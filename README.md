@@ -1,6 +1,6 @@
 # Fruit To Lime
 
-Generating pretty looking xml files that Lime Go likes
+Generating pretty looking xml files that [Lime Go](http://www.lime-go.com/) likes
 
 ## Legal
 
