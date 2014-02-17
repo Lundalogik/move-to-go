@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'rspec'
+gem 'thor'
+gem 'fruit_to_lime'
+gem 'tiny_tds'
