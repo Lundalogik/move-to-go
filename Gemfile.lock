@@ -1,9 +1,10 @@
 PATH
   remote: .
   specs:
-    fruit_to_lime (0.8.1)
+    fruit_to_lime (0.8.2)
       bundler
       iso_country_codes
+      thor
 
 GEM
   remote: http://rubygems.org/
@@ -40,4 +41,3 @@ DEPENDENCIES
   rake
   roo
   rspec (>= 2.14)
-  thor
