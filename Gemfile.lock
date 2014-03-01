@@ -34,6 +34,8 @@ GEM
     spreadsheet (0.9.6)
       ruby-ole (>= 1.0)
     thor (0.18.1)
+    tiny_tds (0.6.1)
+    tiny_tds (0.6.1-x86-mingw32)
 
 PLATFORMS
   ruby
@@ -44,3 +46,4 @@ DEPENDENCIES
   rake
   roo
   rspec (>= 2.14)
+  tiny_tds
