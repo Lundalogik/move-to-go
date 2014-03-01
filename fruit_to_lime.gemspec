@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name        = 'fruit_to_lime'
   s.version     = '0.8.2'
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ['Oskar Gewalli','Peter Wilhelmsson', 'Anders Pålsson']
+  s.authors     = ['Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson']
   s.email       = 'support@lundalogik.se'
   s.summary     = 'Library to generate Lime Go xml import format'
   s.description = <<-EOF
