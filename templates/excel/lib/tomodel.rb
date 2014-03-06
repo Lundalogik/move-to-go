@@ -29,11 +29,18 @@ require "fileutils"
 require 'pathname'
 
 class Cli < Thor
-     desc "to_go ORGANIZATION FILE", "Converts excel file to Go xml format. ORGANIZATIONS is path to input file. FILE is output file where Go xml will go."
+    desc "to_go ORGANIZATION FILE", "Converts excel file to Go xml format. ORGANIZATIONS is path to input file. FILE is output file where Go xml will go."
     def to_go(organizations, file = nil)
         file = 'export.xml' if file == nil
         toModel = ToModel.new()
         model = toModel.to_model(organizations)
-        model.serialize_to_file(file)  
+        error = model.sanity_check
+        if error.empty?
+            model.serialize_to_file(file)
+            puts "'#{organizations}' has been converted into '#{file}'."
+        else
+            puts "'#{organizations}' could not be converted due to"
+            puts error
+        end
     end
 end

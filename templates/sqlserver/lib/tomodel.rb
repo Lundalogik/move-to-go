@@ -14,7 +14,7 @@ class ToModel
         model = FruitToLime::RootModel.new
 
         organization_rows.each do |row|
-            model.organizations.push(to_organization(row))            
+            model.organizations.push(to_organization(row))
         end
 
         return model
@@ -31,16 +31,16 @@ class Cli < Thor
     def to_go(host, database, username, password, file = nil)
         puts "Connecting to database #{database} on server #{host} as user #{username}"
         client = TinyTds::Client.new(
-            :username => username, 
-            :password => password, 
+            :username => username,
+            :password => password,
             :host => host,
             :database => database)
 
-        organizationSql = 
+        organizationSql =
             "SELECT
-                c.id, 
+                c.id,
                 c.name,
-            FROM 
+            FROM
                 company c"
 
         organization_rows = client.execute(organizationSql)
@@ -48,6 +48,13 @@ class Cli < Thor
         file = 'export.xml' if file == nil
         tomodel = ToModel.new()
         model = tomodel.to_model(organization_rows)
-        model.serialize_to_file(file)  
+        error = model.sanity_check
+        if error.empty?
+            model.serialize_to_file(file)
+            puts "'#{organizations}' has been converted into '#{file}'."
+        else
+            puts "'#{organizations}' could not be converted due to"
+            puts error
+        end
     end
 end

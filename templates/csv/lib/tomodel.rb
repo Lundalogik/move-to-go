@@ -16,7 +16,7 @@ class ToModel
             rows.each do |row|
                 rootmodel.organizations.push(to_organization(row))
             end
-        end        
+        end
         return rootmodel
     end
 
@@ -37,6 +37,13 @@ class Cli < Thor
         file = 'export.xml' if file == nil
         toModel = ToModel.new()
         model = toModel.to_model(organizations)
-        model.serialize_to_file(file)  
+        error = model.sanity_check
+        if error.empty?
+            model.serialize_to_file(file)
+            puts "'#{organizations}' has been converted into '#{file}'."
+        else
+            puts "'#{organizations}' could not be converted due to"
+            puts error
+        end
     end
 end

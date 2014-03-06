@@ -3,20 +3,25 @@ module FruitToLime
     class RooHelper
         def initialize(data)
             @data = data
-            @sheet = data.sheets.first
-            @map = {}
-            1.upto(data.last_column(@sheet)) do |col|
-               @map[col] = @data.cell(1, col, @sheet).encode('UTF-8')
-            end
+            @default_sheet = data.sheets.first
         end
 
         def rows
+            return rows_for_sheet(@default_sheet)
+        end
+
+        def rows_for_sheet(sheet)
+            column_headers = {}
+            1.upto(@data.last_column(sheet)) do |col|
+                column_headers[col] = @data.cell(1, col, sheet).encode('UTF-8')
+            end
+
             rs = []
-            2.upto(@data.last_row(@sheet)) do |row|
-                r={}
-                1.upto(@data.last_column(@sheet)) do |col|
-                    val = cell_to_csv(row, col, @sheet)
-                    r[@map[col]] = val
+            2.upto(@data.last_row(sheet)) do |row|
+                r = {}
+                1.upto(@data.last_column(sheet)) do |col|
+                    val = cell_to_csv(row, col, sheet)
+                    r[column_headers[col]] = val
                 end
                 rs.push(r)
             end
@@ -31,7 +36,7 @@ module FruitToLime
                 case @data.celltype(row,col,sheet)
                 when :string
                     unless onecell.empty?
-                        onecell.encode('UTF-8')
+                        onecell.encode('UTF-8').strip
                     end
                 when :float, :percentage
                     if onecell == onecell.to_i

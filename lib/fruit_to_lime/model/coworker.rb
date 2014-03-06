@@ -1,0 +1,44 @@
+module FruitToLime
+    class Coworker
+        include SerializeHelper
+        attr_accessor :id, :integration_id, :first_name, :last_name, :email, :direct_phone_number,
+        :mobile_phone_number, :home_phone_number
+
+        def initialize()
+        end
+
+        def serialize_variables
+            [
+             :id, :integration_id, :first_name, :last_name, :email,
+             :direct_phone_number, :mobile_phone_number, :home_phone_number
+            ].map {|p| { :id => p, :type => :string } }
+        end
+
+        def to_reference
+            reference = CoworkerReference.new
+            reference.id = @id
+            reference.integration_id = @integration_id
+            reference.heading = "#{@first_name} #{@last_name}".strip
+
+            return reference
+        end
+
+        def serialize_name
+            "Coworker"
+        end
+
+        def ==(that)
+            if that.nil?
+                return false
+            end
+
+            if that.is_a? Coworker
+                return @integration_id == that.integration_id
+            elsif that.is_a? String
+                return @integration_id == that
+            end
+
+            return false
+        end
+    end
+end
