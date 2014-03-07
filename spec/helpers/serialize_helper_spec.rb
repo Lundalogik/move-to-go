@@ -4,7 +4,7 @@ require 'fruit_to_lime'
 describe FruitToLime::SerializeHelper do
 
     describe "Serialize note" do
-        let(:serialized) { 
+        let(:serialized) {
             n = FruitToLime::Note.new
             n.text = "text"
             FruitToLime::SerializeHelper::serialize(n)
@@ -20,7 +20,7 @@ describe FruitToLime::SerializeHelper do
         end
     end
     describe "Serialize without data" do
-        let(:serialized) { 
+        let(:serialized) {
             p = FruitToLime::Person.new
             FruitToLime::SerializeHelper::serialize(p)
         }
@@ -38,14 +38,14 @@ describe FruitToLime::SerializeHelper do
     end
 
     describe "Serialize person" do
-        let(:serialized) { 
+        let(:serialized) {
             p = FruitToLime::Person.new
             p.id = "1"
             p.first_name = "Kalle"
             p.last_name = "Anka"
             p.with_source do |source|
                 source.par_se('122345')
-            end 
+            end
             #p.source_ref = {:name=>'Go',:id=>"PASE122345"}
             p.with_postal_address do |addr|
                 addr.city = "Ankeborg"
@@ -60,10 +60,10 @@ describe FruitToLime::SerializeHelper do
             serialized.should match(/<FirstName>Kalle<\/FirstName>/)
             serialized.should match(/Anka/)
         end
-        it "should tag name" do 
+        it "should tag name" do
             serialized.should match(/tag:anka/)
         end
-        it "should contain address" do 
+        it "should contain address" do
             serialized.should match(/Ankeborg/)
         end
         it "should contain custom field" do
@@ -84,12 +84,12 @@ describe FruitToLime::SerializeHelper do
         end
     end
     describe "Serialize organization" do
-        let(:serialized) { 
+        let(:serialized) {
             o = FruitToLime::Organization.new
             o.name = "Ankeborgs bibliotek"
             o.with_source do |source|
                 source.par_se('122345')
-            end 
+            end
             #o.source_ref = {:name=>'Go',:id=>"PASE122345"}
             o.add_tag("tag:bibliotek")
             o.add_tag("tag:Bj\u{00F6}rk")
@@ -108,14 +108,14 @@ describe FruitToLime::SerializeHelper do
             })
             FruitToLime::SerializeHelper::serialize(o)
         }
-        it "should contain name" do 
+        it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
         end
-        it "should contain employee" do 
+        it "should contain employee" do
             serialized.should match(/Kalle/)
             serialized.should match(/Anka/)
         end
-        it "should contain address" do 
+        it "should contain address" do
             serialized.should match(/Ankeborg/)
             serialized.should match(/Gaaseborg/)
         end
@@ -142,14 +142,14 @@ describe FruitToLime::SerializeHelper do
     end
 
     describe "Serialize goimport" do
-        let(:serialized) { 
+        let(:serialized) {
             i = FruitToLime::RootModel.new
             o = FruitToLime::Organization.new
             o.name = "Ankeborgs bibliotek"
             i.organizations.push(o)
             FruitToLime::SerializeHelper::serialize(i)
         }
-        it "should contain name" do 
+        it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
         end
         it "should be utf-8" do
@@ -164,12 +164,12 @@ describe FruitToLime::SerializeHelper do
                 import_rows.should include({:id=>'id', :name=>'Go id', :type=>:string})
             end
             it "should contain address" do
-                expected = {:id=>'postal_address', :name=>'Postal address', :type=>:address, 
-                    :model=>[ 
-                    {:id=>'street',:name=>'Street', :type=>:string}, 
-                    {:id=>'zip_code',:name=>'Zip code', :type=>:string}, 
-                    {:id=>'city',:name=>'City', :type=>:string}, 
-                    {:id=>'country_code',:name=>'Country code', :type=>:string}, 
+                expected = {:id=>'postal_address', :name=>'Postal address', :type=>:address,
+                    :model=>[
+                    {:id=>'street',:name=>'Street', :type=>:string},
+                    {:id=>'zip_code',:name=>'Zip code', :type=>:string},
+                    {:id=>'city',:name=>'City', :type=>:string},
+                    {:id=>'country_code',:name=>'Country code', :type=>:string},
                     {:id=>'location',:name=>'Location', :type=>:string},
                     {:id=>'country_name',:name=>'Country name', :type=>:string},
                 ]}
@@ -183,7 +183,7 @@ describe FruitToLime::SerializeHelper do
                     :model=>[
                         {:id=>'id', :name=>'Go id', :type=>:string},
                         {:id=>'integration_id', :name=>'Integration id', :type=>:string},
-                        {:id=>'name', :name=>'Name', :type=>:string}
+                        {:id=>'heading', :name=>'Heading', :type=>:string}
                         ]
                     })
             end
@@ -196,13 +196,13 @@ describe FruitToLime::SerializeHelper do
             end
             it "should contain address" do
                 expected = {:id=>'postal_address', :name=>'Postal address', :type=>:address,
-                    :model=>[ 
-                        {:id=>'street',:name=>'Street', :type=>:string}, 
-                        {:id=>'zip_code',:name=>'Zip code', :type=>:string}, 
-                        {:id=>'city',:name=>'City', :type=>:string}, 
-                        {:id=>'country_code',:name=>'Country code', :type=>:string}, 
+                    :model=>[
+                        {:id=>'street',:name=>'Street', :type=>:string},
+                        {:id=>'zip_code',:name=>'Zip code', :type=>:string},
+                        {:id=>'city',:name=>'City', :type=>:string},
+                        {:id=>'country_code',:name=>'Country code', :type=>:string},
                         {:id=>'location',:name=>'Location', :type=>:string},
-                        {:id=>'country_name',:name=>'Country name', :type=>:string}, 
+                        {:id=>'country_name',:name=>'Country name', :type=>:string},
                     ]}
                 import_rows.should include(expected)
             end

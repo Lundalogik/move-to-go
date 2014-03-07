@@ -34,14 +34,14 @@ module FruitToLime
         attr_accessor :first_name, :last_name,
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
             :position, :email, :alternative_email, :postal_address, :currently_employed,
-            :notes, :organization
+            :organization
         attr_reader :custom_fields
 
-        def initialize(opt=nil)
-            if opt!=nil
+        def initialize(opt = nil)
+            if opt != nil
                 serialize_variables.each do |myattr|
                     val = opt[myattr[:id]]
-                    instance_variable_set("@"+myattr[:id].to_s,val) if val!=nil
+                    instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
                 end
             end
         end
@@ -75,20 +75,24 @@ module FruitToLime
         end
 
         def serialize_variables
-            [ :id, :integration_id, :first_name, :last_name,
-        :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
-        :position, :email, :alternative_email].map { |prop| {:id=>prop,:type=>:string} } +
-            [{:id=>:postal_address,:type=>:address},
-             {:id=>:currently_employed,:type=>:bool},
-             #{:id=>:notes,:type=>:notes},
-             {:id=>:tags,:type=>:tags},
-             {:id=>:custom_fields,:type=>:custom_fields},
-             {:id=>:source, :type=> :source_ref}
+            [
+             :id, :integration_id, :first_name, :last_name,
+             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
+             :position, :email, :alternative_email
+            ].map {
+                |prop| {:id => prop, :type => :string}
+            }+[
+             {:id => :postal_address, :type => :address},
+             {:id => :currently_employed, :type => :bool},
+             {:id => :tags, :type => :tags},
+             {:id => :custom_fields, :type => :custom_fields},
+             {:id => :source, :type => :source_ref},
+             {:id => :organization, :type => :organization_reference}
             ]
         end
 
         def get_import_rows
-            (serialize_variables+[{:id=>:organization, :type=>:organization_reference}]).map do |p|
+            (serialize_variables + [ { :id => :organization, :type => :organization_reference } ]).map do |p|
                 map_to_row p
             end
         end

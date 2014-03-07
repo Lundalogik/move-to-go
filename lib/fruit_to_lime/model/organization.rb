@@ -46,7 +46,6 @@ module FruitToLime
         attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site, :external_link,
         :postal_address, :visit_address, :central_phone_number, :responsible_coworker, :source_data
 
-        #        attr_reader :employees, :custom_fields
         attr_reader :employees
 
         def initialize()

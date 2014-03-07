@@ -56,9 +56,9 @@ module FruitToLime
 
         def map_symbol_to_row(symbol,type)
             {
-                :id=>symbol.to_s,
-                :name=> symbol==:id ? 'Go id' : symbol_to_name(symbol),
-                :type=>type
+                :id => symbol.to_s,
+                :name => symbol == :id ? 'Go id' : symbol_to_name(symbol),
+                :type =>type
             }
         end
 
