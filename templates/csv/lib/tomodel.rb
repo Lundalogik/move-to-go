@@ -39,8 +39,15 @@ class Cli < Thor
         model = toModel.to_model(organizations)
         error = model.sanity_check
         if error.empty?
-            model.serialize_to_file(file)
-            puts "'#{organizations}' has been converted into '#{file}'."
+            validation_errors = model.validate
+
+            if validation_errors.empty?
+                model.serialize_to_file(file)
+                puts "'#{organizations}' has been converted into '#{file}'."
+            else
+                puts "'#{organizations}' could not be converted due to"
+                puts validation_errors
+            end
         else
             puts "'#{organizations}' could not be converted due to"
             puts error

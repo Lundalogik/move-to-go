@@ -128,7 +128,15 @@ module FruitToLime
                 end
             end
 
-            return error
+            @deals.each do |deal|
+                validation_message = deal.validate
+
+                if !validation_message.empty?
+                    error = "#{error}\n#{validation_message}"
+                end
+            end
+
+            return error.strip
         end
     end
 end
