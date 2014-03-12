@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'fruit_to_lime'
-  s.version     = '0.8.2'
+  s.version     = '0.9.0'
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson']
   s.email       = 'support@lundalogik.se'
