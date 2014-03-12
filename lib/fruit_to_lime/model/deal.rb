@@ -31,11 +31,6 @@ module FruitToLime
         def initialize()
         end
 
-        def set_custom_field_DELETE(obj)
-            @custom_fields = [] if @custom_fields==nil
-            @custom_fields.push CustomField.new(obj)
-        end
-
         def to_s
             return "deal[id=#{@id}, integration_id=#{@integration_id}]"
         end
