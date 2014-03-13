@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/Lundalogik/fruit_to_lime.png?branch=master)](https://travis-ci.org/Lundalogik/fruit_to_lime) 
-
-# Fruit_To_Lime
+# Fruit_To_Lime [![Build Status](https://travis-ci.org/Lundalogik/fruit_to_lime.png?branch=master)](https://travis-ci.org/Lundalogik/fruit_to_lime) 
 
 Generating pretty looking xml files that [LIME Go](http://www.lime-go.com/) likes
 
