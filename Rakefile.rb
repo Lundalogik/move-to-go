@@ -1,5 +1,6 @@
 #!/usr/bin/env rake
 require 'rspec/core/rake_task'
+require 'albacore'
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -30,3 +31,27 @@ end
 
 desc "test fruit to lime gem"
 task :test_fruit_to_lime => [:uninstall_fruit_to_lime, :install_fruit_to_lime, :spec] 
+
+namespace :ms do
+    $nuget = File.join(File.dirname(__FILE__),'nuget')
+
+    desc "build using msbuild"
+    msbuild :build do |msb|
+        msb.properties :configuration => :Debug
+        msb.targets :Clean, :Rebuild
+        msb.verbosity = 'quiet'
+        msb.solution = File.join('.', 'src', "FruitToLime.sln")
+    end
+
+    task :copy_to_nuspec => [:build] do
+        output_directory_lib = File.join($nuget,"lib/40/")
+        mkdir_p output_directory_lib
+        cp Dir.glob(File.join('.', 'src', "FruitToLime/bin/Debug/FruitToLime.dll")), output_directory_lib
+    end
+
+    task :nugetpack => [:copy_to_nuspec] do |nuget|
+        cd File.join($nuget) do
+          sh "..\\src\\.nuget\\NuGet.exe pack FruitToLime.nuspec"
+        end
+    end
+end

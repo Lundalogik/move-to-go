@@ -17,6 +17,14 @@ tmp
 _yardoc
 doc/
 
+# nuget
+nuget/lib/
+nuget/tools/
+nuget/*.nupkg
+
+packages/
+
+
 syntax: regex
 [Oo]bj/
 /src/[^/]*/[Bb]in/

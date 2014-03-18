@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>FruitToLime</id>
+    <title>FruitToLime</title>
+    <version>0.9.0</version>
+    <authors>Oskar Gewalli, Peter Wilhelmsson, Anders Pålsson</authors>
+    <owners>Oskar Gewalli, Peter Wilhelmsson, Anders Pålsson</owners>
+    <licenseUrl>https://github.com/lundalogik/fruit_to_lime/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/lundalogik/fruit_to_lime</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Fruit to lime is a small library to generate xml in a format Go likes.</description>
+    <copyright>Copyright 2014</copyright>
+    <references>
+      <reference file="FruitToLime.dll" />
+    </references>
+    <dependencies>
+    </dependencies>
+    <releaseNotes>First release.</releaseNotes>
+  </metadata>
+</package>
