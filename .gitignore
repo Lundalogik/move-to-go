@@ -16,3 +16,26 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+syntax: regex
+[Oo]bj/
+/src/[^/]*/[Bb]in/
+/src/**/[Bb]in/
+*_ReSharper.*
+/TestResult\.xml
+*.Resharper
+
+syntax: glob
+*.suo
+*.csproj.user
+*.Resharper.user
+*.TeamCity.user
+*.DotSettings.user
+*.orig
+*.bak
+*.*~
+*.swp
+*.ncrunchproject
+*.ncrunchsolution
+*.crunchsolution.cache
+*.ncrunchsolution.user
