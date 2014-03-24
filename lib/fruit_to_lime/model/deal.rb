@@ -4,7 +4,7 @@ module FruitToLime
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
         attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date, :offer_date, :customer,
-        :responsible_coworker, :customer_contact
+        :responsible_coworker, :customer_contact, :status
 
         attr_reader :custom_fields
 
