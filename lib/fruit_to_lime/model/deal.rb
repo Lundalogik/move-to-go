@@ -20,7 +20,8 @@ module FruitToLime
                  { :id => :responsible_coworker, :type => :coworker_reference },
                  { :id => :customer_contact, :type => :person_reference },
                  { :id => :custom_fields, :type => :custom_fields },
-                 { :id => :tags, :type => :tags }
+                 { :id => :tags, :type => :tags },
+                 { :id => :status, :type => :deal_status }
                 ]
         end
 
