@@ -23,7 +23,7 @@ nuget/tools/
 nuget/*.nupkg
 
 packages/
-
+vendor/
 
 syntax: regex
 [Oo]bj/

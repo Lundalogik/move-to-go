@@ -43,7 +43,7 @@ module FruitToLime
     class Organization
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
-        attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site, :external_link,
+        attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site,
         :postal_address, :visit_address, :central_phone_number, :responsible_coworker, :source_data
 
         attr_reader :employees
@@ -95,7 +95,7 @@ module FruitToLime
 
         def serialize_variables
             [
-             :id, :integration_id, :name, :organization_number, :external_link,
+             :id, :integration_id, :name, :organization_number,
              :email, :web_site, :central_phone_number ].map {
                 |prop| { :id => prop, :type => :string }
             } +
