@@ -18,18 +18,19 @@ module FruitToLime
                         m.capitalize
                     end.join('')
 
-                    varv = obj.instance_variable_get("@#{serialize_variable[:id].to_s}")
-                    if (varv.respond_to?(:serialize_variables))
-                        varv = serialize_variables(varv)
-                    elsif (varv.is_a?(Array))
-                        varv = varv.map { |elem| SerializeHelper::serialize(elem) }.join("\n")
-                    elsif (varv == nil)
-                        varv = nil
+                    raw_var = obj.instance_variable_get("@#{serialize_variable[:id].to_s}")
+                    serialized_var = nil
+                    if (raw_var.respond_to?(:serialize_variables))
+                        serialized_var = serialize_variables(raw_var)
+                    elsif (raw_var.is_a?(Array))
+                        serialized_var = raw_var.map { |elem| SerializeHelper::serialize(elem) }.join("\n")
+                    elsif (raw_var == nil)
+                        serialized_var = nil
                     else
-                        varv = varv.to_s.encode('UTF-8').encode(:xml => :text)
+                        serialized_var = raw_var.to_s.encode('UTF-8').encode(:xml => :text)
                     end
-                    if varv != nil then "<#{element_name}>#{ varv }</#{element_name}>" else "" end
-                    if varv != nil then "<#{element_name}>#{ varv }</#{element_name}>" end
+                    if serialized_var != nil then "<#{element_name}>#{ serialized_var }</#{element_name}>" else "" end
+                    if serialized_var != nil then "<#{element_name}>#{ serialized_var }</#{element_name}>" end
                 end.join("\n")
             end
             raise "!!#{obj.class}"
