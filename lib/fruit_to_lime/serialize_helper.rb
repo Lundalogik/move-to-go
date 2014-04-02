@@ -1,4 +1,6 @@
 # encoding: utf-8
+require "rexml/document"
+
 module FruitToLime
     module SerializeHelper
         def serialize()
@@ -11,12 +13,12 @@ module FruitToLime
 
         def self.serialize_variables(obj)
             if (obj.respond_to?(:serialize_variables))
-                return obj.serialize_variables.map do |ivar|
-                    varn = ivar[:id].to_s.gsub(/^\@/,'').split('_').map do |m|
+                return obj.serialize_variables.map do |serialize_variable|
+                    element_name = serialize_variable[:id].to_s.gsub(/^\@/,'').split('_').map do |m|
                         m.capitalize
                     end.join('')
 
-                    varv = obj.instance_variable_get("@#{ivar[:id].to_s}")
+                    varv = obj.instance_variable_get("@#{serialize_variable[:id].to_s}")
                     if (varv.respond_to?(:serialize_variables))
                         varv = serialize_variables(varv)
                     elsif (varv.is_a?(Array))
@@ -26,8 +28,8 @@ module FruitToLime
                     else
                         varv = varv.to_s.encode('UTF-8').encode(:xml => :text)
                     end
-                    if varv != nil then "<#{varn}>#{ varv }</#{varn}>" else "" end
-                    if varv != nil then "<#{varn}>#{ varv }</#{varn}>" end
+                    if varv != nil then "<#{element_name}>#{ varv }</#{element_name}>" else "" end
+                    if varv != nil then "<#{element_name}>#{ varv }</#{element_name}>" end
                 end.join("\n")
             end
             raise "!!#{obj.class}"
@@ -35,8 +37,10 @@ module FruitToLime
 
         def self.serialize(obj)
             if (obj.respond_to?(:serialize_variables))
-                varn = obj.serialize_name
-                "<#{varn}>#{ SerializeHelper::serialize_variables(obj) }</#{varn}>"
+                element_name = obj.serialize_name
+                doc = REXML::Document.new( "<#{element_name}>#{ SerializeHelper::serialize_variables(obj) }</#{element_name}>" )
+                doc.write( targetstr = "", 2 ) #indents with 2 spaces
+                targetstr
             elsif obj.respond_to?(:to_xml)
                 obj.to_xml
             else

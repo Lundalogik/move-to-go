@@ -10,7 +10,7 @@ describe FruitToLime::SerializeHelper do
             FruitToLime::SerializeHelper::serialize(n)
         }
         it "should contain text" do
-            serialized.should match(/<Text>text<\/Text>/)
+            serialized.should match(/<Text>[\n ]*text[\n ]*<\/Text>/)
         end
         it "should contain start tag" do
             serialized.should match(/<Note>/)
@@ -57,7 +57,7 @@ describe FruitToLime::SerializeHelper do
             FruitToLime::SerializeHelper::serialize(p)
         }
         it "should contain first and last name" do
-            serialized.should match(/<FirstName>Kalle<\/FirstName>/)
+            serialized.should match(/<FirstName>[\n ]*Kalle[\n ]*<\/FirstName>/)
             serialized.should match(/Anka/)
         end
         it "should tag name" do
@@ -120,7 +120,7 @@ describe FruitToLime::SerializeHelper do
             serialized.should match(/Gaaseborg/)
         end
         it "should tag name" do
-            serialized.should match(/<Tag>tag:bibliotek<\/Tag>/)
+            serialized.should match(/<Tag>[\n ]*tag:bibliotek[\n ]*<\/Tag>/)
         end
         it "should contain custom field" do
             serialized.should match(/cf title/)
