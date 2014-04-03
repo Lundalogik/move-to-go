@@ -1,6 +1,6 @@
 module FruitToLime
     class CustomField
-        include SerializeHelper
+        include SerializeHelper, ModelWithIntegrationIdSameAs
 
         attr_accessor :id, :integration_id, :title, :value
 

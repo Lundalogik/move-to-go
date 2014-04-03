@@ -30,7 +30,7 @@ module FruitToLime
     end
 
     class Person < PersonReference
-        include SerializeHelper
+        include SerializeHelper, ModelHasCustomFields, ModelHasTags
         attr_accessor :first_name, :last_name,
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
             :position, :email, :alternative_email, :postal_address, :currently_employed,
@@ -52,11 +52,6 @@ module FruitToLime
             yield @postal_address
         end
 
-        def set_custom_field(obj)
-            @custom_fields = [] if @custom_fields==nil
-            @custom_fields.push CustomField.new(obj)
-        end
-
         def with_source
             @source = ReferenceToSource.new
             yield @source
@@ -64,11 +59,6 @@ module FruitToLime
 
         def tags
             @tags
-        end
-
-        def add_tag(str)
-            @tags = [] if @tags == nil
-            @tags.push(Tag.new(str))
         end
 
         def serialize_name
