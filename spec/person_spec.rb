@@ -47,6 +47,14 @@ describe "Person" do
         field.value.should eq 'the value 2'
     end
 
+    it "will only set tag once" do
+        person.set_tag('tag1')
+        person.set_tag('tag1')
+        person.tags.length.should eq 1 
+        tag = person.tags[0]
+        tag.value.should eq 'tag1'
+    end
+
     it "should have a firstname if no lastname" do
         person.first_name = "Vincent"
         person.last_name = nil
