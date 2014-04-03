@@ -1,3 +1,4 @@
+# encoding: utf-8
 module FruitToLime
     class RootModel
         # the import_coworker is a special coworker that is set as
@@ -5,8 +6,8 @@ module FruitToLime
         attr_accessor :organizations, :coworkers, :deals, :notes, :import_coworker
         def serialize_variables
             [
-             {:id => :coworkers, :type => :coworkers},
              {:id => :organizations, :type => :organizations},
+             {:id => :coworkers, :type => :coworkers},
              {:id => :deals, :type => :deals},
              {:id => :notes, :type => :notes},
             ]
@@ -137,6 +138,12 @@ module FruitToLime
             end
 
             return error.strip
+        end
+
+        def to_rexml(doc)
+            element_name = serialize_name
+            elem = doc.add_element(element_name,{"Version"=>"v1_0"})
+            SerializeHelper::serialize_variables_rexml(elem, self)
         end
     end
 end

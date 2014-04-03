@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 module FruitToLime
     class Tag
         def serialize_name
@@ -13,9 +14,9 @@ module FruitToLime
             end
         end
 
-        def to_xml
-            varn = serialize_name
-            "<#{varn}>#{ @value.to_s.encode('utf-8').encode(:xml => :text) }</#{varn}>"
+        def to_rexml(elem)
+            element_name = serialize_name
+            elem.add_element(element_name).text = @value.to_s.encode('utf-8')
         end
 
         def to_s

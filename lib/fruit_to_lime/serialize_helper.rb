@@ -11,39 +11,56 @@ module FruitToLime
             SerializeHelper::serialize_to_file(file, self)
         end
 
-        def self.serialize_variables(obj)
+        def self.serialize_variables_rexml(elem, obj)
             if (obj.respond_to?(:serialize_variables))
-                return obj.serialize_variables.map do |serialize_variable|
+                obj.serialize_variables.each do |serialize_variable|
                     element_name = serialize_variable[:id].to_s.gsub(/^\@/,'').split('_').map do |m|
                         m.capitalize
                     end.join('')
 
                     raw_var = obj.instance_variable_get("@#{serialize_variable[:id].to_s}")
-                    serialized_var = nil
-                    if (raw_var.respond_to?(:serialize_variables))
-                        serialized_var = serialize_variables(raw_var)
-                    elsif (raw_var.is_a?(Array))
-                        serialized_var = raw_var.map { |elem| SerializeHelper::serialize(elem) }.join("\n")
-                    elsif (raw_var == nil)
-                        serialized_var = nil
-                    else
-                        serialized_var = raw_var.to_s.encode('UTF-8').encode(:xml => :text)
+                    if raw_var != nil
+                        element = elem.add_element(element_name)
+                        if (raw_var.respond_to?(:serialize_variables))
+                            SerializeHelper::serialize_variables_rexml(element, raw_var)
+                        elsif (raw_var.is_a?(Array))
+                            raw_var.each do |raw_var_elem| 
+                                SerializeHelper::serialize_rexml(element, raw_var_elem) 
+                            end
+                        else
+                            element.text = raw_var.to_s.encode('UTF-8')
+                        end
                     end
-                    if serialized_var != nil then "<#{element_name}>#{ serialized_var }</#{element_name}>" else "" end
-                    if serialized_var != nil then "<#{element_name}>#{ serialized_var }</#{element_name}>" end
-                end.join("\n")
+                end
+                return
             end
-            raise "!!#{obj.class}"
+            raise "Do not know how to handle #{obj.class} !!"
         end
 
-        def self.serialize(obj)
-            if (obj.respond_to?(:serialize_variables))
+        def self.serialize_rexml(elem, obj)
+            if obj.respond_to?(:to_rexml)
+                obj.to_rexml(elem)
+            elsif (obj.respond_to?(:serialize_variables))
                 element_name = obj.serialize_name
-                doc = REXML::Document.new( "<#{element_name}>#{ SerializeHelper::serialize_variables(obj) }</#{element_name}>" )
-                doc.write( targetstr = "", 2 ) #indents with 2 spaces
-                targetstr
-            elsif obj.respond_to?(:to_xml)
-                obj.to_xml
+                SerializeHelper::serialize_variables_rexml(elem.add_element(element_name), obj)
+            else
+                elem.text = obj.to_s
+            end
+        end
+
+        def self.serialize(obj, indent= 2)
+            # indent -1 to avoid indent
+            if obj.respond_to?(:to_rexml)
+                doc = REXML::Document.new()
+                SerializeHelper::serialize_rexml(doc, obj)
+                doc.write( xml_str = "" , indent, true)
+                xml_str
+            elsif (obj.respond_to?(:serialize_variables))
+                element_name = obj.serialize_name
+                doc = REXML::Document.new()
+                SerializeHelper::serialize_variables_rexml(doc.add_element(element_name), obj)
+                doc.write( xml_str = "", indent, true)
+                xml_str
             else
                 obj.to_s.encode(:xml => :text)
             end

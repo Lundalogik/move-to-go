@@ -3,7 +3,13 @@ module FruitToLime
         include SerializeHelper
         attr_accessor :id, :heading, :integration_id
 
-        def initialize()
+        def initialize(opt = nil)
+            if opt != nil
+                serialize_variables.each do |myattr|
+                    val = opt[myattr[:id]]
+                    instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
+                end
+            end
         end
 
         def serialize_variables

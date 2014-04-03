@@ -4,7 +4,7 @@ module FruitToLime
         attr_accessor :name, :id, :format
 
         def serialize_variables
-            [:name, :id, :format].map { |prop| { :id => prop, :type => :string } }
+            [:name, :format, :id].map { |prop| { :id => prop, :type => :string } }
         end
 
         def serialize_name
@@ -31,6 +31,9 @@ module FruitToLime
         end
 
         def ==(other)
+            if other==nil 
+                return false
+            end
             return @name == other.name && @id == other.id && @format== other.format
         end
 

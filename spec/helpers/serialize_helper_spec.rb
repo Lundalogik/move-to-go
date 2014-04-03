@@ -7,7 +7,7 @@ describe FruitToLime::SerializeHelper do
         let(:serialized) {
             n = FruitToLime::Note.new
             n.text = "text"
-            FruitToLime::SerializeHelper::serialize(n)
+            FruitToLime::SerializeHelper::serialize(n,-1)
         }
         it "should contain text" do
             serialized.should match(/<Text>[\n ]*text[\n ]*<\/Text>/)
@@ -19,13 +19,24 @@ describe FruitToLime::SerializeHelper do
             serialized.encoding.should equal Encoding::UTF_8
         end
     end
+
+    describe "Serialize note with xml inside" do
+        let(:serialized) {
+            n = FruitToLime::Note.new
+            n.text = "<text>"
+            FruitToLime::SerializeHelper::serialize(n,-1)
+        }
+        it "should contain encoded text" do
+            serialized.should match(/<Text>[\n ]*&lt;text&gt;[\n ]*<\/Text>/)
+        end
+    end
+
     describe "Serialize without data" do
         let(:serialized) {
             p = FruitToLime::Person.new
-            FruitToLime::SerializeHelper::serialize(p)
+            FruitToLime::SerializeHelper::serialize(p,-1)
         }
         it "should not contain fields that are not set" do
-            #puts serialized
             serialized.should_not match(/<Email>/)
             serialized.should_not match(/<Position>/)
             serialized.should_not match(/<AlternativeEmail>/)
@@ -50,15 +61,21 @@ describe FruitToLime::SerializeHelper do
             p.with_postal_address do |addr|
                 addr.city = "Ankeborg"
             end
+            p.currently_employed=true
             p.add_tag("tag:anka")
             p.add_tag("tag:Bj\u{00F6}rk")
+            p.add_tag("tag:<Bj\u{00F6}rk>")
             p.set_custom_field({:id=>"2", :title=>"cf title", :value=>"cf value"})
             p.set_custom_field({:id=>"3", :title=>"cf title2", :value=>"cf Bj\u{00F6}rk"})
-            FruitToLime::SerializeHelper::serialize(p)
+            p.set_custom_field({:id=>"4", :title=>"cf <title3>", :value=>"cf <Bj\u{00F6}rk>"})
+            FruitToLime::SerializeHelper::serialize(p,-1)
         }
         it "should contain first and last name" do
             serialized.should match(/<FirstName>[\n ]*Kalle[\n ]*<\/FirstName>/)
             serialized.should match(/Anka/)
+        end
+        it "should contain currently_employed" do
+            serialized.should match(/<CurrentlyEmployed>[\n ]*true[\n ]*<\/CurrentlyEmployed>/)
         end
         it "should tag name" do
             serialized.should match(/tag:anka/)
@@ -78,6 +95,12 @@ describe FruitToLime::SerializeHelper do
         end
         it "should handle sv chars in custom value" do
             serialized.should match(/cf Bj\u{00F6}rk/)
+        end
+        it "should handle xml in tag" do
+            serialized.should match(/tag:&lt;Bj\u{00F6}rk&gt;/)
+        end
+        it "should handle xml in custom value" do
+            serialized.should match(/cf &lt;Bj\u{00F6}rk&gt;/)
         end
         it "should be utf-8" do
             serialized.encoding.should equal Encoding::UTF_8
@@ -106,7 +129,7 @@ describe FruitToLime::SerializeHelper do
                 :first_name => "Kalle",
                 :last_name => "Anka"
             })
-            FruitToLime::SerializeHelper::serialize(o)
+            FruitToLime::SerializeHelper::serialize(o,-1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
@@ -147,7 +170,7 @@ describe FruitToLime::SerializeHelper do
             o = FruitToLime::Organization.new
             o.name = "Ankeborgs bibliotek"
             i.organizations.push(o)
-            FruitToLime::SerializeHelper::serialize(i)
+            FruitToLime::SerializeHelper::serialize(i,-1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)

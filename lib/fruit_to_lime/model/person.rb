@@ -76,18 +76,29 @@ module FruitToLime
 
         def serialize_variables
             [
-             :id, :integration_id, :first_name, :last_name,
-             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
-             :position, :email, :alternative_email
-            ].map {
-                |prop| {:id => prop, :type => :string}
-            }+[
-             {:id => :postal_address, :type => :address},
-             {:id => :currently_employed, :type => :bool},
-             {:id => :tags, :type => :tags},
-             {:id => :custom_fields, :type => :custom_fields},
+             {:id => :id, :type => :string},
+             {:id => :integration_id, :type => :string},
              {:id => :source, :type => :source_ref},
-             {:id => :organization, :type => :organization_reference}
+             {:id => :first_name, :type => :string},
+             {:id => :last_name, :type => :string},
+
+             {:id => :direct_phone_number, :type => :string},
+             {:id => :fax_phone_number, :type => :string},
+             {:id => :mobile_phone_number, :type => :string},
+             {:id => :home_phone_number, :type => :string},
+
+             {:id => :position, :type => :string},
+             
+             {:id => :tags, :type => :tags},
+             
+             {:id => :email, :type => :string},
+             {:id => :alternative_email, :type => :string},
+
+             {:id => :postal_address, :type => :address},
+             {:id => :custom_fields, :type => :custom_fields},
+             {:id => :currently_employed, :type => :bool},
+             {:id => :organization, :type => :organization_reference},
+             
             ]
         end
 

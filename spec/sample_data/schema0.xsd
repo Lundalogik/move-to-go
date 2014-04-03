@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="GoImport" nillable="true" type="GoImport" />
+  <xs:complexType name="GoImport">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Organizations" type="ArrayOfOrganization" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Coworkers" type="ArrayOfCoworker" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Deals" type="ArrayOfDeal" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Notes" type="ArrayOfNote" />
+    </xs:sequence>
+    <xs:attribute name="Version" type="Version" use="required" />
+  </xs:complexType>
+  <xs:complexType name="ArrayOfOrganization">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Organization" nillable="true" type="Organization" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Organization">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Source" type="ReferenceToSource" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="OrganizationNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="PostalAddress" type="Address" />
+      <xs:element minOccurs="0" maxOccurs="1" name="VisitAddress" type="Address" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CentralPhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FaxPhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="MobilePhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="WebSite" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Employees" type="ArrayOfPerson" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CustomFields" type="ArrayOfCustomField" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Tags" type="ArrayOfString" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ResponsibleCoworker" type="CoworkerReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReferenceToSource">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Format" type="ReferenceFormat" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="ReferenceFormat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Internal" />
+      <xs:enumeration value="External" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="Address">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Street" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ZipCode" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CountryCode" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Location" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfPerson">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Person" nillable="true" type="Person" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Person">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Source" type="ReferenceToSource" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FirstName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="LastName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="DirectPhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FaxPhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="MobilePhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="HomePhoneNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Position" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Tags" type="ArrayOfString" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="AlternativeEmail" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="PostalAddress" type="Address" />
+      <xs:element minOccurs="1" maxOccurs="1" name="CurrentlyEmployed" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CustomFields" type="ArrayOfCustomField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfString">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Tag" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfCustomField">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CustomField" nillable="true" type="CustomField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CustomField">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Value" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CoworkerReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfCoworker">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Coworker" nillable="true" type="Coworker" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Coworker">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Email" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FirstName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="LastName" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfDeal">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Deal" nillable="true" type="Deal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Deal">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="OfferDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="1" maxOccurs="1" name="OrderDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="OrganizationReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Status" type="Status" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Description" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Probability" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Value" type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CustomerContact" type="PersonReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ResponsibleCoworker" type="CoworkerReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Tags" type="ArrayOfString" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CustomFields" type="ArrayOfCustomField" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="OrganizationReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Status">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Label" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PersonReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfNote">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Note" nillable="true" type="Note" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Note">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Text" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Classification" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="DateCreated" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Person" type="PersonReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="DealReference">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="Version">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="v1_0" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

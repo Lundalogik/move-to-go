@@ -90,22 +90,32 @@ module FruitToLime
 
         def add_employee(val)
             @employees = [] if @employees==nil
-            @employees.push(if val.is_a? Person then val else Person.new(val) end)
+            person = if val.is_a? Person then val else Person.new(val) end
+            @employees.push(person)
+            person
+        end
+
+        def add_responsible_coworker(val)
+            coworker = if val.is_a? CoworkerReference then val else CoworkerReference.new(val) end
+            @responsible_coworker = coworker
+            coworker
         end
 
         def serialize_variables
-            [
-             :id, :integration_id, :name, :organization_number,
-             :email, :web_site, :central_phone_number ].map {
-                |prop| { :id => prop, :type => :string }
-            } +
                 [
+                 { :id => :id, :type => :string },
+                 { :id => :integration_id, :type => :string },
+                 { :id => :source, :type => :source_ref },
+                 { :id => :name, :type => :string },
+                 { :id => :organization_number, :type => :string },
                  { :id => :postal_address, :type => :address },
                  { :id => :visit_address, :type => :address },
+                 { :id => :central_phone_number, :type => :string },
+                 { :id => :email, :type => :string },
+                 { :id => :web_site, :type => :string },
                  { :id => :employees, :type => :persons },
-                 { :id => :tags, :type => :tags },
                  { :id => :custom_fields, :type => :custom_fields },
-                 { :id => :source, :type => :source_ref },
+                 { :id => :tags, :type => :tags },
                  { :id => :responsible_coworker, :type => :coworker_reference}
                 ]
         end

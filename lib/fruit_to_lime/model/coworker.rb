@@ -4,7 +4,13 @@ module FruitToLime
         attr_accessor :id, :integration_id, :first_name, :last_name, :email, :direct_phone_number,
         :mobile_phone_number, :home_phone_number
 
-        def initialize()
+        def initialize(opt = nil)
+            if opt != nil
+                serialize_variables.each do |myattr|
+                    val = opt[myattr[:id]]
+                    instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
+                end
+            end
         end
 
         def serialize_variables
