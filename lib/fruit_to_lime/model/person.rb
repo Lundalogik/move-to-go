@@ -38,6 +38,7 @@ module FruitToLime
         attr_reader :custom_fields
 
         def initialize(opt = nil)
+            @currently_employed = true
             if opt != nil
                 serialize_variables.each do |myattr|
                     val = opt[myattr[:id]]

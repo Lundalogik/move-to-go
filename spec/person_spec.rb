@@ -25,6 +25,10 @@ describe "Person" do
         error.should be_empty
     end
 
+    it "should be currently employed if nothing specified" do
+        expect(@person.currently_employed).to eq(true)
+    end
+
     it "should have a lastname if no firstname" do
         @person.first_name = String.new
         @person.last_name = "Vega"
