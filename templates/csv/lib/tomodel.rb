@@ -21,7 +21,7 @@ class ToModel
 
     def to_model(organization_file_name)
         rootmodel = FruitToLime::RootModel.new
-        configure model
+        configure rootmodel
         if organization_file_name != nil
             organization_file_data = File.open(organization_file_name, 'r').read.encode('UTF-8',"ISO-8859-1")
             rows = FruitToLime::CsvHelper::text_to_hashes(organization_file_data)
