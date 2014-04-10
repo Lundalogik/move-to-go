@@ -11,11 +11,23 @@ class ToModel
         return organization
     end
 
+    def configure(model)
+        # add custom field to your model here. Custom fields can be
+        # added to organization, deal and person. Valid types are
+        # :String and :Link. If no type is specified :String is used
+        # as default.
+
+        model.settings.with_deal do |deal|
+            deal.set_custom_field( { :integrationid => 'discount_url', :title => 'Rabatt url', :type => :Link } )
+        end
+    end
+
     def to_model(organization_file_name)
         # from excel to csv
         organization_file_data = Roo::Excelx.new(organization_file_name)
 
         model = FruitToLime::RootModel.new
+        configure model
         rows = FruitToLime::RooHelper.new(organization_file_data).rows
         rows.each do |row|
             model.organizations.push(to_organization(row))

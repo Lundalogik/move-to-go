@@ -35,7 +35,7 @@ module FruitToLime
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
             :position, :email, :alternative_email, :postal_address, :currently_employed,
             :organization
-        attr_reader :custom_fields
+        attr_reader :custom_values
 
         def initialize(opt = nil)
             @currently_employed = true
@@ -86,7 +86,7 @@ module FruitToLime
              {:id => :alternative_email, :type => :string},
 
              {:id => :postal_address, :type => :address},
-             {:id => :custom_fields, :type => :custom_fields},
+             {:id => :custom_values, :type => :custom_values},
              {:id => :currently_employed, :type => :bool},
              {:id => :organization, :type => :organization_reference},
              

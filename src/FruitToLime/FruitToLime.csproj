@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GoImport.cs" />
     <Compile Include="GoImportSerializer.cs" />
     <Compile Include="Organization.cs" />
     <Compile Include="Person.cs" />

@@ -102,22 +102,22 @@ module FruitToLime
         end
 
         def serialize_variables
-                [
-                 { :id => :id, :type => :string },
-                 { :id => :integration_id, :type => :string },
-                 { :id => :source, :type => :source_ref },
-                 { :id => :name, :type => :string },
-                 { :id => :organization_number, :type => :string },
-                 { :id => :postal_address, :type => :address },
-                 { :id => :visit_address, :type => :address },
-                 { :id => :central_phone_number, :type => :string },
-                 { :id => :email, :type => :string },
-                 { :id => :web_site, :type => :string },
-                 { :id => :employees, :type => :persons },
-                 { :id => :custom_fields, :type => :custom_fields },
-                 { :id => :tags, :type => :tags },
-                 { :id => :responsible_coworker, :type => :coworker_reference}
-                ]
+            [
+             { :id => :id, :type => :string },
+             { :id => :integration_id, :type => :string },
+             { :id => :source, :type => :source_ref },
+             { :id => :name, :type => :string },
+             { :id => :organization_number, :type => :string },
+             { :id => :postal_address, :type => :address },
+             { :id => :visit_address, :type => :address },
+             { :id => :central_phone_number, :type => :string },
+             { :id => :email, :type => :string },
+             { :id => :web_site, :type => :string },
+             { :id => :employees, :type => :persons },
+             { :id => :custom_values, :type => :custom_values },
+             { :id => :tags, :type => :tags },
+             { :id => :responsible_coworker, :type => :coworker_reference}
+            ]
         end
 
         def serialize_name

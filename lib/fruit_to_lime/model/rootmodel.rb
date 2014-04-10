@@ -3,11 +3,12 @@ module FruitToLime
     class RootModel
         # the import_coworker is a special coworker that is set as
         # responsible for objects that requires a coworker, eg a note.
-        attr_accessor :organizations, :coworkers, :deals, :notes, :import_coworker
+        attr_accessor :settings, :organizations, :coworkers, :deals, :notes, :import_coworker
         def serialize_variables
             [
-             {:id => :organizations, :type => :organizations},
+             {:id => :settings, :type => :settings},
              {:id => :coworkers, :type => :coworkers},
+             {:id => :organizations, :type => :organizations},
              {:id => :deals, :type => :deals},
              {:id => :notes, :type => :notes},
             ]
@@ -20,6 +21,7 @@ module FruitToLime
         include SerializeHelper
 
         def initialize()
+            @settings = Settings.new
             @organizations = []
             @coworkers = []
             @import_coworker = Coworker.new
@@ -142,7 +144,7 @@ module FruitToLime
 
         def to_rexml(doc)
             element_name = serialize_name
-            elem = doc.add_element(element_name,{"Version"=>"v1_0"})
+            elem = doc.add_element(element_name,{"Version"=>"v2_0"})
             SerializeHelper::serialize_variables_rexml(elem, self)
         end
     end

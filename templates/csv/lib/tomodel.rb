@@ -8,8 +8,20 @@ class ToModel
         return organization
     end
 
+    def configure(model)
+        # add custom field to your model here. Custom fields can be
+        # added to organization, deal and person. Valid types are
+        # :String and :Link. If no type is specified :String is used
+        # as default.
+
+        model.settings.with_deal do |deal|
+            deal.set_custom_field( { :integrationid => 'discount_url', :title => 'Rabatt url', :type => :Link } )
+        end
+    end
+
     def to_model(organization_file_name)
         rootmodel = FruitToLime::RootModel.new
+        configure model
         if organization_file_name != nil
             organization_file_data = File.open(organization_file_name, 'r').read.encode('UTF-8',"ISO-8859-1")
             rows = FruitToLime::CsvHelper::text_to_hashes(organization_file_data)

@@ -62,7 +62,7 @@ namespace Tests
                 Assert.That(organization.Id, Is.Null);
                 Assert.That(organization.IntegrationId, Is.Null);
                 Assert.That(organization.CentralPhoneNumber, Is.Null);
-                Assert.That(organization.CustomFields, Is.Null);
+                Assert.That(organization.CustomValues, Is.Null);
                 Assert.That(organization.Email, Is.Null);
                 Assert.That(organization.FaxPhoneNumber, Is.Null);
                 Assert.That(organization.MobilePhoneNumber, Is.Null);

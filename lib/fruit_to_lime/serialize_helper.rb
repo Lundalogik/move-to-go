@@ -119,6 +119,13 @@ module FruitToLime
                     :name => symbol_to_name(p[:id]),
                     :models => SerializeHelper.get_import_rows(:custom_field)
                 }
+            when :custom_values then
+                {
+                    :id => p[:id].to_s,
+                    :type => p[:type],
+                    :name => symbol_to_name(p[:id]),
+                    :models => SerializeHelper.get_import_rows(:custom_value)
+                }
             else
                 {
                     :id => p[:id].to_s,
@@ -153,6 +160,14 @@ module FruitToLime
                 OrganizationReference.new
             when :custom_field then
                 CustomField.new
+            when :custom_value then
+                CustomValue.new
+            when :custom_field_reference then
+                CustomFieldReference.new
+            when :settings then
+                Settings.new
+            when :class_settings then
+                ClassSettings.new
             else
                 raise "Unknown type: #{type}"
             end.get_import_rows

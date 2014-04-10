@@ -24,16 +24,23 @@ namespace FruitToLime {
     public partial class GoImport {
         
         /// <remarks/>
-        public Organization[] Organizations;
+        public Settings Settings;
         
         /// <remarks/>
         public Coworker[] Coworkers;
+        
+        /// <remarks/>
+        public Organization[] Organizations;
         
         /// <remarks/>
         public Deal[] Deals;
         
         /// <remarks/>
         public Note[] Notes;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlAttributeAttribute()]
+        public Version Version;
     }
     
     /// <remarks/>
@@ -41,7 +48,35 @@ namespace FruitToLime {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Organization {
+    public partial class Settings {
+        
+        /// <remarks/>
+        public ClassSettings Organization;
+        
+        /// <remarks/>
+        public ClassSettings Person;
+        
+        /// <remarks/>
+        public ClassSettings Deal;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ClassSettings {
+        
+        /// <remarks/>
+        public CustomField[] CustomFields;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CustomField {
         
         /// <remarks/>
         public string Id;
@@ -50,76 +85,10 @@ namespace FruitToLime {
         public string IntegrationId;
         
         /// <remarks/>
-        public ReferenceToSource Source;
+        public string Title;
         
         /// <remarks/>
-        public string Name;
-        
-        /// <remarks/>
-        public string OrganizationNumber;
-        
-        /// <remarks/>
-        public Address PostalAddress;
-        
-        /// <remarks/>
-        public Address VisitAddress;
-        
-        /// <remarks/>
-        public string CentralPhoneNumber;
-        
-        /// <remarks/>
-        public string FaxPhoneNumber;
-        
-        /// <remarks/>
-        public string MobilePhoneNumber;
-        
-        /// <remarks/>
-        public string Email;
-        
-        /// <remarks/>
-        public string WebSite;
-        
-        /// <remarks/>
-        public Person[] Employees;
-        
-        /// <remarks/>
-        public CustomField[] CustomFields;
-        
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("Tag")]
-        public string[] Tags;
-        
-        /// <remarks/>
-        public CoworkerReference ResponsibleCoworker;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class ReferenceToSource {
-        
-        /// <remarks/>
-        public string Name;
-        
-        /// <remarks/>
-        public ReferenceFormat Format;
-        
-        /// <remarks/>
-        public string Id;
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
-    [System.SerializableAttribute()]
-    public enum ReferenceFormat {
-        
-        /// <remarks/>
-        Internal,
-        
-        /// <remarks/>
-        External,
+        public string Type;
     }
     
     /// <remarks/>
@@ -292,7 +261,7 @@ namespace FruitToLime {
         public string[] Tags;
         
         /// <remarks/>
-        public CustomField[] CustomFields;
+        public CustomValue[] CustomValues;
     }
     
     /// <remarks/>
@@ -300,16 +269,10 @@ namespace FruitToLime {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CustomField {
+    public partial class CustomValue {
         
         /// <remarks/>
-        public string Id;
-        
-        /// <remarks/>
-        public string IntegrationId;
-        
-        /// <remarks/>
-        public string Title;
+        public CustomFieldReference Field;
         
         /// <remarks/>
         public string Value;
@@ -320,22 +283,13 @@ namespace FruitToLime {
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class Coworker {
+    public partial class CustomFieldReference {
         
         /// <remarks/>
         public string Id;
         
         /// <remarks/>
         public string IntegrationId;
-        
-        /// <remarks/>
-        public string Email;
-        
-        /// <remarks/>
-        public string FirstName;
-        
-        /// <remarks/>
-        public string LastName;
     }
     
     /// <remarks/>
@@ -392,7 +346,36 @@ namespace FruitToLime {
         public bool CurrentlyEmployed;
         
         /// <remarks/>
-        public CustomField[] CustomFields;
+        public CustomValue[] CustomValues;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class ReferenceToSource {
+        
+        /// <remarks/>
+        public string Name;
+        
+        /// <remarks/>
+        public ReferenceFormat Format;
+        
+        /// <remarks/>
+        public string Id;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    public enum ReferenceFormat {
+        
+        /// <remarks/>
+        Internal,
+        
+        /// <remarks/>
+        External,
     }
     
     /// <remarks/>
@@ -416,5 +399,97 @@ namespace FruitToLime {
         
         /// <remarks/>
         public string Location;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class Organization {
+        
+        /// <remarks/>
+        public string Id;
+        
+        /// <remarks/>
+        public string IntegrationId;
+        
+        /// <remarks/>
+        public ReferenceToSource Source;
+        
+        /// <remarks/>
+        public string Name;
+        
+        /// <remarks/>
+        public string OrganizationNumber;
+        
+        /// <remarks/>
+        public Address PostalAddress;
+        
+        /// <remarks/>
+        public Address VisitAddress;
+        
+        /// <remarks/>
+        public string CentralPhoneNumber;
+        
+        /// <remarks/>
+        public string FaxPhoneNumber;
+        
+        /// <remarks/>
+        public string MobilePhoneNumber;
+        
+        /// <remarks/>
+        public string Email;
+        
+        /// <remarks/>
+        public string WebSite;
+        
+        /// <remarks/>
+        public Person[] Employees;
+        
+        /// <remarks/>
+        public CustomValue[] CustomValues;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayItemAttribute("Tag")]
+        public string[] Tags;
+        
+        /// <remarks/>
+        public CoworkerReference ResponsibleCoworker;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class Coworker {
+        
+        /// <remarks/>
+        public string Id;
+        
+        /// <remarks/>
+        public string IntegrationId;
+        
+        /// <remarks/>
+        public string Email;
+        
+        /// <remarks/>
+        public string FirstName;
+        
+        /// <remarks/>
+        public string LastName;
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.0.30319.33440")]
+    [System.SerializableAttribute()]
+    public enum Version {
+        
+        /// <remarks/>
+        v1_0,
+        
+        /// <remarks/>
+        v2_0,
     }
 }

@@ -6,7 +6,7 @@ module FruitToLime
         attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date, :offer_date, :customer,
         :responsible_coworker, :customer_contact, :status
 
-        attr_reader :custom_fields
+        attr_reader :custom_values
 
         def serialize_variables
             [ :id, :integration_id, :name, :description, :probability, :value, :offer_date, :order_date ].map {
@@ -19,7 +19,7 @@ module FruitToLime
                  { :id => :customer, :type => :organization_reference },
                  { :id => :responsible_coworker, :type => :coworker_reference },
                  { :id => :customer_contact, :type => :person_reference },
-                 { :id => :custom_fields, :type => :custom_fields },
+                 { :id => :custom_values, :type => :custom_values },
                  { :id => :tags, :type => :tags },
                  { :id => :status, :type => :deal_status }
                 ]

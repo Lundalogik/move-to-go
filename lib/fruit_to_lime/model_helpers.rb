@@ -1,29 +1,30 @@
 module FruitToLime
     module ModelHasCustomFields
-        def set_custom_field(obj)
-            @custom_fields = [] if @custom_fields==nil
-            new_custom_field = CustomField.new(obj)
-            index = @custom_fields.find_index do |custom_field| 
-                custom_field.same_as?(new_custom_field)
+        def set_custom_value(value, field)
+            @custom_values = [] if @custom_values==nil
+            custom_value = CustomValue.new()
+            custom_value.value = value
+            custom_value.field = field
+            index = @custom_values.find_index do |custom_value|
+                custom_value.field.same_as?(field)
             end
             if index
-                @custom_fields.delete_at index
+                @custom_values.delete_at index
             end
-            @custom_fields.push new_custom_field
-            return new_custom_field
-        end
 
-        def add_custom_field(obj)
-            @custom_fields = [] if @custom_fields==nil
-            custom_field = CustomField.new(obj)
-            @custom_fields.push custom_field
-            return custom_field
+            @custom_values.push custom_value
+            return custom_value
+        end
+        def set_custom_field(obj)
+            value = obj[:value]
+            ref = CustomFieldReference.new(obj)
+            return set_custom_value(value, ref)
         end
     end
 
     module ModelWithIntegrationIdSameAs
         def same_as?(other)
-            if @integration_id!=nil && @integration_id == other.integration_id 
+            if @integration_id!=nil && @integration_id == other.integration_id
                 return true
             end
             if @id != nil && @id == other.id
@@ -40,7 +41,7 @@ module FruitToLime
         end
         def set_tag(str)
             @tags = [] if @tags == nil
-            if ! @tags.any? {|tag| tag.value = str }  
+            if ! @tags.any? {|tag| tag.value = str }
                 @tags.push(Tag.new(str))
             end
         end

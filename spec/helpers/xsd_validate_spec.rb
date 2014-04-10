@@ -7,6 +7,10 @@ describe FruitToLime::SerializeHelper do
     describe "Validate according to xsd" do
         let(:validate_result) {
             i = FruitToLime::RootModel.new
+            i.settings.with_organization do |s|
+                s.set_custom_field({:integration_id=>"2", :title=>"cf title"})
+                s.set_custom_field({:integration_id=>"3", :title=>"cf title2"})
+            end
             o = FruitToLime::Organization.new
             o.name = "Ankeborgs bibliotek"
             o.with_source do |source|
@@ -15,8 +19,8 @@ describe FruitToLime::SerializeHelper do
             #o.source_ref = {:name=>'Go',:id=>"PASE122345"}
             o.add_tag("tag:bibliotek")
             o.add_tag("tag:Bj\u{00F6}rk")
-            o.set_custom_field({:id=>"2", :title=>"cf title", :value=>"cf value"})
-            o.set_custom_field({:id=>"3", :title=>"cf title2", :value=>"cf Bj\u{00F6}rk"})
+            o.set_custom_field({:integration_id=>"2", :value=>"cf value"})
+            o.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
             o.with_postal_address do |addr|
                 addr.city = "Ankeborg"
             end
@@ -24,10 +28,10 @@ describe FruitToLime::SerializeHelper do
                 addr.city = "Gaaseborg"
             end
             o.add_responsible_coworker({
-                :id => "1"
+                :integration_id => "1"
             })
             emp = o.add_employee({
-                :id => "1",
+                :integration_id => "1",
                 :first_name => "Kalle",
                 :last_name => "Anka"
             })
