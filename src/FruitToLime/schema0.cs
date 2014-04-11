@@ -23,24 +23,78 @@ namespace FruitToLime {
     [System.Xml.Serialization.XmlRootAttribute(Namespace="", IsNullable=true)]
     public partial class GoImport {
         
-        /// <remarks/>
-        public Settings Settings;
+        private Settings settingsField;
+        
+        private Coworker[] coworkersField;
+        
+        private Organization[] organizationsField;
+        
+        private Deal[] dealsField;
+        
+        private Note[] notesField;
+        
+        private Version versionField;
         
         /// <remarks/>
-        public Coworker[] Coworkers;
+        public Settings Settings {
+            get {
+                return this.settingsField;
+            }
+            set {
+                this.settingsField = value;
+            }
+        }
         
         /// <remarks/>
-        public Organization[] Organizations;
+        public Coworker[] Coworkers {
+            get {
+                return this.coworkersField;
+            }
+            set {
+                this.coworkersField = value;
+            }
+        }
         
         /// <remarks/>
-        public Deal[] Deals;
+        public Organization[] Organizations {
+            get {
+                return this.organizationsField;
+            }
+            set {
+                this.organizationsField = value;
+            }
+        }
         
         /// <remarks/>
-        public Note[] Notes;
+        public Deal[] Deals {
+            get {
+                return this.dealsField;
+            }
+            set {
+                this.dealsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public Note[] Notes {
+            get {
+                return this.notesField;
+            }
+            set {
+                this.notesField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlAttributeAttribute()]
-        public Version Version;
+        public Version Version {
+            get {
+                return this.versionField;
+            }
+            set {
+                this.versionField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -50,14 +104,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Settings {
         
-        /// <remarks/>
-        public ClassSettings Organization;
+        private ClassSettings organizationField;
+        
+        private ClassSettings personField;
+        
+        private ClassSettings dealField;
         
         /// <remarks/>
-        public ClassSettings Person;
+        public ClassSettings Organization {
+            get {
+                return this.organizationField;
+            }
+            set {
+                this.organizationField = value;
+            }
+        }
         
         /// <remarks/>
-        public ClassSettings Deal;
+        public ClassSettings Person {
+            get {
+                return this.personField;
+            }
+            set {
+                this.personField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ClassSettings Deal {
+            get {
+                return this.dealField;
+            }
+            set {
+                this.dealField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -67,8 +148,17 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class ClassSettings {
         
+        private CustomField[] customFieldsField;
+        
         /// <remarks/>
-        public CustomField[] CustomFields;
+        public CustomField[] CustomFields {
+            get {
+                return this.customFieldsField;
+            }
+            set {
+                this.customFieldsField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -78,17 +168,53 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CustomField {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string titleField;
+        
+        private string typeField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Title;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Type;
+        public string Title {
+            get {
+                return this.titleField;
+            }
+            set {
+                this.titleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Type {
+            get {
+                return this.typeField;
+            }
+            set {
+                this.typeField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -98,14 +224,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class DealReference {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string headingField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Heading;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Heading {
+            get {
+                return this.headingField;
+            }
+            set {
+                this.headingField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -115,35 +268,125 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Note {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private System.DateTime dateField;
+        
+        private string textField;
+        
+        private string classificationField;
+        
+        private System.DateTime dateCreatedField;
+        
+        private CoworkerReference createdByField;
+        
+        private OrganizationReference organizationField;
+        
+        private DealReference dealField;
+        
+        private PersonReference personField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public System.DateTime Date;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Text;
+        public System.DateTime Date {
+            get {
+                return this.dateField;
+            }
+            set {
+                this.dateField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Classification;
+        public string Text {
+            get {
+                return this.textField;
+            }
+            set {
+                this.textField = value;
+            }
+        }
         
         /// <remarks/>
-        public System.DateTime DateCreated;
+        public string Classification {
+            get {
+                return this.classificationField;
+            }
+            set {
+                this.classificationField = value;
+            }
+        }
         
         /// <remarks/>
-        public CoworkerReference CreatedBy;
+        public System.DateTime DateCreated {
+            get {
+                return this.dateCreatedField;
+            }
+            set {
+                this.dateCreatedField = value;
+            }
+        }
         
         /// <remarks/>
-        public OrganizationReference Organization;
+        public CoworkerReference CreatedBy {
+            get {
+                return this.createdByField;
+            }
+            set {
+                this.createdByField = value;
+            }
+        }
         
         /// <remarks/>
-        public DealReference Deal;
+        public OrganizationReference Organization {
+            get {
+                return this.organizationField;
+            }
+            set {
+                this.organizationField = value;
+            }
+        }
         
         /// <remarks/>
-        public PersonReference Person;
+        public DealReference Deal {
+            get {
+                return this.dealField;
+            }
+            set {
+                this.dealField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PersonReference Person {
+            get {
+                return this.personField;
+            }
+            set {
+                this.personField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -153,14 +396,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CoworkerReference {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string headingField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Heading;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Heading {
+            get {
+                return this.headingField;
+            }
+            set {
+                this.headingField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -170,14 +440,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class OrganizationReference {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string headingField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Heading;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Heading {
+            get {
+                return this.headingField;
+            }
+            set {
+                this.headingField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -187,14 +484,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class PersonReference {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string headingField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Heading;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Heading {
+            get {
+                return this.headingField;
+            }
+            set {
+                this.headingField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -204,11 +528,29 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Status {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string labelField;
         
         /// <remarks/>
-        public string Label;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Label {
+            get {
+                return this.labelField;
+            }
+            set {
+                this.labelField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -218,50 +560,176 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Deal {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string nameField;
+        
+        private System.Nullable<System.DateTime> offerDateField;
+        
+        private System.Nullable<System.DateTime> orderDateField;
+        
+        private OrganizationReference customerField;
+        
+        private Status statusField;
+        
+        private string descriptionField;
+        
+        private int probabilityField;
+        
+        private long valueField;
+        
+        private PersonReference customerContactField;
+        
+        private CoworkerReference responsibleCoworkerField;
+        
+        private string[] tagsField;
+        
+        private CustomValue[] customValuesField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Name;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public System.Nullable<System.DateTime> OfferDate;
+        public System.Nullable<System.DateTime> OfferDate {
+            get {
+                return this.offerDateField;
+            }
+            set {
+                this.offerDateField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public System.Nullable<System.DateTime> OrderDate;
+        public System.Nullable<System.DateTime> OrderDate {
+            get {
+                return this.orderDateField;
+            }
+            set {
+                this.orderDateField = value;
+            }
+        }
         
         /// <remarks/>
-        public OrganizationReference Customer;
+        public OrganizationReference Customer {
+            get {
+                return this.customerField;
+            }
+            set {
+                this.customerField = value;
+            }
+        }
         
         /// <remarks/>
-        public Status Status;
+        public Status Status {
+            get {
+                return this.statusField;
+            }
+            set {
+                this.statusField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Description;
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
         
         /// <remarks/>
-        public int Probability;
+        public int Probability {
+            get {
+                return this.probabilityField;
+            }
+            set {
+                this.probabilityField = value;
+            }
+        }
         
         /// <remarks/>
-        public long Value;
+        public long Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
         
         /// <remarks/>
-        public PersonReference CustomerContact;
+        public PersonReference CustomerContact {
+            get {
+                return this.customerContactField;
+            }
+            set {
+                this.customerContactField = value;
+            }
+        }
         
         /// <remarks/>
-        public CoworkerReference ResponsibleCoworker;
+        public CoworkerReference ResponsibleCoworker {
+            get {
+                return this.responsibleCoworkerField;
+            }
+            set {
+                this.responsibleCoworkerField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Tag")]
-        public string[] Tags;
+        public string[] Tags {
+            get {
+                return this.tagsField;
+            }
+            set {
+                this.tagsField = value;
+            }
+        }
         
         /// <remarks/>
-        public CustomValue[] CustomValues;
+        public CustomValue[] CustomValues {
+            get {
+                return this.customValuesField;
+            }
+            set {
+                this.customValuesField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -271,11 +739,29 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CustomValue {
         
-        /// <remarks/>
-        public CustomFieldReference Field;
+        private CustomFieldReference fieldField;
+        
+        private string valueField;
         
         /// <remarks/>
-        public string Value;
+        public CustomFieldReference Field {
+            get {
+                return this.fieldField;
+            }
+            set {
+                this.fieldField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -285,11 +771,29 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class CustomFieldReference {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -299,54 +803,198 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Person {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private ReferenceToSource sourceField;
+        
+        private string firstNameField;
+        
+        private string lastNameField;
+        
+        private string directPhoneNumberField;
+        
+        private string faxPhoneNumberField;
+        
+        private string mobilePhoneNumberField;
+        
+        private string homePhoneNumberField;
+        
+        private string positionField;
+        
+        private string[] tagsField;
+        
+        private string emailField;
+        
+        private string alternativeEmailField;
+        
+        private Address postalAddressField;
+        
+        private bool currentlyEmployedField;
+        
+        private CustomValue[] customValuesField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public ReferenceToSource Source;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
         
         /// <remarks/>
-        public string FirstName;
+        public ReferenceToSource Source {
+            get {
+                return this.sourceField;
+            }
+            set {
+                this.sourceField = value;
+            }
+        }
         
         /// <remarks/>
-        public string LastName;
+        public string FirstName {
+            get {
+                return this.firstNameField;
+            }
+            set {
+                this.firstNameField = value;
+            }
+        }
         
         /// <remarks/>
-        public string DirectPhoneNumber;
+        public string LastName {
+            get {
+                return this.lastNameField;
+            }
+            set {
+                this.lastNameField = value;
+            }
+        }
         
         /// <remarks/>
-        public string FaxPhoneNumber;
+        public string DirectPhoneNumber {
+            get {
+                return this.directPhoneNumberField;
+            }
+            set {
+                this.directPhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string MobilePhoneNumber;
+        public string FaxPhoneNumber {
+            get {
+                return this.faxPhoneNumberField;
+            }
+            set {
+                this.faxPhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string HomePhoneNumber;
+        public string MobilePhoneNumber {
+            get {
+                return this.mobilePhoneNumberField;
+            }
+            set {
+                this.mobilePhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Position;
+        public string HomePhoneNumber {
+            get {
+                return this.homePhoneNumberField;
+            }
+            set {
+                this.homePhoneNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Position {
+            get {
+                return this.positionField;
+            }
+            set {
+                this.positionField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Tag")]
-        public string[] Tags;
+        public string[] Tags {
+            get {
+                return this.tagsField;
+            }
+            set {
+                this.tagsField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Email;
+        public string Email {
+            get {
+                return this.emailField;
+            }
+            set {
+                this.emailField = value;
+            }
+        }
         
         /// <remarks/>
-        public string AlternativeEmail;
+        public string AlternativeEmail {
+            get {
+                return this.alternativeEmailField;
+            }
+            set {
+                this.alternativeEmailField = value;
+            }
+        }
         
         /// <remarks/>
-        public Address PostalAddress;
+        public Address PostalAddress {
+            get {
+                return this.postalAddressField;
+            }
+            set {
+                this.postalAddressField = value;
+            }
+        }
         
         /// <remarks/>
-        public bool CurrentlyEmployed;
+        public bool CurrentlyEmployed {
+            get {
+                return this.currentlyEmployedField;
+            }
+            set {
+                this.currentlyEmployedField = value;
+            }
+        }
         
         /// <remarks/>
-        public CustomValue[] CustomValues;
+        public CustomValue[] CustomValues {
+            get {
+                return this.customValuesField;
+            }
+            set {
+                this.customValuesField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -356,14 +1004,41 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class ReferenceToSource {
         
-        /// <remarks/>
-        public string Name;
+        private string nameField;
+        
+        private ReferenceFormat formatField;
+        
+        private string idField;
         
         /// <remarks/>
-        public ReferenceFormat Format;
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Id;
+        public ReferenceFormat Format {
+            get {
+                return this.formatField;
+            }
+            set {
+                this.formatField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -385,20 +1060,65 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Address {
         
-        /// <remarks/>
-        public string Street;
+        private string streetField;
+        
+        private string zipCodeField;
+        
+        private string cityField;
+        
+        private string countryCodeField;
+        
+        private string locationField;
         
         /// <remarks/>
-        public string ZipCode;
+        public string Street {
+            get {
+                return this.streetField;
+            }
+            set {
+                this.streetField = value;
+            }
+        }
         
         /// <remarks/>
-        public string City;
+        public string ZipCode {
+            get {
+                return this.zipCodeField;
+            }
+            set {
+                this.zipCodeField = value;
+            }
+        }
         
         /// <remarks/>
-        public string CountryCode;
+        public string City {
+            get {
+                return this.cityField;
+            }
+            set {
+                this.cityField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Location;
+        public string CountryCode {
+            get {
+                return this.countryCodeField;
+            }
+            set {
+                this.countryCodeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Location {
+            get {
+                return this.locationField;
+            }
+            set {
+                this.locationField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -408,54 +1128,198 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Organization {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private ReferenceToSource sourceField;
+        
+        private string nameField;
+        
+        private string organizationNumberField;
+        
+        private Address postalAddressField;
+        
+        private Address visitAddressField;
+        
+        private string centralPhoneNumberField;
+        
+        private string faxPhoneNumberField;
+        
+        private string mobilePhoneNumberField;
+        
+        private string emailField;
+        
+        private string webSiteField;
+        
+        private Person[] employeesField;
+        
+        private CustomValue[] customValuesField;
+        
+        private string[] tagsField;
+        
+        private CoworkerReference responsibleCoworkerField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public ReferenceToSource Source;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Name;
+        public ReferenceToSource Source {
+            get {
+                return this.sourceField;
+            }
+            set {
+                this.sourceField = value;
+            }
+        }
         
         /// <remarks/>
-        public string OrganizationNumber;
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
         
         /// <remarks/>
-        public Address PostalAddress;
+        public string OrganizationNumber {
+            get {
+                return this.organizationNumberField;
+            }
+            set {
+                this.organizationNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public Address VisitAddress;
+        public Address PostalAddress {
+            get {
+                return this.postalAddressField;
+            }
+            set {
+                this.postalAddressField = value;
+            }
+        }
         
         /// <remarks/>
-        public string CentralPhoneNumber;
+        public Address VisitAddress {
+            get {
+                return this.visitAddressField;
+            }
+            set {
+                this.visitAddressField = value;
+            }
+        }
         
         /// <remarks/>
-        public string FaxPhoneNumber;
+        public string CentralPhoneNumber {
+            get {
+                return this.centralPhoneNumberField;
+            }
+            set {
+                this.centralPhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string MobilePhoneNumber;
+        public string FaxPhoneNumber {
+            get {
+                return this.faxPhoneNumberField;
+            }
+            set {
+                this.faxPhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Email;
+        public string MobilePhoneNumber {
+            get {
+                return this.mobilePhoneNumberField;
+            }
+            set {
+                this.mobilePhoneNumberField = value;
+            }
+        }
         
         /// <remarks/>
-        public string WebSite;
+        public string Email {
+            get {
+                return this.emailField;
+            }
+            set {
+                this.emailField = value;
+            }
+        }
         
         /// <remarks/>
-        public Person[] Employees;
+        public string WebSite {
+            get {
+                return this.webSiteField;
+            }
+            set {
+                this.webSiteField = value;
+            }
+        }
         
         /// <remarks/>
-        public CustomValue[] CustomValues;
+        public Person[] Employees {
+            get {
+                return this.employeesField;
+            }
+            set {
+                this.employeesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CustomValue[] CustomValues {
+            get {
+                return this.customValuesField;
+            }
+            set {
+                this.customValuesField = value;
+            }
+        }
         
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayItemAttribute("Tag")]
-        public string[] Tags;
+        public string[] Tags {
+            get {
+                return this.tagsField;
+            }
+            set {
+                this.tagsField = value;
+            }
+        }
         
         /// <remarks/>
-        public CoworkerReference ResponsibleCoworker;
+        public CoworkerReference ResponsibleCoworker {
+            get {
+                return this.responsibleCoworkerField;
+            }
+            set {
+                this.responsibleCoworkerField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -465,20 +1329,65 @@ namespace FruitToLime {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class Coworker {
         
-        /// <remarks/>
-        public string Id;
+        private string idField;
+        
+        private string integrationIdField;
+        
+        private string emailField;
+        
+        private string firstNameField;
+        
+        private string lastNameField;
         
         /// <remarks/>
-        public string IntegrationId;
+        public string Id {
+            get {
+                return this.idField;
+            }
+            set {
+                this.idField = value;
+            }
+        }
         
         /// <remarks/>
-        public string Email;
+        public string IntegrationId {
+            get {
+                return this.integrationIdField;
+            }
+            set {
+                this.integrationIdField = value;
+            }
+        }
         
         /// <remarks/>
-        public string FirstName;
+        public string Email {
+            get {
+                return this.emailField;
+            }
+            set {
+                this.emailField = value;
+            }
+        }
         
         /// <remarks/>
-        public string LastName;
+        public string FirstName {
+            get {
+                return this.firstNameField;
+            }
+            set {
+                this.firstNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string LastName {
+            get {
+                return this.lastNameField;
+            }
+            set {
+                this.lastNameField = value;
+            }
+        }
     }
     
     /// <remarks/>

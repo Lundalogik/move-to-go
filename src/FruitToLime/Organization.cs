@@ -1,6 +1,8 @@
+using FruitToLime.Extra;
+
 namespace FruitToLime
 {
-    public partial class Organization
+    public partial class Organization : IWithCustomValues, IWithTags, IWithSource
     {
         public Organization()
         {

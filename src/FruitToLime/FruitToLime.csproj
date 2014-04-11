@@ -34,6 +34,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClassSettings.cs" />
+    <Compile Include="Extra\Extensions.cs" />
+    <Compile Include="Extra\IWithCustomValues.cs" />
+    <Compile Include="Extra\IWithSource.cs" />
+    <Compile Include="Extra\IWithTags.cs" />
     <Compile Include="GoImport.cs" />
     <Compile Include="GoImportSerializer.cs" />
     <Compile Include="Organization.cs" />
