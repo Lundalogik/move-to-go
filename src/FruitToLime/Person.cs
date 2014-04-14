@@ -1,6 +1,8 @@
+using FruitToLime.Extra;
+
 namespace FruitToLime
 {
-    public partial class Person
+    public partial class Person : IWithCustomValues, IWithTags, IWithSource
     {
         public Person()
         {
