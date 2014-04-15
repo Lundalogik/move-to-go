@@ -8,6 +8,7 @@ class ToModel
         return organization
     end
 
+
     def configure(model)
         # add custom field to your model here. Custom fields can be
         # added to organization, deal and person. Valid types are
