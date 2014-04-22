@@ -3,6 +3,7 @@ module FruitToLime
     class Settings
         include SerializeHelper
         attr_reader :organization, :person, :deal
+        
         def with_organization
             @organization = ClassSettings.new if @organization ==nil
             yield @organization
@@ -15,6 +16,7 @@ module FruitToLime
             @deal = ClassSettings.new if @deal ==nil
             yield @deal
         end
+
         def initialize(opt = nil)
             if opt != nil
                 serialize_variables.each do |myattr|

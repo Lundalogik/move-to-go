@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'fruit_to_lime'
 
-describe FruitToLime::AddressHelper do
+describe FruitToLime::Address do
 	describe "Parse line with swedish zip and city into zipcode" do
 		let (:zip_code) {
 			address = FruitToLime::Address.new

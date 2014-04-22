@@ -19,25 +19,6 @@ module FruitToLime
         def empty?
             return !@integration_id && !@id && !@heading
         end
-
-        # *** TODO: delete this?
-        def same_as_this_method()
-            if @integration_id
-                return lambda { |org|
-                    org.integration_id == @integration_id
-                }
-            elsif @id
-                return lambda { |org|
-                    org.id == @id
-                }
-            elsif @heading
-                return lambda { |org|
-                    org.heading == @heading
-                }
-            else
-                raise "No reference!"
-            end
-        end
     end
 
     class Organization
@@ -127,7 +108,7 @@ module FruitToLime
         def to_s
             return "#{name}"
         end
-
+        
         def validate
             error = String.new
 

@@ -11,6 +11,7 @@ module FruitToLime
             SerializeHelper::serialize_to_file(file, self)
         end
 
+        # @!visibility private
         def self.serialize_variables_rexml(elem, obj)
             if (obj.respond_to?(:serialize_variables))
                 obj.serialize_variables.each do |serialize_variable|
@@ -37,6 +38,7 @@ module FruitToLime
             raise "Do not know how to handle #{obj.class} !!"
         end
 
+        # @!visibility private
         def self.serialize_rexml(elem, obj)
             if obj.respond_to?(:to_rexml)
                 obj.to_rexml(elem)
@@ -48,6 +50,7 @@ module FruitToLime
             end
         end
 
+        # @!visibility private
         def self.serialize(obj, indent= 2)
             # indent -1 to avoid indent
             if obj.respond_to?(:to_rexml)
@@ -66,16 +69,19 @@ module FruitToLime
             end
         end
 
+        # @!visibility private
         def self.serialize_to_file(file, obj)
             File.open(file, 'w') do |f|
                 f.write(SerializeHelper::serialize(obj))
             end
         end
 
+        # @!visibility private
         def symbol_to_name(symbol)
             symbol.to_s.split('_').join(' ').capitalize
         end
 
+        # @!visibility private
         def map_symbol_to_row(symbol,type)
             {
                 :id => symbol.to_s,
@@ -84,6 +90,7 @@ module FruitToLime
             }
         end
 
+        # @!visibility private
         def map_to_row(p)
             case p[:type]
             when :string then
@@ -136,12 +143,15 @@ module FruitToLime
             end
         end
 
+        # What fields/rows on the class is supposed to be used by the Gem to generate the xml
+        # This method uses #serialize_variables.
         def get_import_rows
             serialize_variables.map do |p|
                 map_to_row p
             end
         end
 
+        # @!visibility private
         def self.get_import_rows(type)
             case type
             when :person then

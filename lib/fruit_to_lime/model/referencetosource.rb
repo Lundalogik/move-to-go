@@ -36,7 +36,7 @@ module FruitToLime
             end
             return @name == other.name && @id == other.id && @format== other.format
         end
-
+        # Sets the id of this instance to the parameter supplied. Will also set {#name} and {#format} so that this reference is identified as a PAR identifier by Go.
         def par_se(id)
             @name = 'pase'
             @format = 'External'

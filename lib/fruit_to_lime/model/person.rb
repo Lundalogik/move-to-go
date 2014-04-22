@@ -14,19 +14,6 @@ module FruitToLime
         def empty?
             return !@integration_id && !@id
         end
-        def same_as_this_method()
-            if @integration_id
-                return lambda { |person|
-                    person.integration_id == @integration_id
-                }
-            elsif @id
-                return lambda { |person|
-                    person.id == @id
-                }
-            else
-                raise "No reference!"
-            end
-        end
     end
 
     class Person < PersonReference

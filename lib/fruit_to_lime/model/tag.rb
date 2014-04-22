@@ -13,7 +13,8 @@ module FruitToLime
                 @value = val
             end
         end
-
+        
+        # @!visibility private
         def to_rexml(elem)
             element_name = serialize_name
             elem.add_element(element_name).text = @value.to_s.encode('utf-8')

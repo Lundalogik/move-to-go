@@ -54,17 +54,6 @@ module FruitToLime
             yield note
         end
 
-        # *** TODO:
-        #
-        # delete find_organization_by_reference and
-        #same_as_this_method from organization?
-        def find_organization_by_reference(organization_reference)
-            same_as_this = organization_reference.same_as_this_method
-            return @organizations.find do |org|
-                same_as_this.call(org)
-            end
-        end
-
         def find_coworker_by_integration_id(integration_id)
             return @coworkers.find do |coworker|
                 coworker == integration_id
