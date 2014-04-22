@@ -1,11 +1,11 @@
 require 'spec_helper'
 require 'tomodel'
 
-describe 'ToModel' do
+describe 'Exporter' do
     before(:all) do
-        toModel = ToModel.new
+        exporter = Exporter.new
         organizations_file =File.join(File.dirname(__FILE__), 'sample_data', 'organizations.csv')
-        @model = toModel.to_model(organizations_file)        
+        @model = exporter.to_model(organizations_file)        
     end
     it "will find something with a name" do
         organization = @model.organizations[0]
