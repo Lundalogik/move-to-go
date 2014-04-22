@@ -15,6 +15,7 @@ module FruitToLime
             @custom_values.push custom_value
             return custom_value
         end
+        # Note that this method is obsolete and will be removed later on. Please use {#set_custom_value}
         def set_custom_field(obj)
             value = obj[:value]
             ref = CustomFieldReference.new(obj)
@@ -23,6 +24,7 @@ module FruitToLime
     end
 
     module ModelWithIntegrationIdSameAs
+        # check if other is same as regarding integration_id or id
         def same_as?(other)
             if @integration_id!=nil && @integration_id == other.integration_id
                 return true

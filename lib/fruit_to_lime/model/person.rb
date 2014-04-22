@@ -22,6 +22,7 @@ module FruitToLime
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
             :position, :email, :alternative_email, :postal_address, :currently_employed,
             :organization
+        # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
         def initialize(opt = nil)

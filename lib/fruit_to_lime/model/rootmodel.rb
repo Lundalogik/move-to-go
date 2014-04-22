@@ -1,9 +1,12 @@
 # encoding: utf-8
 module FruitToLime
+    # The root model for Go import. This class is the container for everything else.  
     class RootModel
         # the import_coworker is a special coworker that is set as
         # responsible for objects that requires a coworker, eg a note.
-        attr_accessor :settings, :organizations, :coworkers, :deals, :notes, :import_coworker
+        attr_accessor :import_coworker
+        
+        attr_accessor :settings, :organizations, :coworkers, :deals, :notes
         def serialize_variables
             [
              {:id => :settings, :type => :settings},
@@ -66,6 +69,7 @@ module FruitToLime
             end
         end
 
+        # find deals for organization using {Organization#integration_id}
         def find_deals_for_organization(organization)
             deals = []
 
@@ -76,6 +80,7 @@ module FruitToLime
             return deals
         end
 
+        # Returns a string describing problems with the data. For instance if integration_id for any entity is not unique.
         def sanity_check
             error = String.new
 
@@ -102,7 +107,7 @@ module FruitToLime
 
         # returns all items from the object array with duplicate keys.
         # To get all organizations with the same integration_id use
-        # get_duplicates(organizations, {|org| org.integration_id})
+        # `get_duplicates(organizations, {|org| org.integration_id})`
         def get_duplicates(objects, &key)
             uniq_items = objects.uniq {|item| key.call(item)}.compact
 
@@ -131,6 +136,7 @@ module FruitToLime
             return error.strip
         end
 
+        # @!visibility private
         def to_rexml(doc)
             element_name = serialize_name
             elem = doc.add_element(element_name,{"Version"=>"v2_0"})
