@@ -24,3 +24,6 @@ syntax: glob
 *.bak
 *.*~
 *.swp
+
+# my own artifacts
+export.xml
