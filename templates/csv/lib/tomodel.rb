@@ -3,7 +3,9 @@ require 'fruit_to_lime'
 class Exporter
     # turns a row from the organization cssv file into
     # a fruit_to_lime model that is used to generate xml
-    def to_organization(row)
+    # Uses rootmodel to locate other related stuff such
+    # coworker
+    def to_organization(row, rootmodel)
         organization = FruitToLime::Organization.new
         # Integrationid is typically the id in the system that 
         # we are getting the csv from. Must be set to be able
@@ -35,7 +37,23 @@ class Exporter
             address.parse_zip_and_address_se '226 48 LUND'
         end
 
+        # Responsible coworker is set by first locating
+        # it in the root model and then setting a reference
+        # to him/her
+        # We need to be able handle missing coworkers here
+        coworker = rootmodel.find_coworker_by_integration_id row['responsible_id']
+        organization.responsible_coworker = coworker.to_reference
+
         return organization
+    end
+
+    def to_coworker(row)
+        coworker = FruitToLime::Coworker.new
+        coworker.integration_id = row['id']
+        coworker.first_name = row['first_name']
+        coworker.last_name = row['last_name']
+        
+        return coworker
     end
 
     def configure(model)
@@ -49,17 +67,33 @@ class Exporter
         end
     end
 
-    def to_model(organization_file_name)
+    def process_rows(file_name)
+        data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1")
+        rows = FruitToLime::CsvHelper::text_to_hashes(data)
+        rows.each do |row|
+            yield row
+        end
+    end
+
+    def to_model(coworkers_filename, organization_filename)
+        # A rootmodel is used to represent all entitite/models
+        # that is exported
         rootmodel = FruitToLime::RootModel.new
+
         configure rootmodel
 
-        if organization_file_name != nil
-            organization_file_data = File.open(organization_file_name, 'r').read.encode('UTF-8',"ISO-8859-1")
-            rows = FruitToLime::CsvHelper::text_to_hashes(organization_file_data)
-            rows.each do |row|
-                rootmodel.organizations.push(to_organization(row))
-            end
+        # coworkers
+        # start with these since they are references
+        # from everywhere....
+        process_rows coworkers_filename do |row|
+            rootmodel.add_coworker(to_coworker(row))
         end
+
+        # organizations
+        process_rows organization_filename do |row|
+            rootmodel.organizations.push(to_organization(row, rootmodel))
+        end
+
         return rootmodel
     end
 
@@ -75,11 +109,11 @@ require "fileutils"
 require 'pathname'
 
 class Cli < Thor
-    desc "to_go ORGANIZATIONS OUTPUT", "Exports xml to OUTPUT using csv files ORGANIZATIONS."
-    def to_go(organizations, output = nil)
+    desc "to_go COWORKERS ORGANIZATIONS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS."
+    def to_go( coworkers, organizations, output = nil)
         output = 'export.xml' if output == nil
         exporter = Exporter.new()
-        model = exporter.to_model(organizations)
+        model = exporter.to_model(coworkers, organizations)
         error = model.sanity_check
         if error.empty?
             validation_errors = model.validate
