@@ -4,6 +4,7 @@ PATH
     fruit_to_lime (2.1.0)
       bundler
       iso_country_codes
+      nokogiri
       roo
       thor
 
@@ -39,6 +40,5 @@ PLATFORMS
 
 DEPENDENCIES
   fruit_to_lime!
-  nokogiri
   rake
   rspec (>= 2.14)
