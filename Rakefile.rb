@@ -13,6 +13,8 @@ require 'bundler/gem_helper'
 
 desc "Build gem"
 task :build do
+	# Forces update of bundle
+	sh 'bundle update'
 	Bundler::GemHelper.new().build_gem
 end
 
