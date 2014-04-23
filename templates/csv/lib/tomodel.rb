@@ -156,27 +156,35 @@ class Exporter
         # coworkers
         # start with these since they are referenced
         # from everywhere....
-        process_rows coworkers_filename do |row|
-            rootmodel.add_coworker(to_coworker(row))
+        if coworkers_filename != nil
+            process_rows coworkers_filename do |row|
+                rootmodel.add_coworker(to_coworker(row))
+            end
         end
 
         # organizations
-        process_rows organization_filename do |row|
-            rootmodel.organizations.push(to_organization(row, rootmodel))
+        if organization_filename != nil
+            process_rows organization_filename do |row|
+                rootmodel.organizations.push(to_organization(row, rootmodel))
+            end
         end
 
         # persons
         # depends on organizations
-        process_rows persons_filename do |row|
-            # adds it self to the employer
-            to_person(row, rootmodel)
+        if persons_filename != nil
+            process_rows persons_filename do |row|
+                # adds it self to the employer
+                to_person(row, rootmodel)
+            end
         end
 
         # deals
         # deals can reference coworkers (responsible), organizations
         # and persons (contact)
-        process_rows deals_filename do |row|
-            rootmodel.deals.push(to_deal(row, rootmodel))
+        if deals_filename != nil
+            process_rows deals_filename do |row|
+                rootmodel.deals.push(to_deal(row, rootmodel))
+            end
         end
 
         return rootmodel
@@ -194,24 +202,29 @@ require "fileutils"
 require 'pathname'
 
 class Cli < Thor
-    desc "to_go COWORKERS ORGANIZATIONS PERSONS DEALS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS, PERSONS, DEALS."
-    def to_go( coworkers, organizations, persons, deals, output = nil)
-        output = 'export.xml' if output == nil
+    desc "to_go", "Generates a Go XML file"
+    method_option :output, :desc => "Path to file where xml will be output", :default => "export.xml", :type => :string
+    method_option :organizations, :desc => "Path to organization csv file", :type => :string
+    method_option :persons, :desc => "Path to persons csv file", :type => :string
+    method_option :coworkers, :desc => "Path to coworkers csv file", :type => :string
+    method_option :deals, :desc => "Path to deals csv file", :type => :string
+    def to_go
+        output = options.output
         exporter = Exporter.new()
-        model = exporter.to_model(coworkers, organizations, persons, deals)
+        model = exporter.to_model(options.coworkers, options.organizations, options.persons, options.deals)
         error = model.sanity_check
         if error.empty?
             validation_errors = model.validate
 
             if validation_errors.empty?
                 model.serialize_to_file(output)
-                puts "'#{organizations}' has been converted into '#{output}'."
+                puts "Generated Go XML file: '#{output}'."
             else
-                puts "'#{organizations}' could not be converted due to"
+                puts "Could not generate file due to"
                 puts validation_errors
             end
         else
-            puts "'#{organizations}' could not be converted due to"
+            puts "Could not generate file due to"
             puts error
         end
     end
