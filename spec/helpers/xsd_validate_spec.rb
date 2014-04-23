@@ -17,8 +17,8 @@ describe FruitToLime::SerializeHelper do
                 source.par_se('122345')
             end
             #o.source_ref = {:name=>'Go',:id=>"PASE122345"}
-            o.add_tag("tag:bibliotek")
-            o.add_tag("tag:Bj\u{00F6}rk")
+            o.set_tag("tag:bibliotek")
+            o.set_tag("tag:Bj\u{00F6}rk")
             o.set_custom_field({:integration_id=>"2", :value=>"cf value"})
             o.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
             o.with_postal_address do |addr|

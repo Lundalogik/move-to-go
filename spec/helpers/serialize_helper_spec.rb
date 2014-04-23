@@ -76,9 +76,9 @@ describe FruitToLime::SerializeHelper do
                 addr.city = "Ankeborg"
             end
             p.currently_employed=true
-            p.add_tag("tag:anka")
-            p.add_tag("tag:Bj\u{00F6}rk")
-            p.add_tag("tag:<Bj\u{00F6}rk>")
+            p.set_tag("tag:anka")
+            p.set_tag("tag:Bj\u{00F6}rk")
+            p.set_tag("tag:<Bj\u{00F6}rk>")
             p.set_custom_field({:integration_id=>"2", :value=>"cf value"})
             p.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
             p.set_custom_field({:integration_id=>"4", :value=>"cf <Bj\u{00F6}rk>"})
@@ -127,8 +127,8 @@ describe FruitToLime::SerializeHelper do
                 source.par_se('122345')
             end
             #o.source_ref = {:name=>'Go',:id=>"PASE122345"}
-            o.add_tag("tag:bibliotek")
-            o.add_tag("tag:Bj\u{00F6}rk")
+            o.set_tag("tag:bibliotek")
+            o.set_tag("tag:Bj\u{00F6}rk")
             o.set_custom_field({:integration_id=>"2", :value=>"cf value"})
             o.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
             o.with_postal_address do |addr|

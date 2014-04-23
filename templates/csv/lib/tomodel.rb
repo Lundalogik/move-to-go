@@ -44,6 +44,16 @@ class Exporter
         coworker = rootmodel.find_coworker_by_integration_id row['responsible_id']
         organization.responsible_coworker = coworker.to_reference
 
+        # Tags are set and defined at the same place
+        # Setting a tag: Imported is useful for the user
+        organization.set_tag("Imported")
+
+        # When imported from web based ERP or similair that
+        # client will continue to use it can be useful to be
+        # able to link from Go to the same record in the ERP
+        # FOr instance Lime links
+        organization.set_custom_value("http://something.com?key=#{row['id']}", "external_url")
+
         return organization
     end
 
@@ -52,6 +62,9 @@ class Exporter
         coworker.integration_id = row['id']
         coworker.first_name = row['first_name']
         coworker.last_name = row['last_name']
+
+        # Tags and custom fields are set the same
+        # way as on organizations
         
         return coworker
     end
@@ -61,9 +74,8 @@ class Exporter
         # added to organization, deal and person. Valid types are
         # :String and :Link. If no type is specified :String is used
         # as default.
-
-        model.settings.with_deal do |deal|
-            deal.set_custom_field( { :integrationid => 'discount_url', :title => 'Rabatt url', :type => :Link } )
+        model.settings.with_organization do |organization|
+            organization.set_custom_field( { :integrationid => 'external_url', :title => 'Link to external system', :type => :Link } )
         end
     end
 

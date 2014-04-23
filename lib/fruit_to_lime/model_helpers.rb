@@ -1,7 +1,7 @@
 module FruitToLime
     module ModelHasCustomFields
         def set_custom_value(value, field)
-            @custom_values = [] if @custom_values==nil
+            @custom_values = [] if @custom_values == nil
             custom_value = CustomValue.new()
             custom_value.value = value
             custom_value.field = field
@@ -36,14 +36,10 @@ module FruitToLime
         end
     end
 
-    module ModelHasTags
-        def add_tag(str)
-            @tags = [] if @tags == nil
-            @tags.push(Tag.new(str))
-        end
+    module ModelHasTags        
         def set_tag(str)
             @tags = [] if @tags == nil
-            if ! @tags.any? {|tag| tag.value = str }
+            if ! @tags.any? {|tag| tag.value == str }
                 @tags.push(Tag.new(str))
             end
         end
