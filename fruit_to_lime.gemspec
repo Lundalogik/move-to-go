@@ -19,6 +19,7 @@ EOF
 
   s.add_development_dependency 'rspec', '>= 2.14'
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'nokogiri'
 
   s.files         = Dir.glob('lib/**/*.rb') + Dir.glob('bin/**/*') + Dir.glob('templates/**/*')
   s.test_files    = Dir.glob('spec/**/*.rb')

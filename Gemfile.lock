@@ -39,5 +39,6 @@ PLATFORMS
 
 DEPENDENCIES
   fruit_to_lime!
+  nokogiri
   rake
   rspec (>= 2.14)
