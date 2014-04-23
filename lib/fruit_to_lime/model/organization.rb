@@ -82,6 +82,12 @@ module FruitToLime
             coworker
         end
 
+        def find_employee_by_integration_id(integration_id)
+            return @employees.find do |e|
+                e.integration_id == integration_id
+            end
+        end
+
         def serialize_variables
             [
              { :id => :id, :type => :string },

@@ -101,6 +101,33 @@ class Exporter
         employer.add_employee person
     end
 
+    def to_deal(row, rootmodel)
+        deal = FruitToLime::Deal.new
+        deal.integration_id = row['id']
+        deal.name = row['name']
+        # should be integer, same currency should be used in
+        # the system
+        deal.value = row['value']
+
+        # find stuff connected to deal
+        responsible = rootmodel.find_coworker_by_integration_id row['responsible_id']
+        organization = rootmodel.find_organization_by_integration_id row['customer_id']
+        person = organization.find_employee_by_integration_id row['customer_contact_id']
+        # connect the deal by references
+        deal.responsible_coworker = responsible.to_reference
+        deal.customer = organization.to_reference
+        deal.customer_contact = person.to_reference
+
+        # other optional attributes
+        deal.probability = 50           # should be between 0 - 100
+        deal.order_date = '2014-01-05'  # Format ?
+        deal.offer_date = '2013-12-01'  # Format ?
+
+        # status, how do we set this ?
+
+        return deal
+    end
+
     def configure(model)
         # add custom field to your model here. Custom fields can be
         # added to organization, deal and person. Valid types are
@@ -119,7 +146,7 @@ class Exporter
         end
     end
 
-    def to_model(coworkers_filename, organization_filename, persons_filename)
+    def to_model(coworkers_filename, organization_filename, persons_filename, deals_filename)
         # A rootmodel is used to represent all entitite/models
         # that is exported
         rootmodel = FruitToLime::RootModel.new
@@ -127,7 +154,7 @@ class Exporter
         configure rootmodel
 
         # coworkers
-        # start with these since they are references
+        # start with these since they are referenced
         # from everywhere....
         process_rows coworkers_filename do |row|
             rootmodel.add_coworker(to_coworker(row))
@@ -145,6 +172,13 @@ class Exporter
             to_person(row, rootmodel)
         end
 
+        # deals
+        # deals can reference coworkers (responsible), organizations
+        # and persons (contact)
+        process_rows deals_filename do |row|
+            rootmodel.deals.push(to_deal(row, rootmodel))
+        end
+
         return rootmodel
     end
 
@@ -160,11 +194,11 @@ require "fileutils"
 require 'pathname'
 
 class Cli < Thor
-    desc "to_go COWORKERS ORGANIZATIONS PERSONS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS, PERSONS."
-    def to_go( coworkers, organizations, persons, output = nil)
+    desc "to_go COWORKERS ORGANIZATIONS PERSONS DEALS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS, PERSONS, DEALS."
+    def to_go( coworkers, organizations, persons, deals, output = nil)
         output = 'export.xml' if output == nil
         exporter = Exporter.new()
-        model = exporter.to_model(coworkers, organizations, persons)
+        model = exporter.to_model(coworkers, organizations, persons, deals)
         error = model.sanity_check
         if error.empty?
             validation_errors = model.validate

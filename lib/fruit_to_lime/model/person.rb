@@ -21,7 +21,7 @@ module FruitToLime
         attr_accessor :first_name, :last_name,
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
             :position, :email, :alternative_email, :postal_address, :currently_employed,
-            :organization, :integration_id
+            :organization
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
@@ -79,6 +79,13 @@ module FruitToLime
              {:id => :organization, :type => :organization_reference},
              
             ]
+        end
+
+        def to_reference()
+            reference = PersonReference.new
+            reference.id = @id
+            reference.integration_id = @integration_id
+            return reference
         end
 
         def get_import_rows
