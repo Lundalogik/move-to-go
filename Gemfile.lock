@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fruit_to_lime (2.0.1)
+    fruit_to_lime (2.1.0)
       bundler
       iso_country_codes
       thor
