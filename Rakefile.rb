@@ -57,8 +57,21 @@ def unpack_template_and_run_specs(template)
 	end
 end
 
-
 desc "csv template spec"
 task :csv_template_spec => [:clean_temporary_templates_folder] do
 	unpack_template_and_run_specs 'csv'
+end
+
+desc "excel template spec"
+task :excel_template_spec => [:clean_temporary_templates_folder] do
+	unpack_template_and_run_specs 'excel'
+end
+
+desc "sqlserver template spec"
+task :sqlserver_template_spec => [:clean_temporary_templates_folder] do
+	unpack_template_and_run_specs 'sqlserver'
+end
+
+desc "specs for fruit_to_lime and templates"
+task :spec_and_templates => [:spec, :csv_template_spec, :excel_template_spec, :sqlserver_template_spec] do
 end
