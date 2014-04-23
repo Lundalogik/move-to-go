@@ -90,5 +90,5 @@ task :sqlserver_template_spec => [:clean_temporary_templates_folder] do
 end
 
 desc "specs for fruit_to_lime and templates"
-task :spec_and_templates => [:spec, :csv_template_spec, :excel_template_spec, :sqlserver_template_spec] do
+task :spec_and_templates => [:spec, :csv_template_spec, :excel_template_spec] do
 end
