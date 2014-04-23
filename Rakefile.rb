@@ -9,7 +9,22 @@ task :default => :spec
 task :test => :spec
 
 require 'bundler/gem_helper'
-Bundler::GemHelper.install_tasks({:dir=>File.dirname(__FILE__),:name=>'fruit_to_lime'})
+#Bundler::GemHelper.install_tasks({:dir=>File.dirname(__FILE__),:name=>'fruit_to_lime'})
+
+desc "Build gem"
+task :build do
+	Bundler::GemHelper.new().build_gem
+end
+
+desc "Installs gem locally"
+task :install do
+	Bundler::GemHelper.new().install_gem	
+end
+
+desc "Releases gem to rubygems"
+task :release do
+	Bundler::GemHelper.new().release_gem
+end
 
 
 task :install_fruit_to_lime do
@@ -33,7 +48,6 @@ end
 desc "test fruit to lime gem"
 task :test_fruit_to_lime => [:uninstall_fruit_to_lime, :install_fruit_to_lime, :spec] 
 
-desc "cleans temporary templates folder"
 task :clean_temporary_templates_folder do
 	unpack_path = File.expand_path("unpacked", Dir.tmpdir)
 	FileUtils.remove_dir(unpack_path, true)
