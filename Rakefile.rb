@@ -1,6 +1,7 @@
 #!/usr/bin/env rake
 require 'rspec/core/rake_task'
 require 'fileutils'
+require 'tmpdir'
 require './lib/fruit_to_lime/templating.rb'
 
 RSpec::Core::RakeTask.new(:spec)
