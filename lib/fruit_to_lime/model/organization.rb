@@ -70,7 +70,7 @@ module FruitToLime
         end
 
         def add_employee(val)
-            @employees = [] if @employees==nil
+            @employees = [] if @employees == nil
             person = if val.is_a? Person then val else Person.new(val) end
             @employees.push(person)
             person

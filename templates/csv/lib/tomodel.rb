@@ -62,11 +62,43 @@ class Exporter
         coworker.integration_id = row['id']
         coworker.first_name = row['first_name']
         coworker.last_name = row['last_name']
+        # Other optional attributes
+        coworker.email = 't@e.com'
+        coworker.direct_phone_number = '+46121212'
+        coworker.mobile_phone_number = '+46324234'
+        coworker.home_phone_number = '+46234234'
 
         # Tags and custom fields are set the same
         # way as on organizations
         
         return coworker
+    end
+
+    def to_person(row, rootmodel)
+        person = FruitToLime::Person.new
+        person.integration_id = row['id']
+        # Note that Go has separate first and last names
+        # Some splitting might be necessary
+        person.first_name = row['first_name']
+        person.last_name = row['last_name']
+        # other optional attributes
+        person.direct_phone_number = '+4611111'
+        person.fax_phone_number = '+4623234234234'
+        person.mobile_phone_number = '+462321212'
+        person.email = 'x@y.com'
+        person.alternative_email = 'y@x.com'
+        person.with_postal_address do |address|
+            address.street = 'postal street'
+            address.parse_zip_and_address_se '226 48 LUND'
+        end
+
+        # Tags and custom fields are set the same
+        # way as on organizations
+
+        # set employer connection
+        employer_id = row['employer_id']
+        employer = rootmodel.find_organization_by_integration_id employer_id
+        employer.add_employee person
     end
 
     def configure(model)
@@ -87,7 +119,7 @@ class Exporter
         end
     end
 
-    def to_model(coworkers_filename, organization_filename)
+    def to_model(coworkers_filename, organization_filename, persons_filename)
         # A rootmodel is used to represent all entitite/models
         # that is exported
         rootmodel = FruitToLime::RootModel.new
@@ -106,6 +138,13 @@ class Exporter
             rootmodel.organizations.push(to_organization(row, rootmodel))
         end
 
+        # persons
+        # depends on organizations
+        process_rows persons_filename do |row|
+            # adds it self to the employer
+            to_person(row, rootmodel)
+        end
+
         return rootmodel
     end
 
@@ -121,11 +160,11 @@ require "fileutils"
 require 'pathname'
 
 class Cli < Thor
-    desc "to_go COWORKERS ORGANIZATIONS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS."
-    def to_go( coworkers, organizations, output = nil)
+    desc "to_go COWORKERS ORGANIZATIONS PERSONS OUTPUT", "Exports xml to OUTPUT using csv files COWORKERS, ORGANIZATIONS, PERSONS."
+    def to_go( coworkers, organizations, persons, output = nil)
         output = 'export.xml' if output == nil
         exporter = Exporter.new()
-        model = exporter.to_model(coworkers, organizations)
+        model = exporter.to_model(coworkers, organizations, persons)
         error = model.sanity_check
         if error.empty?
             validation_errors = model.validate
