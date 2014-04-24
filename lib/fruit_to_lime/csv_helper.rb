@@ -9,11 +9,16 @@ module FruitToLime
             end
         end
         
-        def self.text_to_hashes(text)
+        def self.text_to_hashes(text, column_separator = nil)
             if !text
                 raise "Missing text"
             end
-            rows = CSV.parse(text.strip,{:col_sep=>self.detect_col_sep(text)})
+
+            if !column_separator
+                column_separator = self.detect_col_sep text
+            end
+
+            rows = CSV.parse(text.strip,{:col_sep => column_separator})
             map = {}
             first = rows.first 
             (0 .. first.length-1).each do |i|

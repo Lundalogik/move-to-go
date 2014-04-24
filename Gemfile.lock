@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fruit_to_lime (2.1.0)
+    fruit_to_lime (2.1.1)
       bundler
       iso_country_codes
       nokogiri
