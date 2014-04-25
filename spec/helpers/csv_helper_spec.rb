@@ -12,4 +12,18 @@ describe FruitToLime::CsvHelper do
 1;Bj\u{00F6}rk")
     v.should include({"id"=>"1","navn"=>"Bj\u{00F6}rk"})
   end
+  it "should handle escaped newlines" do
+    v = FruitToLime::CsvHelper.text_to_hashes("id;navn
+1;\"Bj\u{00F6}rk
+And a new line\"")
+    v.should include({"id"=>"1","navn"=>"Bj\u{00F6}rk
+And a new line"})
+  end
+  it "should handle escaped newlines with ',' as delim" do
+    v = FruitToLime::CsvHelper.text_to_hashes("id,navn
+1,\"Bj\u{00F6}rk
+And a new line\"")
+    v.should include({"id"=>"1","navn"=>"Bj\u{00F6}rk
+And a new line"})
+  end
 end
