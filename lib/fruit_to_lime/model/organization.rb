@@ -28,6 +28,8 @@ module FruitToLime
         :postal_address, :visit_address, :central_phone_number, :responsible_coworker, :source_data
 
         attr_reader :employees
+        # you add custom values by using {#set_custom_value}
+        attr_reader :custom_values
 
         def initialize()
         end
