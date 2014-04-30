@@ -117,36 +117,25 @@ module FruitToLime
         def sanity_check
             error = String.new
 
-            dups = get_duplicates(@coworkers) {|coworker| coworker.integration_id}
+            dups = get_integration_id_duplicates(with_non_empty_integration_id(@coworkers))
             dups_error_items = (dups.collect{|coworker| coworker.integration_id}).compact
             if dups.length > 0
                 error = "#{error}\nDuplicate coworker integration_id: #{dups_error_items.join(", ")}."
             end
 
-            dups = get_duplicates(@organizations) {|org| org.integration_id}
+            dups = get_integration_id_duplicates(with_non_empty_integration_id(@organizations))
             dups_error_items = (dups.collect{|org| org.integration_id}).compact
             if dups.length > 0
                 error = "#{error}\nDuplicate organization integration_id: #{dups_error_items.join(", ")}."
             end
 
-            dups = get_duplicates(@deals) {|deal| deal.integration_id}
+            dups = get_integration_id_duplicates(with_non_empty_integration_id(@deals))
             dups_error_items = (dups.collect{|deal| deal.integration_id}).compact
             if dups_error_items.length > 0
                 error = "#{error}\nDuplicate deal integration_id: #{dups_error_items.join(", ")}."
             end
 
             return error.strip
-        end
-
-        # returns all items from the object array with duplicate keys.
-        # To get all organizations with the same integration_id use
-        # @example Get all the organization duplicates with the same integration id
-        #      rm.get_duplicates(rm.organizations, {|org| org.integration_id})
-        #
-        def get_duplicates(objects, &key)
-            uniq_items = objects.uniq {|item| key.call(item)}.compact
-
-            return (objects - uniq_items).compact
         end
 
         def validate()
@@ -176,6 +165,23 @@ module FruitToLime
             element_name = serialize_name
             elem = doc.add_element(element_name,{"Version"=>"v2_0"})
             SerializeHelper::serialize_variables_rexml(elem, self)
+        end
+
+        private
+        # returns all items from the object array with duplicate integration ids.
+        # To get all organizations with the same integration_id use
+        # @example Get all the organization duplicates with the same integration id
+        #      rm.get_integration_id_duplicates(rm.organizations)
+        def get_integration_id_duplicates(objects)
+            uniq_items = objects.uniq {|item| item.integration_id}.compact
+
+            return (objects - uniq_items).compact
+        end
+
+        def with_non_empty_integration_id(objects)
+            return objects.select do |obj|
+                obj.integration_id!=nil && !obj.integration_id.empty?
+            end
         end
     end
 end

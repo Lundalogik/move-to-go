@@ -54,7 +54,7 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 2
     end
 
-    it "will ignore empty itegration ids during sanity check" do
+    it "will ignore empty integration ids during sanity check" do
         org1 = FruitToLime::Organization.new
         org1.name = "company 1"
         rootmodel.organizations.push org1
@@ -64,5 +64,19 @@ describe "RootModel" do
         rootmodel.organizations.push org2
 
         rootmodel.sanity_check.should eq ""
+    end
+    
+    it "will report when the same integration id is used during sanity check" do
+        org1 = FruitToLime::Organization.new
+        org1.integration_id = "1"
+        org1.name = "company 1"
+        rootmodel.organizations.push org1
+
+        org2 = FruitToLime::Organization.new
+        org2.integration_id = "1"
+        org2.name = "company 2"
+        rootmodel.organizations.push org2
+
+        rootmodel.sanity_check.should eq "Duplicate organization integration_id: 1."
     end
 end
