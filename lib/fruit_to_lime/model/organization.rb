@@ -47,8 +47,6 @@ module FruitToLime
 
             if that.is_a? Organization
                 return @integration_id == that.integration_id
-            elsif that.is_a? String
-                return @integration_id == that
             end
 
             return false
@@ -60,7 +58,7 @@ module FruitToLime
         #     end
         # @see Address address
         def with_postal_address
-            @postal_address = Address.new
+            @postal_address = Address.new if @postal_address == nil
             yield @postal_address
         end
 
@@ -70,20 +68,39 @@ module FruitToLime
         #     end
         # @see Address address
         def with_visit_address
-            @visit_address = Address.new
+            @visit_address = Address.new if @visit_address == nil
             yield @visit_address
         end
 
         # @example Set the source to par id 4653
-        #     organization.with_source do |source|
+        #     o.with_source do |source|
         #          source.par_se('4653') 
         #     end 
         # @see ReferenceToSource source
         def with_source
-            @source = ReferenceToSource.new
+            @source = ReferenceToSource.new if @source == nil
             yield @source
         end
 
+        # @example Set the responsible coworker of the organization to the coworker with integration id 943
+        #     o.with_responsible_coworker do |responsible_coworker|
+        #          responsible_coworker.integration_id = "943"
+        #     end 
+        # @see CoworkerReference responsible_coworker
+        def with_responsible_coworker
+            @responsible_coworker = CoworkerReference.new if @responsible_coworker==nil
+            yield @responsible_coworker
+        end
+
+        # @example Add an employee and then add additional info to that employee
+        #    employee = o.add_employee({
+        #        :integration_id => "79654",
+        #        :first_name => "Peter",
+        #        :last_name => "Wilhelmsson"
+        #    })
+        #    employee.direct_phone_number = '+234234234'
+        #    employee.currently_employed = true
+        # @see Person employee
         def add_employee(val)
             @employees = [] if @employees == nil
             person = if val.is_a? Person then val else Person.new(val) end
@@ -91,6 +108,8 @@ module FruitToLime
             person
         end
 
+        # TODO! Remove, it's obsolete
+        # @!visibility private
         def add_responsible_coworker(val)
             coworker = if val.is_a? CoworkerReference then val else CoworkerReference.new(val) end
             @responsible_coworker = coworker

@@ -34,14 +34,23 @@ module FruitToLime
                 end
             end
         end
-
+        # @example Set city of postal address to 'Lund'
+        #     p.with_postal_address do |addr|
+        #         addr.city = "Lund"
+        #     end
+        # @see Address address
         def with_postal_address
-            @postal_address = Address.new
+            @postal_address = Address.new if @postal_address == nil
             yield @postal_address
         end
 
+        # @example Set the source to par id 4653
+        #     p.with_source do |source|
+        #          source.par_se('4653') 
+        #     end 
+        # @see ReferenceToSource source
         def with_source
-            @source = ReferenceToSource.new
+            @source = ReferenceToSource.new if @source == nil
             yield @source
         end
 

@@ -11,6 +11,12 @@ describe FruitToLime::SerializeHelper do
                 s.set_custom_field({:integration_id=>"2", :title=>"cf title"})
                 s.set_custom_field({:integration_id=>"3", :title=>"cf title2"})
             end
+            i.add_coworker({
+                :integration_id=>"123",
+                :first_name=>"Kalle",
+                :last_name=>"Anka",
+                :email=>"kalle.anka@vonanka.com"
+            })
             o = FruitToLime::Organization.new
             o.name = "Ankeborgs bibliotek"
             o.with_source do |source|
@@ -27,9 +33,9 @@ describe FruitToLime::SerializeHelper do
             o.with_visit_address do |addr|
                 addr.city = "Gaaseborg"
             end
-            o.add_responsible_coworker({
-                :integration_id => "1"
-            })
+            o.with_responsible_coworker do |coworker|
+                coworker.integration_id = "1"
+            end
             emp = o.add_employee({
                 :integration_id => "1",
                 :first_name => "Kalle",

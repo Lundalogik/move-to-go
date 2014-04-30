@@ -36,20 +36,53 @@ module FruitToLime
         end
 
         # Adds the specifed coworker object to the model.
+        # @example Add a coworker from a hash
+        #    rootmodel.add_coworker({
+        #        :integration_id=>"123",
+        #        :first_name=>"Kalle",
+        #        :last_name=>"Anka",
+        #        :email=>"kalle.anka@vonanka.com"
+        #    })
+        # 
+        # @example Add a coworker from a new coworker
+        #    coworker = FruitToLime::Coworker.new
+        #    coworker.integration_id = "123"
+        #    coworker.first_name="Kalle"
+        #    coworker.last_name="Anka"
+        #    coworker.email = "kalle.anka@vonanka.com"
+        #    rootmodel.add_coworker(coworker)
+        #
+        # @example If you want to keep adding coworkers and dont care about duplicates not being added
+        #    begin
+        #       rootmodel.add_coworker(coworker)
+        #    rescue FruitToLime::AlreadyAddedError
+        #       puts "Warning: already added coworker"
+        #    end
+        # @see Coworker
         def add_coworker(coworker)
             @coworkers = [] if @coworkers == nil
 
-            if coworker != nil && coworker.is_a?(Coworker) && !@coworkers.include?(coworker)
-                @coworkers.push(coworker)
+            if coworker == nil
+                raise "Missing coworker to add!"
             end
+
+            coworker = Coworker.new(coworker) if !coworker.is_a?(Coworker)
+            
+            if find_coworker_by_integration_id(coworker.integration_id)!=nil
+                raise AlreadyAddedError, "Already added a coworker with integration_id #{coworker.integration_id}"
+            end
+
+            @coworkers.push(coworker)
         end
 
+        # TODO! Remove, it's obsolete
+        # @!visibility private
         def add_note(text)
             @notes = [] if @notes == nil
             @notes.push(if text.is_a? Note then text else Note.new(text) end)
         end
 
-        def with_note
+        def with_new_note
             @notes = [] if @notes == nil
 
             note = Note.new
@@ -59,13 +92,13 @@ module FruitToLime
 
         def find_coworker_by_integration_id(integration_id)
             return @coworkers.find do |coworker|
-                coworker == integration_id
+                coworker.integration_id == integration_id
             end
         end
 
         def find_organization_by_integration_id(integration_id)
             return @organizations.find do |organization|
-                organization == integration_id
+                organization.integration_id == integration_id
             end
         end
 

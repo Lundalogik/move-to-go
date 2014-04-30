@@ -40,8 +40,6 @@ module FruitToLime
 
             if that.is_a? Coworker
                 return @integration_id == that.integration_id
-            elsif that.is_a? String
-                return @integration_id == that
             end
 
             return false
