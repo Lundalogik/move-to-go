@@ -54,7 +54,5 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 2
     end
 
-
-
 end
 

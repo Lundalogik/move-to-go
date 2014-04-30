@@ -30,9 +30,5 @@ module FruitToLime
         def serialize_name
             "Note"
         end
-
-        # def with_organization
-        #     yield org
-        # end
     end
 end

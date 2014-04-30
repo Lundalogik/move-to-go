@@ -140,7 +140,9 @@ module FruitToLime
 
         # returns all items from the object array with duplicate keys.
         # To get all organizations with the same integration_id use
-        # `get_duplicates(organizations, {|org| org.integration_id})`
+        # @example Get all the organization duplicates with the same integration id
+        #      rm.get_duplicates(rm.organizations, {|org| org.integration_id})
+        #
         def get_duplicates(objects, &key)
             uniq_items = objects.uniq {|item| key.call(item)}.compact
 
