@@ -42,7 +42,7 @@ describe "RootModel" do
             :email=>"kalle.anka@vonanka.com"
         })
         rootmodel.coworkers.length.should eq 2
-        expect { 
+        expect {
             rootmodel.add_coworker({
                 :integration_id=>"123key",
                 :first_name=>"Knatte",
@@ -54,5 +54,15 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 2
     end
 
-end
+    it "will ignore empty itegration ids during sanity check" do
+        org1 = FruitToLime::Organization.new
+        org1.name = "company 1"
+        rootmodel.organizations.push org1
 
+        org2 = FruitToLime::Organization.new
+        org2.name = "company 2"
+        rootmodel.organizations.push org2
+
+        rootmodel.sanity_check.should eq ""
+    end
+end
