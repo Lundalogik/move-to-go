@@ -1,5 +1,7 @@
 module FruitToLime
     module ModelHasCustomFields
+        # @example
+        #     obj.set_custom_value(row['business_value_partner_info'], "partner_info")
         def set_custom_value(value, field)
             @custom_values = [] if @custom_values == nil
             custom_value = CustomValue.new()
@@ -36,7 +38,9 @@ module FruitToLime
         end
     end
 
-    module ModelHasTags        
+    module ModelHasTags
+        # @example
+        #     obj.set_tag("partner")
         def set_tag(str)
             @tags = [] if @tags == nil
             if ! @tags.any? {|tag| tag.value == str }

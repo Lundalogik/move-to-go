@@ -10,24 +10,6 @@ module FruitToLime
             Dir.entries(@path).select { |d| d != '.' && d != '..' }
         end
 
-        def exec_but_dont_show_unless_error(cmd)
-            std_out_value = []
-            Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-                while std_line = stdout.gets
-                    std_out_value << std_line
-                end
-
-                exit_status = wait_thr.value
-                if !exit_status.success?
-                    puts "Failed with #{exit_status}"
-                    puts "std_out_value"
-                    puts std_out_value
-
-                    raise "failed exec #{cmd}"
-                end
-            end
-        end
-
         def unpack(name, path)
             template = list.find { |t| t == name }
             if template
@@ -45,6 +27,25 @@ module FruitToLime
             else
                 puts "Unable to find template #{name}"
                 false
+            end
+        end
+
+        private
+        def exec_but_dont_show_unless_error(cmd)
+            std_out_value = []
+            Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+                while std_line = stdout.gets
+                    std_out_value << std_line
+                end
+
+                exit_status = wait_thr.value
+                if !exit_status.success?
+                    puts "Failed with #{exit_status}"
+                    puts "std_out_value"
+                    puts std_out_value
+
+                    raise "failed exec #{cmd}"
+                end
             end
         end
     end
