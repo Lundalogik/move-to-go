@@ -1,7 +1,7 @@
 module FruitToLime
     class Coworker
         include SerializeHelper
-        attr_accessor :id, :integration_id, :first_name, :last_name, :email, :direct_phone_number,
+        attr_accessor :id, :integration_id, :email, :first_name, :last_name, :direct_phone_number,
         :mobile_phone_number, :home_phone_number
 
         def initialize(opt = nil)
@@ -15,7 +15,7 @@ module FruitToLime
 
         def serialize_variables
             [
-             :id, :integration_id, :first_name, :last_name, :email,
+             :id, :integration_id, :email, :first_name, :last_name, 
              :direct_phone_number, :mobile_phone_number, :home_phone_number
             ].map {|p| { :id => p, :type => :string } }
         end
