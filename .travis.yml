@@ -7,3 +7,9 @@ rvm:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq freetds-dev
+
+install:
+ - bundle install
+
+script:
+ - bundle exec rake spec_and_templates
