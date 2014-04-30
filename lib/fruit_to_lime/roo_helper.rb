@@ -1,15 +1,28 @@
 require "csv"
 module FruitToLime
+    # @example transform xlsx file into rows
+    #     organizations_path = File.join(File.dirname(__FILE__), 'organizations.xlsx') # same path as this file
+    #     rows = FruitToLime::RooHelper.new(Roo::Excelx.new(organizations_path)).rows
     class RooHelper
+
         def initialize(data)
             @data = data
             @default_sheet = data.sheets.first
         end
 
+        # Get rows for the first sheet.
+        # The rows are hashes of the first row of cells as header cells and the rest as content.
+        # @example If the header 'Name' and the second column contains 'Johan'.
+        #    FruitToLime::RooHelper.new(Roo::Excelx.new(file_path)).rows
+        #    # returns:
+        #    [{'Name'=>'Johan'}]
         def rows
             return rows_for_sheet(@default_sheet)
         end
 
+        # @example transform xlsx file into rows for the second sheet
+        #     data = Roo::Excelx.new(organizations_path)
+        #     rows = FruitToLime::RooHelper.new(data).rows_for_sheet(data.sheets[1])
         def rows_for_sheet(sheet)
             column_headers = {}
             1.upto(@data.last_column(sheet)) do |col|

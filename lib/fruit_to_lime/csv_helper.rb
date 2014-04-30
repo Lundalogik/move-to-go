@@ -1,14 +1,13 @@
 require "csv"
 module FruitToLime
     module CsvHelper
-        def self.detect_col_sep(text)
-            firstline = text.split('\n').first
-            col_seps = [';','\t',',']
-            return col_seps.find do |c|
-                firstline.include? c
-            end
-        end
-        
+
+        # @example Detect column separator and transform to hashes
+        #     hashes = FruitToLime::CsvHelper.text_to_hashes(text)
+        #
+        # @example Use specific column separator and transform to hashes
+        #     column_separator = ','
+        #     hashes = FruitToLime::CsvHelper.text_to_hashes(text, column_separator)
         def self.text_to_hashes(text, column_separator = nil)
             if !text
                 raise "Missing text"
@@ -34,5 +33,15 @@ module FruitToLime
             end
             return rs
         end
+        
+        private
+        def self.detect_col_sep(text)
+            firstline = text.split('\n').first
+            col_seps = [';','\t',',']
+            return col_seps.find do |c|
+                firstline.include? c
+            end
+        end
+
     end
 end
