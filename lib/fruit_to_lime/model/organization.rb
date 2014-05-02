@@ -119,6 +119,7 @@ module FruitToLime
         end
 
         def find_employee_by_integration_id(integration_id)
+            return nil if @employees.nil?
             return @employees.find do |e|
                 e.integration_id == integration_id
             end
