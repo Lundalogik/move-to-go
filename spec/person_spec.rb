@@ -79,5 +79,22 @@ describe "Person" do
         error = person.validate
         error.should start_with("A firstname or lastname is required for person")
     end
+
+    describe "parse_name_to_firstname_lastname_se" do
+        it "can parse 'Kalle Nilsson' into firstname 'Kalle' and lastname 'Nilsson'" do
+            person.parse_name_to_firstname_lastname_se 'Kalle Nilsson'
+
+            person.first_name.should eq 'Kalle'
+            person.last_name.should eq 'Nilsson'
+
+        end
+
+        it "can parse 'Kalle Svensson Nilsson' into firstname 'Kalle' and lastname 'Svensson Nilsson'" do
+            person.parse_name_to_firstname_lastname_se 'Kalle Svensson Nilsson'
+
+            person.first_name.should eq 'Kalle'
+            person.last_name.should eq 'Svensson Nilsson'
+        end
+    end
 end
 

@@ -44,5 +44,13 @@ module FruitToLime
 
             return false
         end
+
+        def parse_name_to_firstname_lastname_se(name)
+            splitted = name.split(' ')
+            @first_name = splitted[0]
+            if splitted.length > 1                
+                @last_name = splitted.drop(1).join(' ')
+            end
+        end        
     end
 end
