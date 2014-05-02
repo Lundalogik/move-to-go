@@ -95,6 +95,18 @@ describe "Person" do
             person.first_name.should eq 'Kalle'
             person.last_name.should eq 'Svensson Nilsson'
         end
+
+        it "sets default name when name is empty" do
+            person.parse_name_to_firstname_lastname_se '', 'a default'
+
+            person.first_name.should eq 'a default'
+        end
+
+        it "sets default name when name is nil" do
+            person.parse_name_to_firstname_lastname_se nil, 'a default'
+
+            person.first_name.should eq 'a default'
+        end        
     end
 end
 

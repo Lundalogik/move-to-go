@@ -46,7 +46,12 @@ module FruitToLime
             return false
         end
 
-        def parse_name_to_firstname_lastname_se(name)
+        def parse_name_to_firstname_lastname_se(name, when_missing = '')
+            if name.nil? or name.empty?
+                @first_name = when_missing
+                return
+            end
+
             splitted = name.split(' ')
             @first_name = splitted[0]
             if splitted.length > 1                
