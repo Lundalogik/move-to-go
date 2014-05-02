@@ -1,3 +1,4 @@
+# encoding: utf-8
 module FruitToLime
     class Coworker
         include SerializeHelper
@@ -51,6 +52,20 @@ module FruitToLime
             if splitted.length > 1                
                 @last_name = splitted.drop(1).join(' ')
             end
-        end        
+        end
+
+        def to_email_chars(s)
+            s.tr " åäöèé", "-aaoee"
+        end
+
+        def guess_email(domain)
+            return '' if @last_name.nil? || @last_name.empty?
+            return '' if @first_name.nil? || @first_name.empty?
+
+            firstname = to_email_chars @first_name.downcase
+            lastname = to_email_chars @last_name.downcase
+            return "#{firstname}.#{lastname}@#{domain}"
+        end
+
     end
 end
