@@ -79,4 +79,26 @@ describe "RootModel" do
 
         rootmodel.sanity_check.should eq "Duplicate organization integration_id: 1."
     end
+
+    it "will report when the same integrationid on person is used during sanity check" do
+        org1 = FruitToLime::Organization.new
+        org1.integration_id = "1"
+        org1.name = "company 1"
+        person1 = FruitToLime::Person.new
+        person1.integration_id = '1'
+        org1.add_employee person1
+
+        rootmodel.organizations.push org1
+
+        org2 = FruitToLime::Organization.new
+        org2.integration_id = "2"
+        org2.name = "company 2"
+        person2 = FruitToLime::Person.new
+        person2.integration_id = '1'
+        org2.add_employee person2
+        rootmodel.organizations.push org2
+
+        rootmodel.sanity_check.should eq "Duplicate person integration_id: 1."
+
+    end
 end

@@ -135,6 +135,13 @@ module FruitToLime
                 error = "#{error}\nDuplicate deal integration_id: #{dups_error_items.join(", ")}."
             end
 
+            persons = @organizations.collect{|o| o.employees}.flatten.compact
+            dups = get_integration_id_duplicates(with_non_empty_integration_id(persons))
+            dups_error_items = (dups.collect{|person| person.integration_id}).compact
+            if dups_error_items.length > 0
+                error = "#{error}\nDuplicate person integration_id: #{dups_error_items.join(", ")}."
+            end
+
             return error.strip
         end
 
