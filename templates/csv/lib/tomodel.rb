@@ -121,7 +121,6 @@ class Exporter
         # other optional attributes
         deal.probability = 50           # should be between 0 - 100
         deal.order_date = '2014-01-05'  # Format ?
-        deal.offer_date = '2013-12-01'  # Format ?
 
         # status, how do we set this ?
 
