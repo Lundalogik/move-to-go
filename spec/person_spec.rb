@@ -106,7 +106,7 @@ describe "Person" do
             person.parse_name_to_firstname_lastname_se nil, 'a default'
 
             person.first_name.should eq 'a default'
-        end        
+        end
     end
 end
 

@@ -46,5 +46,10 @@ module FruitToLime
             return error
         end
 
+        def with_status
+            @status = DealStatus.new
+            yield @status
+        end
+
     end
 end
