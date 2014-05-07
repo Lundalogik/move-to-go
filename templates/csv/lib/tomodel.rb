@@ -52,7 +52,7 @@ class Exporter
         # client will continue to use it can be useful to be
         # able to link from Go to the same record in the ERP
         # FOr instance Lime links
-        organization.set_custom_value("http://something.com?key=#{row['id']}", "external_url")
+        organization.set_custom_value("external_url", "http://something.com?key=#{row['id']}")
 
         return organization
     end

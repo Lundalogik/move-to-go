@@ -1,10 +1,19 @@
 module FruitToLime
     module ModelHasCustomFields
         # @example
-        #     obj.set_custom_value(row['business_value_partner_info'], "partner_info")
-        def set_custom_value(value, field)
+        #     value = row['business_value_partner_info']
+        #     obj.set_custom_value("partner_info", value)
+        def set_custom_value(integration_id, value)
+            return set_custom_field({integration_id: integration_id, value: value})
+        end
+        # @example
+        #     value = row['business_value_partner_info']
+        #     obj.set_custom_field({:integration_id=>"partner_info", :value=>value})
+        def set_custom_field(obj)
             @custom_values = [] if @custom_values == nil
-            custom_value = CustomValue.new()
+            value = obj[:value]
+            field = CustomFieldReference.new(obj)
+            custom_value = CustomValue.new
             custom_value.value = value
             custom_value.field = field
             index = @custom_values.find_index do |custom_value|
@@ -16,12 +25,6 @@ module FruitToLime
 
             @custom_values.push custom_value
             return custom_value
-        end
-        # Note that this method is obsolete and will be removed later on. Please use {#set_custom_value}
-        def set_custom_field(obj)
-            value = obj[:value]
-            ref = CustomFieldReference.new(obj)
-            return set_custom_value(value, ref)
         end
     end
 

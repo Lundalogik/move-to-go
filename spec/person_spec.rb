@@ -44,6 +44,19 @@ describe "Person" do
         value.value.should eq 'the value 2'
     end
 
+    it "will set custom field (using set_custom_value) with same integration_id to the last value" do
+        person.set_custom_value('the id','the value')
+
+        person.set_custom_value('the id','the value 2')
+        value = person.custom_values[0]
+        field = value.field
+
+        person.custom_values.length.should eq 1 
+        field.integration_id.should eq 'the id'
+        value.value.should eq 'the value 2'
+    end
+
+
     it "will only set tag once" do
         person.set_tag('tag1')
         person.set_tag('tag1')

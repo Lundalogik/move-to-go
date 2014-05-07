@@ -43,28 +43,5 @@ module FruitToLime
             return field
         end
 
-        # Add custom field. If there is already an existing custom field, then an AlreadyAddedError will be raised.
-        def add_custom_field(obj)
-            @custom_fields = [] if @custom_fields==nil
-
-            if obj.is_a?(CustomField)
-                field = obj
-            else
-                field = CustomField.new(obj)
-            end
-
-            index = @custom_fields.find_index do |custom_field| 
-                custom_field.same_as?(field)
-            end
-
-            if index
-                raise AlreadyAddedError, "Already added a custom same as #{obj}"
-            end
-
-            @custom_fields.push field
-
-            return field
-        end
-
     end
 end
