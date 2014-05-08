@@ -23,7 +23,7 @@ module FruitToLime
 
         # Set custom field. If there is already an existing custom field, then it is overwritten.
         def set_custom_field(obj)
-            @custom_fields = [] if @custom_fields==nil
+            @custom_fields = [] if @custom_fields == nil
 
             if obj.is_a?(CustomField)
                 field = obj
@@ -31,7 +31,11 @@ module FruitToLime
                 field = CustomField.new(obj)
             end
 
-            index = @custom_fields.find_index do |custom_field| 
+            if field.integration_id == "" && field.id == ""
+                raise InvalidCustomFieldError, "Custom field must have either id or integration_id"
+            end
+
+            index = @custom_fields.find_index do |custom_field|
                 custom_field.same_as?(field)
             end
             if index
@@ -42,6 +46,5 @@ module FruitToLime
 
             return field
         end
-
     end
 end
