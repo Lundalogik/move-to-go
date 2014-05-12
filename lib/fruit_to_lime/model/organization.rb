@@ -1,5 +1,5 @@
 module FruitToLime
-   class OrganizationReference
+    class OrganizationReference
         include SerializeHelper
         attr_accessor :id, :integration_id, :heading
         def serialize_variables
@@ -24,6 +24,16 @@ module FruitToLime
 
         def empty?
             return !@integration_id && !@id && !@heading
+        end
+
+        def self.from_organization(organization)
+            if organization.nil?
+                return nil
+            elsif organization.is_a?(Organization)
+                return organization.to_reference
+            elsif organization.is_a?(OrganizationReference)
+                return organization
+            end
         end
     end
 

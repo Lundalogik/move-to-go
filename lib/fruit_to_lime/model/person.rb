@@ -8,11 +8,23 @@ module FruitToLime
 
         def initalize()
         end
+
         def to_s
             return "(#{id}, #{integration_id})"
         end
+
         def empty?
             return !@integration_id && !@id
+        end
+
+        def self.from_person(person)
+            if person.nil?
+                return nil
+            elsif person.is_a?(Person)
+                return person.to_reference
+            elsif coworker.is?(PersonReference)
+                return person
+            end
         end
     end
 
@@ -20,10 +32,10 @@ module FruitToLime
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
         attr_accessor :first_name, :last_name,
             :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
-            :position, :email, :alternative_email, :postal_address, :currently_employed,
-            :organization
+            :position, :email, :alternative_email, :postal_address, :currently_employed
+
         # you add custom values by using {#set_custom_value}
-        attr_reader :custom_values
+        attr_reader :custom_values, :organization
 
         def initialize(opt = nil)
             @currently_employed = true
@@ -34,6 +46,11 @@ module FruitToLime
                 end
             end
         end
+
+        def organization=(org)
+            @organization = OrganizationReference.from_organization(org)
+        end
+
         # @example Set city of postal address to 'Lund'
         #     p.with_postal_address do |addr|
         #         addr.city = "Lund"
@@ -46,8 +63,8 @@ module FruitToLime
 
         # @example Set the source to par id 4653
         #     p.with_source do |source|
-        #          source.par_se('4653') 
-        #     end 
+        #          source.par_se('4653')
+        #     end
         # @see ReferenceToSource source
         def with_source
             @source = ReferenceToSource.new if @source == nil
@@ -76,9 +93,9 @@ module FruitToLime
              {:id => :home_phone_number, :type => :string},
 
              {:id => :position, :type => :string},
-             
+
              {:id => :tags, :type => :tags},
-             
+
              {:id => :email, :type => :string},
              {:id => :alternative_email, :type => :string},
 
@@ -86,7 +103,7 @@ module FruitToLime
              {:id => :custom_values, :type => :custom_values},
              {:id => :currently_employed, :type => :bool},
              {:id => :organization, :type => :organization_reference},
-             
+
             ]
         end
 
@@ -126,7 +143,7 @@ module FruitToLime
 
             splitted = name.split(' ')
             @first_name = splitted[0]
-            if splitted.length > 1                
+            if splitted.length > 1
                 @last_name = splitted.drop(1).join(' ')
             end
         end

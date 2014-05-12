@@ -17,4 +17,39 @@ describe "Note" do
 
         note.validate.should eq ""
     end
+
+    it "will auto convert org to org.ref during assignment" do
+        # given
+        org = FruitToLime::Organization.new({:integration_id => "123", :name => "Beagle Boys!"})
+
+        # when
+        note.organization = org
+
+        # then
+        note.organization.is_a?(FruitToLime::OrganizationReference).should eq true
+    end
+
+    it "will auto convert person to person.ref during assignment" do
+        # given
+        person = FruitToLime::Person.new({:integration_id => "123" })
+        person.parse_name_to_firstname_lastname_se "Billy Bob"
+
+        # when
+        note.person = person
+
+        # then
+        note.person.is_a?(FruitToLime::PersonReference).should eq true
+    end
+
+    it "will auto convert coworker to coworker.ref during assignment" do
+        # given
+        coworker = FruitToLime::Coworker.new({:integration_id => "123" })
+        coworker.parse_name_to_firstname_lastname_se "Billy Bob"
+
+        # when
+        note.created_by = coworker
+
+        # then
+        note.created_by.is_a?(FruitToLime::CoworkerReference).should eq true
+    end
 end

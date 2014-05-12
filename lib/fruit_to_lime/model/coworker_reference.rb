@@ -19,5 +19,15 @@ module FruitToLime
         def serialize_name
             "CoworkerReference"
         end
+
+        def self.from_coworker(coworker)
+            if coworker.nil?
+                return nil
+            elsif coworker.is_a?(Coworker)
+                return coworker.to_reference
+            elsif coworker.is_a?(CoworkerReference)
+                return coworker
+            end
+        end
     end
 end

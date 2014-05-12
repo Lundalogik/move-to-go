@@ -25,7 +25,7 @@ describe "Person" do
         value = person.custom_values[0]
         field = value.field
 
-        person.custom_values.length.should eq 1 
+        person.custom_values.length.should eq 1
         field.integration_id.should eq 'the key'
         value.value.should eq 'the value 2'
     end
@@ -39,7 +39,7 @@ describe "Person" do
         value = person.custom_values[0]
         field = value.field
 
-        person.custom_values.length.should eq 1 
+        person.custom_values.length.should eq 1
         field.id.should eq 'the id'
         value.value.should eq 'the value 2'
     end
@@ -51,16 +51,15 @@ describe "Person" do
         value = person.custom_values[0]
         field = value.field
 
-        person.custom_values.length.should eq 1 
+        person.custom_values.length.should eq 1
         field.integration_id.should eq 'the id'
         value.value.should eq 'the value 2'
     end
 
-
     it "will only set tag once" do
         person.set_tag('tag1')
         person.set_tag('tag1')
-        person.tags.length.should eq 1 
+        person.tags.length.should eq 1
         tag = person.tags[0]
         tag.value.should eq 'tag1'
     end
@@ -93,13 +92,23 @@ describe "Person" do
         error.should start_with("A firstname or lastname is required for person")
     end
 
+    it "should auto convert org to org.ref during assignment" do
+        # given
+        org = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+
+        # when
+        person.organization = org
+
+        # then
+        person.organization.is_a?(FruitToLime::OrganizationReference).should eq true
+    end
+
     describe "parse_name_to_firstname_lastname_se" do
         it "can parse 'Kalle Nilsson' into firstname 'Kalle' and lastname 'Nilsson'" do
             person.parse_name_to_firstname_lastname_se 'Kalle Nilsson'
 
             person.first_name.should eq 'Kalle'
             person.last_name.should eq 'Nilsson'
-
         end
 
         it "can parse 'Kalle Svensson Nilsson' into firstname 'Kalle' and lastname 'Svensson Nilsson'" do

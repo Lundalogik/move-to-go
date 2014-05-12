@@ -3,10 +3,10 @@ module FruitToLime
     class Deal
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
-        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date, :customer,
+        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date,
         :responsible_coworker, :customer_contact, :status
         # you add custom values by using {#set_custom_value}
-        attr_reader :custom_values
+        attr_reader :custom_values, :customer
 
         def serialize_variables
             [ :id, :integration_id, :name, :description, :probability, :value, :order_date ].map {
@@ -57,5 +57,8 @@ module FruitToLime
             yield @status
         end
 
+        def customer=(customer)
+            @customer = OrganizationReference.from_organization(customer)
+        end
     end
 end

@@ -14,4 +14,15 @@ describe "Deal" do
             status.note = 'ho ho'
         end
     end
+
+    it "will auto convert org to org.ref during assignment" do
+        # given
+        org = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+
+        # when
+        deal.customer = org
+
+        # then
+        deal.customer.is_a?(FruitToLime::OrganizationReference).should eq true
+    end
 end

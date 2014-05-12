@@ -1,7 +1,9 @@
 module FruitToLime
     class Note
         include SerializeHelper
-        attr_accessor :id, :text, :integration_id, :classification, :date, :created_by, :organization, :person
+        attr_accessor :id, :text, :integration_id, :classification, :date
+
+        attr_reader :organization, :created_by, :person
 
         def serialize_variables
             [ :id, :text, :integration_id, :classification ].map {
@@ -29,6 +31,18 @@ module FruitToLime
 
         def serialize_name
             "Note"
+        end
+
+        def organization=(org)
+            @organization = OrganizationReference.from_organization(org)
+        end
+
+        def created_by=(coworker)
+            @created_by = CoworkerReference.from_coworker(coworker)
+        end
+
+        def person=(person)
+            @person = PersonReference.from_person(person)
         end
 
         def validate
