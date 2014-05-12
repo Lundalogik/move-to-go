@@ -37,7 +37,13 @@ module FruitToLime
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
-        def initialize()
+        def initialize(opt = nil)
+            if !opt.nil?
+                serialize_variables.each do |myattr|
+                    val = opt[myattr[:id]]
+                    instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
+                end
+            end
         end
 
         def to_reference()

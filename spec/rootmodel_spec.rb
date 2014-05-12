@@ -53,6 +53,92 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 2
     end
 
+    it "can add an organization from hash" do
+        rootmodel.add_organization({
+                                       :integration_id => "123key",
+                                       :name => "Beagle Boys"
+        })
+        rootmodel.find_organization_by_integration_id("123key").name.should eq "Beagle Boys"
+        rootmodel.organizations.length.should eq 1
+    end
+
+    it "can add an organization from a new organization" do
+        # given
+        organization = FruitToLime::Organization.new
+        organization.integration_id = "123key"
+        organization.name = "Beagle Boys"
+
+        # when
+        rootmodel.add_organization(organization)
+
+        # then
+        rootmodel.find_organization_by_integration_id("123key").name.should eq "Beagle Boys"
+        rootmodel.organizations.length.should eq 1
+    end
+
+    it "will not add a new organizations when the organizations is already added (same integration id)" do
+        # given
+        rootmodel.add_organization({
+            :integration_id => "123key",
+            :name => "Beagle Boys"
+        })
+        rootmodel.organizations.length.should eq 1
+        rootmodel.find_organization_by_integration_id("123key").name.should eq "Beagle Boys"
+
+        # when, then
+        expect {
+            rootmodel.add_organization({
+                :integration_id => "123key",
+                :name => "Beagle Boys 2"
+            })
+        }.to raise_error(FruitToLime::AlreadyAddedError)
+        rootmodel.find_organization_by_integration_id("123key").name.should eq "Beagle Boys"
+        rootmodel.organizations.length.should eq 1
+    end
+
+    it "can add a deal from hash" do
+        rootmodel.add_deal({
+                                       :integration_id => "123key",
+                                       :name => "Big deal"
+        })
+        rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
+        rootmodel.deals.length.should eq 1
+    end
+
+    it "can add a deal from a new deal" do
+        # given
+        deal = FruitToLime::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big deal"
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
+        rootmodel.deals.length.should eq 1
+    end
+
+    it "will not add a new deal when the deal is already added (same integration id)" do
+        # given
+        rootmodel.add_deal({
+            :integration_id => "123key",
+            :name => "Big deal"
+        })
+        rootmodel.deals.length.should eq 1
+        rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
+
+        # when, then
+        expect {
+            rootmodel.add_deal({
+                :integration_id => "123key",
+                :name => "Bigger deal"
+            })
+        }.to raise_error(FruitToLime::AlreadyAddedError)
+        rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
+        rootmodel.deals.length.should eq 1
+    end
+
     it "will ignore empty integration ids during sanity check" do
         org1 = FruitToLime::Organization.new
         org1.name = "company 1"

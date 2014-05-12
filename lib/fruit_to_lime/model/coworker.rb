@@ -16,7 +16,7 @@ module FruitToLime
 
         def serialize_variables
             [
-             :id, :integration_id, :email, :first_name, :last_name, 
+             :id, :integration_id, :email, :first_name, :last_name,
              :direct_phone_number, :mobile_phone_number, :home_phone_number
             ].map {|p| { :id => p, :type => :string } }
         end
@@ -54,7 +54,7 @@ module FruitToLime
 
             splitted = name.split(' ')
             @first_name = splitted[0]
-            if splitted.length > 1                
+            if splitted.length > 1
                 @last_name = splitted.drop(1).join(' ')
             end
         end

@@ -75,6 +75,82 @@ module FruitToLime
             @coworkers.push(coworker)
         end
 
+        # Adds the specifed organization object to the model.
+        # @example Add an organization from a hash
+        #    rootmodel.add_organization({
+        #        :integration_id => "123",
+        #        :name => "Beagle Boys",
+        #    })
+        #
+        # @example Add an organization from a new organization
+        #    organization = FruitToLime::Organization.new
+        #    organization.integration_id = "123"
+        #    organization.name = "Beagle Boys"
+        #    rootmodel.add_organization(organization)
+        #
+        # @example If you want to keep adding organizations and dont
+        # care about duplicates not being added. Your model might not
+        # be saved due to duplicate integration_ids.
+        #    begin
+        #       rootmodel.add_organization(organization)
+        #    rescue FruitToLime::AlreadyAddedError
+        #       puts "Warning: already added organization"
+        #    end
+        # @see Coworker
+        def add_organization(organization)
+            @organizations = [] if @organizations.nil?
+
+            if organization.nil?
+                raise "Missing organization to add"
+            end
+
+            organization = Organization.new(organization) if !organization.is_a?(Organization)
+
+            if find_organization_by_integration_id(organization.integration_id) != nil
+                raise AlreadyAddedError, "Already added an organization with integration_id #(organization.integration_id)"
+            end
+
+            @organizations.push(organization)
+        end
+
+        # Adds the specifed deal object to the model.
+        # @example Add an deal from a hash
+        #    rootmodel.add_deal({
+        #        :integration_id => "123",
+        #        :name => "Big deal",
+        #    })
+        #
+        # @example Add an deal from a new deal
+        #    organization = FruitToLime::Deal.new
+        #    organization.integration_id = "123"
+        #    organization.name = "Big deal"
+        #    rootmodel.add_deal(deal)
+        #
+        # @example If you want to keep adding deals and dont
+        # care about duplicates not being added. Your model might not
+        # be saved due to duplicate integration_ids.
+        #    begin
+        #       rootmodel.add_deal(deal)
+        #    rescue FruitToLime::AlreadyAddedError
+        #       puts "Warning: already added deal"
+        #    end
+        # @see Coworker
+        def add_deal(deal)
+            @deals = [] if @deals.nil?
+
+            if deal.nil?
+                raise "Missing deal to add"
+            end
+
+            deal = Deal.new(deal) if !deal.is_a?(Deal)
+
+            if find_deal_by_integration_id(deal.integration_id) != nil
+                raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
+            end
+
+            @deals.push(deal)
+        end
+
         # TODO! Remove, it's obsolete
         # @!visibility private
         def add_note(text)
@@ -111,6 +187,12 @@ module FruitToLime
             end
 
             return deals
+        end
+
+        def find_deal_by_integration_id(integration_id)
+            return @deals.find do |deal|
+                deal.integration_id == integration_id
+            end
         end
 
         # Returns a string describing problems with the data. For instance if integration_id for any entity is not unique.
