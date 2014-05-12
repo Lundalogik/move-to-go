@@ -30,5 +30,23 @@ module FruitToLime
         def serialize_name
             "Note"
         end
+
+        def validate
+            error = String.new
+
+            if @text.nil? || @text.empty?
+                error = "Text is required for note\n"
+            end
+
+            if @created_by.nil?
+                error = "#{error}Created_by is required for note\n"
+            end
+
+            if @organization.nil?
+                error = "#{error}Organization is required for note\n"
+            end
+
+            return error
+        end
     end
 end

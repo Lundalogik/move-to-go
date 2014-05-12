@@ -1,11 +1,11 @@
 # encoding: utf-8
 module FruitToLime
-    # The root model for Go import. This class is the container for everything else.  
+    # The root model for Go import. This class is the container for everything else.
     class RootModel
         # the import_coworker is a special coworker that is set as
         # responsible for objects that requires a coworker, eg a note.
         attr_accessor :import_coworker
-        
+
         attr_accessor :settings, :organizations, :coworkers, :deals, :notes
         def serialize_variables
             [
@@ -43,7 +43,7 @@ module FruitToLime
         #        :last_name=>"Anka",
         #        :email=>"kalle.anka@vonanka.com"
         #    })
-        # 
+        #
         # @example Add a coworker from a new coworker
         #    coworker = FruitToLime::Coworker.new
         #    coworker.integration_id = "123"
@@ -67,8 +67,8 @@ module FruitToLime
             end
 
             coworker = Coworker.new(coworker) if !coworker.is_a?(Coworker)
-            
-            if find_coworker_by_integration_id(coworker.integration_id)!=nil
+
+            if find_coworker_by_integration_id(coworker.integration_id) != nil
                 raise AlreadyAddedError, "Already added a coworker with integration_id #{coworker.integration_id}"
             end
 
@@ -158,6 +158,14 @@ module FruitToLime
 
             @deals.each do |deal|
                 validation_message = deal.validate
+
+                if !validation_message.empty?
+                    error = "#{error}\n#{validation_message}"
+                end
+            end
+
+            @notes.each do |note|
+                validation_message = note.validate
 
                 if !validation_message.empty?
                     error = "#{error}\n#{validation_message}"

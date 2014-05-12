@@ -11,13 +11,12 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 1
     end
 
-
     it "can add a coworker from a hash" do
         rootmodel.add_coworker({
-            :integration_id=>"123key",
-            :first_name=>"Kalle",
-            :last_name=>"Anka",
-            :email=>"kalle.anka@vonanka.com"
+            :integration_id => "123key",
+            :first_name => "Kalle",
+            :last_name => "Anka",
+            :email => "kalle.anka@vonanka.com"
         })
         rootmodel.find_coworker_by_integration_id("123key").first_name.should eq "Kalle"
         rootmodel.coworkers.length.should eq 2
@@ -65,7 +64,7 @@ describe "RootModel" do
 
         rootmodel.sanity_check.should eq ""
     end
-    
+
     it "will report when the same integration id is used during sanity check" do
         org1 = FruitToLime::Organization.new
         org1.integration_id = "1"
@@ -99,6 +98,5 @@ describe "RootModel" do
         rootmodel.organizations.push org2
 
         rootmodel.sanity_check.should eq "Duplicate person integration_id: 1."
-
     end
 end

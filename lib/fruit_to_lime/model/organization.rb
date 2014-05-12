@@ -9,7 +9,13 @@ module FruitToLime
             }
         end
 
-        def initalize()
+        def initialize(opt = nil)
+            if opt != nil
+                serialize_variables.each do |var|
+                    value = opt[var[:id]]
+                    instance_variable_set("@" + var[:id].to_s, value) if value != nil
+                end
+            end
         end
 
         def to_s
@@ -76,8 +82,8 @@ module FruitToLime
 
         # @example Set the source to par id 4653
         #     o.with_source do |source|
-        #          source.par_se('4653') 
-        #     end 
+        #          source.par_se('4653')
+        #     end
         # @see ReferenceToSource source
         def with_source
             @source = ReferenceToSource.new if @source == nil
@@ -87,7 +93,7 @@ module FruitToLime
         # @example Set the responsible coworker of the organization to the coworker with integration id 943
         #     o.with_responsible_coworker do |responsible_coworker|
         #          responsible_coworker.integration_id = "943"
-        #     end 
+        #     end
         # @see CoworkerReference responsible_coworker
         def with_responsible_coworker
             @responsible_coworker = CoworkerReference.new if @responsible_coworker==nil
@@ -151,7 +157,7 @@ module FruitToLime
         def to_s
             return "#{name}"
         end
-        
+
         def validate
             error = String.new
 
