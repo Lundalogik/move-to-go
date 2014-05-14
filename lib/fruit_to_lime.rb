@@ -11,5 +11,6 @@ module FruitToLime
     require 'fruit_to_lime/csv_helper'
     require 'fruit_to_lime/roo_helper'
     require 'fruit_to_lime/phone_helper'
+    require 'fruit_to_lime/email_helper'
     require 'fruit_to_lime/templating'
 end

@@ -7,7 +7,10 @@ describe FruitToLime::PhoneHelper do
     end
 
     it "should parse phonenumbers" do
+        # given, when
         nice_number = FruitToLime::PhoneHelper.parse_numbers("0709-685226")
+
+        # then
         nice_number.should eq "+46709685226"
     end
 
