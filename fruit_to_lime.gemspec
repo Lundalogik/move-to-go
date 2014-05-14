@@ -22,7 +22,8 @@ EOF
   s.add_development_dependency 'rspec', '>= 2.14'
   s.add_development_dependency 'rake'
 
-  s.files         = Dir.glob('lib/**/*.rb') + Dir.glob('bin/**/*') + Dir.glob('templates/**/*')
+  s.files         = Dir.glob('lib/**/*.rb') + Dir.glob('bin/**/*') +
+        Dir.glob('templates/**/*') + Dir.glob('lib/fruit_to_lime/global_phone.json')
   s.test_files    = Dir.glob('spec/**/*.rb')
   s.executables   = ['fruit_to_lime']
   s.require_paths = ['lib']
