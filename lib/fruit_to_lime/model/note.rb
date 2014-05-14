@@ -5,6 +5,15 @@ module FruitToLime
 
         attr_reader :organization, :created_by, :person
 
+        def initialize(opt = nil)
+            if !opt.nil?
+                serialize_variables.each do |myattr|
+                    val = opt[myattr[:id]]
+                    instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
+                end
+            end
+        end
+
         def serialize_variables
             [ :id, :text, :integration_id, :classification ].map {
                 |p| {

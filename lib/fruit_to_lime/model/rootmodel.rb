@@ -73,6 +73,8 @@ module FruitToLime
             end
 
             @coworkers.push(coworker)
+
+            return coworker
         end
 
         # Adds the specifed organization object to the model.
@@ -111,6 +113,8 @@ module FruitToLime
             end
 
             @organizations.push(organization)
+
+            return organization
         end
 
         # Adds the specifed deal object to the model.
@@ -120,10 +124,10 @@ module FruitToLime
         #        :name => "Big deal",
         #    })
         #
-        # @example Add an deal from a new deal
-        #    organization = FruitToLime::Deal.new
-        #    organization.integration_id = "123"
-        #    organization.name = "Big deal"
+        # @example Add a deal from a new deal
+        #    deal = FruitToLime::Deal.new
+        #    deal.integration_id = "123"
+        #    deal.name = "Big deal"
         #    rootmodel.add_deal(deal)
         #
         # @example If you want to keep adding deals and dont
@@ -149,13 +153,49 @@ module FruitToLime
             end
 
             @deals.push(deal)
+
+            return deal
         end
 
-        # TODO! Remove, it's obsolete
-        # @!visibility private
-        def add_note(text)
+        # Adds the specifed note object to the model.
+        # @example Add an deal from a hash
+        #    rootmodel.add_note({
+        #        :integration_id => "123",
+        #        :text => "This is a note",
+        #    })
+        #
+        # @example Add a note from a new note
+        #    note = FruitToLime::Note.new
+        #    note.integration_id = "123"
+        #    note.text = "Big deal"
+        #    rootmodel.add_note(note)
+        #
+        # @example If you want to keep adding deals and dont
+        # care about duplicates not being added. Your model might not
+        # be saved due to duplicate integration_ids.
+        #    begin
+        #       rootmodel.add_deal(deal)
+        #    rescue FruitToLime::AlreadyAddedError
+        #       puts "Warning: already added deal"
+        #    end
+        # @see Coworker
+        def add_note(note)
             @notes = [] if @notes == nil
-            @notes.push(if text.is_a? Note then text else Note.new(text) end)
+
+            if note.nil?
+                raise "Missing note to add"
+            end
+
+            note = Note.new(note) if !note.is_a?(Note)
+
+            if (!note.integration_id.nil? && note.integration_id.length > 0) &&
+                    find_note_by_integration_id(note.integration_id) != nil
+                raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
+            end
+
+            @notes.push(note)
+
+            return note
         end
 
         def with_new_note
@@ -175,6 +215,12 @@ module FruitToLime
         def find_organization_by_integration_id(integration_id)
             return @organizations.find do |organization|
                 organization.integration_id == integration_id
+            end
+        end
+
+        def find_note_by_integration_id(integration_id)
+            return @notes.find do |note|
+                note.integration_id == integration_id
             end
         end
 

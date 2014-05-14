@@ -139,6 +139,48 @@ describe "RootModel" do
         rootmodel.deals.length.should eq 1
     end
 
+    it "can add a note from hash" do
+        rootmodel.add_note({
+                               :integration_id => "123key",
+                               :text => "This is a note"
+        })
+        rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
+        rootmodel.notes.length.should eq 1
+    end
+
+    it "can add a note from a new note" do
+        # given
+        note = FruitToLime::Note.new
+        note.integration_id = "123key"
+        note.text = "This is a note"
+
+        # when
+        rootmodel.add_note(note)
+
+        # then
+        rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
+        rootmodel.notes.length.should eq 1
+    end
+
+    it "will not add a new organizations when the organizations is already added (same integration id)" do
+        # given
+        rootmodel.add_note({
+            :integration_id => "123key",
+            :text => "This is a note"
+        })
+        rootmodel.notes.length.should eq 1
+
+        # when, then
+        expect {
+            rootmodel.add_note({
+                :integration_id => "123key",
+                :text => "This is another note"
+            })
+        }.to raise_error(FruitToLime::AlreadyAddedError)
+        rootmodel.notes.length.should eq 1
+        rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
+    end
+
     it "will ignore empty integration ids during sanity check" do
         org1 = FruitToLime::Organization.new
         org1.name = "company 1"
