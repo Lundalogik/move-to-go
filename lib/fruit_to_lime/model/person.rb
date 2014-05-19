@@ -22,7 +22,7 @@ module FruitToLime
                 return nil
             elsif person.is_a?(Person)
                 return person.to_reference
-            elsif coworker.is?(PersonReference)
+            elsif person.is?(PersonReference)
                 return person
             end
         end
