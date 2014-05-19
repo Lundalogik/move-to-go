@@ -33,36 +33,36 @@ describe "Coworker" do
             coworker.parse_name_to_firstname_lastname_se nil, 'a default'
 
             coworker.first_name.should eq 'a default'
-        end        
+        end
     end
 
-    describe "gues_email" do
-    	it "guesses kalle.nilsson@x.com for coworker with firstname 'Kalle', lastname 'Nilsson' and domain set to 'x.com" do
-    		coworker.first_name = 'Kalle'
-    		coworker.last_name = 'Nilsson'
+    describe "guess_email" do
+        it "guesses kalle.nilsson@x.com for coworker with firstname 'Kalle', lastname 'Nilsson' and domain set to 'x.com" do
+            coworker.first_name = 'Kalle'
+            coworker.last_name = 'Nilsson'
 
-    		guessed = coworker.guess_email 'x.com'
+            guessed = coworker.guess_email 'x.com'
 
-    		guessed.should eq 'kalle.nilsson@x.com'
-    	end
+            guessed.should eq 'kalle.nilsson@x.com'
+        end
 
-    	it "guesses '' when lastname is missing" do
-    		coworker.first_name = 'Kalle'
-    		coworker.last_name = ''
+        it "guesses '' when lastname is missing" do
+            coworker.first_name = 'Kalle'
+            coworker.last_name = ''
 
-    		guessed = coworker.guess_email 'x.com'
+            guessed = coworker.guess_email 'x.com'
 
-    		guessed.should eq ''
-    	end
+            guessed.should eq ''
+        end
 
-    	it "guesses '' when firstname is missing" do
-    		coworker.first_name = nil
-    		coworker.last_name = 'Nilsson'
+        it "guesses '' when firstname is missing" do
+            coworker.first_name = nil
+            coworker.last_name = 'Nilsson'
 
-    		guessed = coworker.guess_email 'x.com'
+            guessed = coworker.guess_email 'x.com'
 
-    		guessed.should eq ''
-    	end
+            guessed.should eq ''
+        end
 
         it "guesses åäöèé to be aaoee" do
             coworker.first_name = 'åäöèé'
@@ -80,7 +80,7 @@ describe "Coworker" do
             guessed = coworker.guess_email 'x.com'
 
             guessed.should eq 'sven-erik.nilsson@x.com'
-        end        
+        end
 
         it "guesses 'sven.nilsson-svensson@x.com' when lastnames has two names with ' ' between them" do
             coworker.first_name = 'Sven'
@@ -89,6 +89,6 @@ describe "Coworker" do
             guessed = coworker.guess_email 'x.com'
 
             guessed.should eq 'sven.nilsson-svensson@x.com'
-        end            
+        end
     end
 end

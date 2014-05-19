@@ -3,10 +3,9 @@ module FruitToLime
     class Deal
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
-        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date,
-        :responsible_coworker, :customer_contact, :status
+        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date, :status
         # you add custom values by using {#set_custom_value}
-        attr_reader :custom_values, :customer
+        attr_reader :custom_values, :customer, :responsible_coworker, :customer_contact
 
         def serialize_variables
             [ :id, :integration_id, :name, :description, :probability, :value, :order_date ].map {
@@ -46,7 +45,19 @@ module FruitToLime
             error = String.new
 
             if @name.nil? || @name.empty?
-                error = "A name is required for deal.\n#{serialize()}"
+                error = "A name is required for deal.\n}"
+            end
+
+            if @customer.nil?
+                error = "#{error}\nA customer is required for deal."
+            end
+
+            if @responsible_coworker.nil?
+                error = "#{error}\nA responsible coworker is required for deal."
+            end
+
+            if error.length > 0
+                error = "#{error}\n#{serialize()}"
             end
 
             return error
@@ -59,6 +70,14 @@ module FruitToLime
 
         def customer=(customer)
             @customer = OrganizationReference.from_organization(customer)
+        end
+
+        def responsible_coworker=(coworker)
+            @responsible_coworker = CoworkerReference.from_coworker(coworker)
+        end
+
+        def customer_contact=(person)
+            @customer_contact = PersonReference.from_person(person)
         end
     end
 end
