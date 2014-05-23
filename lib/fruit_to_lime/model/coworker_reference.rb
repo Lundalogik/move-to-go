@@ -13,7 +13,7 @@ module FruitToLime
         end
 
         def serialize_variables
-            [:id, :heading, :integration_id].map {|p| {:id => p, :type => :string} }
+            [:id, :integration_id, :heading].map {|p| {:id => p, :type => :string} }
         end
 
         def serialize_name

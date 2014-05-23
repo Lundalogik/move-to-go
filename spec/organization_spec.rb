@@ -17,6 +17,17 @@ describe "Organization" do
 
         organization.validate.length > 0
     end
+
+    it "will auto convert coworker to coworker.ref during assignment" do
+        # given
+        coworker = FruitToLime::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
+
+        # when
+        organization.responsible_coworker = coworker
+
+        # then
+        organization.responsible_coworker.is_a?(FruitToLime::CoworkerReference).should eq true
+    end
 end
 
 describe "OrganizationReference" do

@@ -41,9 +41,9 @@ module FruitToLime
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
         attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site,
-        :postal_address, :visit_address, :central_phone_number, :responsible_coworker, :source_data
+        :postal_address, :visit_address, :central_phone_number, :source_data
 
-        attr_reader :employees
+        attr_reader :employees, :responsible_coworker
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
@@ -106,16 +106,6 @@ module FruitToLime
             yield @source
         end
 
-        # @example Set the responsible coworker of the organization to the coworker with integration id 943
-        #     o.with_responsible_coworker do |responsible_coworker|
-        #          responsible_coworker.integration_id = "943"
-        #     end
-        # @see CoworkerReference responsible_coworker
-        def with_responsible_coworker
-            @responsible_coworker = CoworkerReference.new if @responsible_coworker==nil
-            yield @responsible_coworker
-        end
-
         # @example Add an employee and then add additional info to that employee
         #    employee = o.add_employee({
         #        :integration_id => "79654",
@@ -132,12 +122,8 @@ module FruitToLime
             person
         end
 
-        # TODO! Remove, it's obsolete
-        # @!visibility private
-        def add_responsible_coworker(val)
-            coworker = if val.is_a? CoworkerReference then val else CoworkerReference.new(val) end
-            @responsible_coworker = coworker
-            coworker
+        def responsible_coworker=(coworker)
+            @responsible_coworker = CoworkerReference.from_coworker(coworker)
         end
 
         def find_employee_by_integration_id(integration_id)

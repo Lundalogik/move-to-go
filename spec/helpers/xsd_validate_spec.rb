@@ -33,9 +33,9 @@ describe FruitToLime::SerializeHelper do
             o.with_visit_address do |addr|
                 addr.city = "Gaaseborg"
             end
-            o.with_responsible_coworker do |coworker|
-                coworker.integration_id = "1"
-            end
+            coworker = FruitToLime::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
+            o.responsible_coworker = coworker
+
             emp = o.add_employee({
                 :integration_id => "1",
                 :first_name => "Kalle",
@@ -45,15 +45,14 @@ describe FruitToLime::SerializeHelper do
             emp.currently_employed = true
             i.organizations.push(o)
             xsd_file = File.join(File.dirname(__FILE__), '..', 'sample_data', 'schema0.xsd')
-            
+
             xsd = Nokogiri::XML::Schema(File.read(xsd_file))
-            #puts  FruitToLime::SerializeHelper::serialize(i)
             doc = Nokogiri::XML(FruitToLime::SerializeHelper::serialize(i,-1))
             xsd.validate(doc)
         }
         it "Should not contain validation errors" do
             expect(validate_result).to eq([])
         end
-        
+
     end
 end
