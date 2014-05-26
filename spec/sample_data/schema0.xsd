@@ -73,6 +73,7 @@
       <xs:element minOccurs="0" maxOccurs="1" name="CustomValues" type="ArrayOfCustomValue" />
       <xs:element minOccurs="0" maxOccurs="1" name="Tags" type="ArrayOfString" />
       <xs:element minOccurs="0" maxOccurs="1" name="ResponsibleCoworker" type="CoworkerReference" />
+	  <xs:element minOccurs="0" maxOccurs="1" name="Relation" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ReferenceToSource">

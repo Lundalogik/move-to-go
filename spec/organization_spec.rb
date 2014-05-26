@@ -28,6 +28,27 @@ describe "Organization" do
         # then
         organization.responsible_coworker.is_a?(FruitToLime::CoworkerReference).should eq true
     end
+
+    it "will have a no relation as default" do
+        # given, when, then
+        organization.relation.should eq FruitToLime::Relation::NoRelation
+    end
+
+    it "should only accept relations from Relations enum" do
+        # given, when
+        organization.relation = FruitToLime::Relation::IsACustomer
+
+        # then
+        organization.relation.should eq FruitToLime::Relation::IsACustomer
+    end
+
+    it "should not accept invalid relations" do
+        # when, then
+        expect {
+            organization.relation = "hubbabubba"
+        }.to raise_error(FruitToLime::InvalidRelationError)
+    end
+
 end
 
 describe "OrganizationReference" do

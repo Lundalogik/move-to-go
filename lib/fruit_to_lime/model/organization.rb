@@ -43,7 +43,7 @@ module FruitToLime
         attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site,
         :postal_address, :visit_address, :central_phone_number, :source_data
 
-        attr_reader :employees, :responsible_coworker
+        attr_reader :employees, :responsible_coworker, :relation
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
@@ -54,6 +54,8 @@ module FruitToLime
                     instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
                 end
             end
+
+            @relation = Relation::NoRelation if @relation.nil?
         end
 
         def to_reference()
@@ -126,6 +128,18 @@ module FruitToLime
             @responsible_coworker = CoworkerReference.from_coworker(coworker)
         end
 
+        # Sets the organization's relation to the specified value. The
+        # relation must be a valid value from the Relation module
+        # otherwise an InvalidRelationError error will be thrown.
+        def relation=(relation)
+            if relation == Relation::NoRelation || relation == Relation::WorkingOnIt ||
+                    relation == Relation::IsACustomer || relation == Relation::WasACustomer || relation == Relation::BeenInTouch
+                @relation = relation
+            else
+                raise InvalidRelationError
+            end
+        end
+
         def find_employee_by_integration_id(integration_id)
             return nil if @employees.nil?
             return @employees.find do |e|
@@ -148,7 +162,8 @@ module FruitToLime
              { :id => :employees, :type => :persons },
              { :id => :custom_values, :type => :custom_values },
              { :id => :tags, :type => :tags },
-             { :id => :responsible_coworker, :type => :coworker_reference}
+             { :id => :responsible_coworker, :type => :coworker_reference},
+             { :id => :relation, :type => :string }
             ]
         end
 

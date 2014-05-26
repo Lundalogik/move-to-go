@@ -75,6 +75,10 @@ class Converter
         # same file more than once without creating duplicates
         organization.integration_id = row['ID']
 
+        # Sets the organization's relation. Relation must be a value
+        # from FruitToLime::Relation.
+        organization.relation = FruitToLime::Relation::IsACustomer
+
         # *** TODO:
         #
         # Set organization properties from the row.

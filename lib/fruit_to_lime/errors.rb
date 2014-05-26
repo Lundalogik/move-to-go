@@ -4,4 +4,7 @@ module FruitToLime
 
     class InvalidCustomFieldError < StandardError
     end
+
+    class InvalidRelationError < StandardError
+    end
 end
