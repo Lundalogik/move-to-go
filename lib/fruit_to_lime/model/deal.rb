@@ -3,9 +3,16 @@ module FruitToLime
     class Deal
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
-        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date, :status
+        # Get/set the deal's status. Statuses must be configured in
+        # LIME Go before the import.
+        attr_accessor :status
+
+        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date
+
         # you add custom values by using {#set_custom_value}
-        attr_reader :custom_values, :customer, :responsible_coworker, :customer_contact
+        attr_reader :custom_values
+
+        attr_reader :customer, :responsible_coworker, :customer_contact
 
         def serialize_variables
             [ :id, :integration_id, :name, :description, :probability, :value, :order_date ].map {
