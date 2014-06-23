@@ -52,4 +52,16 @@ describe "Note" do
         # then
         note.created_by.is_a?(FruitToLime::CoworkerReference).should eq true
     end
+
+    it "will auto convert deal to deal.ref during assignment" do
+        # given
+        deal = FruitToLime::Deal.new({:integration_id => "123" })
+        deal.name = "The new deal"
+
+        # when
+        note.deal = deal
+
+        # then
+        note.deal.is_a?(FruitToLime::DealReference).should eq true
+    end
 end

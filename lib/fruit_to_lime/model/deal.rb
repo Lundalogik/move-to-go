@@ -1,5 +1,34 @@
 
 module FruitToLime
+    class DealReference
+        include SerializeHelper
+        attr_accessor :id, :integration_id
+        def serialize_variables
+            [ :id, :integration_id ].map { |prop| {:id => prop, :type => :string} }
+        end
+
+        def initalize()
+        end
+
+        def to_s
+            return "(#{id}, #{integration_id})"
+        end
+
+        def empty?
+            return !@integration_id && !@id
+        end
+
+        def self.from_deal(deal)
+            if deal.nil?
+                return nil
+            elsif deal.is_a?(Deal)
+                return deal.to_reference
+            elsif person.is_a?(DealReference)
+                return deal
+            end
+        end
+    end
+
     class Deal
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
@@ -46,6 +75,13 @@ module FruitToLime
 
         def to_s
             return "deal[id=#{@id}, integration_id=#{@integration_id}]"
+        end
+
+        def to_reference
+            reference = DealReference.new
+            reference.id = @id
+            reference.integration_id = @integration_id
+            return reference
         end
 
         def validate

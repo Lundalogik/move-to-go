@@ -3,7 +3,7 @@ module FruitToLime
         include SerializeHelper
         attr_accessor :id, :text, :integration_id, :classification, :date
 
-        attr_reader :organization, :created_by, :person
+        attr_reader :organization, :created_by, :person, :deal
 
         def initialize(opt = nil)
             if !opt.nil?
@@ -52,6 +52,10 @@ module FruitToLime
 
         def person=(person)
             @person = PersonReference.from_person(person)
+        end
+
+        def deal=(deal)
+            @deal = DealReference.from_deal(deal)
         end
 
         def validate
