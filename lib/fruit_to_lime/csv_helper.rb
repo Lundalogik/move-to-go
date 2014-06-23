@@ -8,7 +8,7 @@ module FruitToLime
         # @example Use specific column separator and transform to hashes
         #     column_separator = ','
         #     hashes = FruitToLime::CsvHelper.text_to_hashes(text, column_separator)
-        def self.text_to_hashes(text, column_separator = nil)
+        def self.text_to_hashes(text, column_separator = nil, row_separator = :auto, quote_char = '"')
             if !text
                 raise "Missing text"
             end
@@ -17,7 +17,8 @@ module FruitToLime
                 column_separator = self.detect_col_sep text
             end
 
-            rows = CSV.parse(text.strip,{:col_sep => column_separator})
+            rows = CSV.parse(text.strip,{:col_sep => column_separator, 
+                :row_sep => row_separator, :quote_char => quote_char})
             map = {}
             first = rows.first 
             (0 .. first.length-1).each do |i|
