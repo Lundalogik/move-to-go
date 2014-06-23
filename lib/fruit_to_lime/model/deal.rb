@@ -59,10 +59,6 @@ module FruitToLime
                 error = "#{error}\nA customer is required for deal."
             end
 
-            if @responsible_coworker.nil?
-                error = "#{error}\nA responsible coworker is required for deal."
-            end
-
             if error.length > 0
                 error = "#{error}\n#{serialize()}"
             end
