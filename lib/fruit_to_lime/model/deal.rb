@@ -36,12 +36,12 @@ module FruitToLime
         # LIME Go before the import.
         attr_accessor :status
 
-        attr_accessor :id, :integration_id, :name, :description, :probability, :value, :order_date
+        attr_accessor :id, :integration_id, :name, :description, :probability, :order_date
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
-        attr_reader :customer, :responsible_coworker, :customer_contact
+        attr_reader :customer, :responsible_coworker, :customer_contact, :value
 
         def serialize_variables
             [ :id, :integration_id, :name, :description, :probability, :value, :order_date ].map {
@@ -117,6 +117,29 @@ module FruitToLime
 
         def customer_contact=(person)
             @customer_contact = PersonReference.from_person(person)
+        end
+
+        def value=(value)
+            # we have had some issues with LIME Easy imports where the
+            # value was in the format "357 000". We need to remove
+            # those spaces.
+            fixed_value = value.gsub(" ", "")
+
+            if is_integer?(fixed_value)
+                @value = fixed_value
+            elsif is_float?(fixed_value)
+                @value = fixed_value
+            else
+                raise InvalidValueError, value
+            end
+        end
+
+        def is_integer?(value)
+            true if Integer(value) rescue false
+        end
+
+        def is_float?(value)
+            true if Float(value) rescue false
         end
     end
 end

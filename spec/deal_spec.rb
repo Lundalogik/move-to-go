@@ -48,14 +48,55 @@ describe "Deal" do
         deal.customer_contact.is_a?(FruitToLime::PersonReference).should eq true
     end
 
-    it "will fail on validation if name, responsible and customer is empty" do
+    it "will fail on validation if name and customer is empty" do
         # given, when
         deal.name = "The big deal"
         deal.customer = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
-        deal.responsible_coworker =
-            FruitToLime::Coworker.new({ :integration_id => "456", :first_name => "Billy", :last_name => "Bob" })
 
         # then
         deal.validate.should eq ""
+    end
+
+    it "should convert value strings that looks like number to number" do
+        # given
+        deal.name = "The deal with a strange value"
+
+        # when
+        deal.value = "357 000"
+
+        # then
+        deal.value.should eq "357000"
+    end
+
+    it "should raise invalidvalueerror if value is not a number" do
+        # given
+        deal.name = "The deal with an invalid value"
+
+        # when, then
+        expect {
+            deal.value = "Im not a number"
+        }.to raise_error(FruitToLime::InvalidValueError)
+    end
+
+    it "should set value if value is an integer" do
+        # given
+        deal.name = "The new deal"
+
+        # when
+        deal.value = "100"
+
+        # then
+        deal.value.should eq "100"
+    end
+
+    it "should set value if value is a float" do
+        # given
+        deal.name = "The new deal"
+
+        # when
+        deal.value = "100.10"
+
+        # then
+        deal.value.should eq "100.10"
     end
 end
