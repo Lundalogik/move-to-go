@@ -182,6 +182,12 @@ module FruitToLime
                 error = "A name is required for organization.\n#{serialize()}"
             end
 
+            if !@source.nil?
+                if @source.id.nil? || @source.id == ""
+                    error = "#{error}\nReference to source must have an id"
+                end
+            end
+
             if @employees != nil
                 @employees.each do |person|
                     validation_message = person.validate()

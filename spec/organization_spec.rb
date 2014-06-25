@@ -12,10 +12,25 @@ describe "Organization" do
         organization.validate.should eq ""
     end
 
+    it "will fail on validateion if it has a source with no sourceid" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se('')
+        end
+
+        # then
+        organization.validate.length.should be > 0
+    end
+
     it "will fail on validation if no name is specified" do
+        # given
         organization.name = ""
 
-        organization.validate.length > 0
+        # when, then
+        organization.validate.length.should be > 0
     end
 
     it "will auto convert coworker to coworker.ref during assignment" do
@@ -48,7 +63,6 @@ describe "Organization" do
             organization.relation = "hubbabubba"
         }.to raise_error(FruitToLime::InvalidRelationError)
     end
-
 end
 
 describe "OrganizationReference" do

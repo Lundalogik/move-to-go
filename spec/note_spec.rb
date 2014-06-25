@@ -7,7 +7,7 @@ describe "Note" do
     }
 
     it "must have a text" do
-        note.validate.length > 0
+        note.validate.length.should be > 0
     end
 
     it "is valid when it has text, created_by and organization" do
@@ -46,7 +46,7 @@ describe "Note" do
         note.created_by = FruitToLime::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
 
         # when, then
-        note.validate.length > 0
+        note.validate.length.should be > 0
     end
 
     it "will auto convert org to org.ref during assignment" do
