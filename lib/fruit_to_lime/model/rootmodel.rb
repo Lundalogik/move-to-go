@@ -218,6 +218,14 @@ module FruitToLime
             end
         end
 
+        def find_person_by_integration_id(integration_id)
+            return nil if @organizations.nil?
+            @organizations.each do |organization|
+                person = organization.find_employee_by_integration_id(integration_id)
+                return person if person
+            end
+        end
+
         def find_note_by_integration_id(integration_id)
             return @notes.find do |note|
                 note.integration_id == integration_id

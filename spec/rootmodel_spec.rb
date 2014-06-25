@@ -181,6 +181,53 @@ describe "RootModel" do
         rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
     end
 
+    it "Will find a person by integration id" do
+        # given
+        organization = FruitToLime::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.add_employee({
+            :integration_id => "123",
+            :first_name => "Billy",
+            :last_name => "Bob"
+        })
+        
+        rootmodel.add_organization(organization)
+        
+        # when
+        found_person = rootmodel.find_person_by_integration_id("123")
+
+        # then
+        found_person.integration_id.should eq "123"
+        found_person.first_name.should eq "Billy"
+        found_person.last_name.should eq "Bob"
+    end
+
+    it "Will find a person by integration id from an organization with many employees" do
+        # given
+        organization = FruitToLime::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.add_employee({
+            :integration_id => "123",
+            :first_name => "Billy",
+            :last_name => "Bob"
+        })
+        organization.add_employee({
+            :integration_id => "456",
+            :first_name => "Vincent",
+            :last_name => "Vega"
+        })
+        
+        rootmodel.add_organization(organization)
+
+        # when
+        found_person = rootmodel.find_person_by_integration_id("123")
+
+        # then
+        found_person.integration_id.should eq "123"
+        found_person.first_name.should eq "Billy"
+        found_person.last_name.should eq "Bob"
+    end
+
     it "will ignore empty integration ids during sanity check" do
         org1 = FruitToLime::Organization.new
         org1.name = "company 1"

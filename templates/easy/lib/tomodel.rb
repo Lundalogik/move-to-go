@@ -50,12 +50,17 @@ class Exporter
             addr.city = row['visit city']
         end
         
-        organization.with_source do |source|
-            source.par_se(row['Bisnode-id'])
+        # Set Bisnode Id if present
+        bisnode_id = row['Bisnode-id']
+        
+        if bisnode_id && !bisnode_id.empty?
+            organization.with_source do |source|
+                source.par_se(bisnode_id)
+            end
         end
 
-        # Only set the orgnr. if the PAR-id is empty
-        if row['Bisnode-id'].empty?
+        # Only set other Bisnode fields if the Bisnode Id is empty
+        if bisnode_id.empty?
             organization.organization_number = row['orgnr']
         end
 
@@ -148,17 +153,20 @@ class Exporter
         return deal
     end
 
-    def to_organization_note(row, rootmodel, coworkers)
+    def to_organization_note(row, rootmodel, coworkers, people)
         note = FruitToLime::Note.new()
         
         organization = rootmodel.find_organization_by_integration_id(row['companyId'])
-        coworker = rootmodel.find_coworker_by_integration_id(coworkers[row['userIndex']])
+        
+        coworker_id = coworkers[row['userIndex']]
+        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if organization && coworker
             note.organization = organization
             note.created_by = coworker
+            note.person = organization.find_employee_by_integration_id(people[row['personIndex']])
             note.date = row['Date']
-            note.text = row['RawHistory']
+            note.text = "#{row['Category']}: #{row['History']}"
 
             rootmodel.add_note(note) unless note.text.empty?
         end
@@ -170,7 +178,9 @@ class Exporter
         note = FruitToLime::Note.new()
 
         deal = rootmodel.find_deal_by_integration_id(row['projectId'])
-        coworker = rootmodel.find_coworker_by_integration_id(coworkers[row['userIndex']])
+        
+        coworker_id = coworkers[row['userIndex']]
+        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if deal && coworker
             note.deal = deal
@@ -212,13 +222,14 @@ class Exporter
         rootmodel = FruitToLime::RootModel.new
         coworkers = Hash.new
         includes = Hash.new
+        people = Hash.new
 
         configure rootmodel
 
         # coworkers
         # start with these since they are referenced
         # from everywhere....
-        if coworkers_filename != nil
+        if coworkers_filename && !coworkers_filename.empty?
             process_rows coworkers_filename do |row|
                 coworkers[row['userIndex']] = row['userId']
                 rootmodel.add_coworker(to_coworker(row))
@@ -227,44 +238,45 @@ class Exporter
         end
 
         # organizations
-        if organization_filename != nil
+        if organization_filename && !organization_filename.empty?
             process_rows organization_filename do |row|
-                rootmodel.organizations.push(to_organization(row, rootmodel, coworkers))
+                rootmodel.add_organization(to_organization(row, rootmodel, coworkers))
             end
         end
 
         # persons
         # depends on organizations
-        if persons_filename != nil
+        if persons_filename && !persons_filename.empty?
             process_rows persons_filename do |row|
+                people[row['personIndex']] = "#{row['referenceId']}-#{row['companyId']}"
                 # adds it self to the employer
                 to_person(row, rootmodel)
             end
         end
 
-        if orgnotes_filename != nil
+        if orgnotes_filename && !orgnotes_filename.empty?
             process_rows orgnotes_filename do |row|
                 # adds itself if applicable
-                to_organization_note(row, rootmodel, coworkers)
+                to_organization_note(row, rootmodel, coworkers, people)
             end
         end
 
         # deals
         # deals can reference coworkers (responsible), organizations
         # and persons (contact)
-        if includes_filename
+        if includes_filename && !includes_filename.empty?
             process_rows includes_filename do |row|
                 includes[row['projectId']] = row['companyId']
             end
         end
         
-        if deals_filename
+        if deals_filename && !deals_filename.empty?
             process_rows deals_filename do |row|
-                rootmodel.deals.push(to_deal(row, rootmodel, includes, coworkers))    
+                rootmodel.add_deal(to_deal(row, rootmodel, includes, coworkers))    
             end
         end
 
-        if dealnotes_filename
+        if dealnotes_filename && !dealnotes_filename.empty?
             process_rows dealnotes_filename do |row|
                 # adds itself if applicable
                 to_deal_note(row, rootmodel, coworkers)
