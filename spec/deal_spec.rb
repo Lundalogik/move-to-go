@@ -48,12 +48,11 @@ describe "Deal" do
         deal.customer_contact.is_a?(FruitToLime::PersonReference).should eq true
     end
 
-    it "will fail on validation if name and customer is empty" do
-        # given, when
+    it "will fail on validation if name is empty" do
+        # given
         deal.name = "The big deal"
-        deal.customer = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
-        # then
+        # when, then
         deal.validate.should eq ""
     end
 

@@ -11,11 +11,42 @@ describe "Note" do
     end
 
     it "is valid when it has text, created_by and organization" do
+        # given
         note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
         note.created_by = FruitToLime::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
         note.organization = FruitToLime::OrganizationReference.new({ :integration_id => "456", :heading => "Lundalogik" })
 
+        # when, then
         note.validate.should eq ""
+    end
+
+    it "is valid when it has text, created_by and person" do
+        # given
+        note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
+        note.created_by = FruitToLime::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.person = FruitToLime::Person.new({ :integration_id => "456", :heading => "Billy Bob" })
+
+        # when, then
+        note.validate.should eq ""
+    end
+
+    it "is valid when it has text, created_by and deal" do
+        # given
+        note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
+        note.created_by = FruitToLime::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.deal = FruitToLime::Deal.new({ :integration_id => "456", :heading => "The new deal" })
+
+        # when, then
+        note.validate.should eq ""
+    end
+
+    it "is invalid if no note has no attached objects" do
+        # given
+        note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
+        note.created_by = FruitToLime::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+
+        # when, then
+        note.validate.length > 0
     end
 
     it "will auto convert org to org.ref during assignment" do

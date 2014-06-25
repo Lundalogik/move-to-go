@@ -69,8 +69,8 @@ module FruitToLime
                 error = "#{error}Created_by is required for note\n"
             end
 
-            if @organization.nil? && @deal.nil?
-                error = "#{error}Organization or deal is required for note\n"
+            if @organization.nil? && @deal.nil? && @person.nil?
+                error = "#{error}Organization, deal or person is required for note\n"
             end
 
             return error
