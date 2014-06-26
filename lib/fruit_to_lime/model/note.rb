@@ -25,6 +25,7 @@ module FruitToLime
                  { :id => :date, :type => :date },
                  { :id => :created_by, :type => :coworker_reference },
                  { :id => :organization, :type => :organization_reference },
+                 { :id => :deal, :type => :deal_reference },
                  { :id => :person, :type => :person_reference }
                 ]
         end
