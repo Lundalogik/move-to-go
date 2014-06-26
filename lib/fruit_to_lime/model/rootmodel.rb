@@ -152,6 +152,10 @@ module FruitToLime
                 raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
             end
 
+            if deal.responsible_coworker.nil?
+                deal.responsible_coworker = @import_coworker
+            end
+
             @deals.push(deal)
 
             return deal
