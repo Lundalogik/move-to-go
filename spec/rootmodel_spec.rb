@@ -119,6 +119,35 @@ describe "RootModel" do
         rootmodel.deals.length.should eq 1
     end
 
+    it "will set reponsible coworker to import_coworker if none specifed" do
+        # given
+        deal = FruitToLime::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big deal"
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        deal.responsible_coworker.integration_id.should eq rootmodel.import_coworker.integration_id
+    end
+
+    it "will not set reponsible coworker to import_coworker if specifed" do
+        # given
+        deal = FruitToLime::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big deal"
+        coworker = FruitToLime::Coworker.new
+        coworker.integration_id = "123"
+        deal.responsible_coworker = coworker
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        deal.responsible_coworker.integration_id.should eq coworker.integration_id
+    end
+
     it "will not add a new deal when the deal is already added (same integration id)" do
         # given
         rootmodel.add_deal({
@@ -190,9 +219,9 @@ describe "RootModel" do
             :first_name => "Billy",
             :last_name => "Bob"
         })
-        
+
         rootmodel.add_organization(organization)
-        
+
         # when
         found_person = rootmodel.find_person_by_integration_id("123")
 
@@ -216,7 +245,7 @@ describe "RootModel" do
             :first_name => "Vincent",
             :last_name => "Vega"
         })
-        
+
         rootmodel.add_organization(organization)
 
         # when
