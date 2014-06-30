@@ -176,8 +176,10 @@ class Exporter
         deal.probability = row['probability'].gsub(/[^\d]/,"").to_i
 
         # Create a status object and set it's label to the value of the Easy field
-        deal.status = FruitToLime::DealStatus.new
-        deal.status.label = row['Status']
+        if !row['Status'].empty?
+            deal.status = FruitToLime::DealStatus.new
+            deal.status.label = row['Status']    
+        end
 
         # Tags
         deal.set_tag("Imported")
