@@ -191,6 +191,39 @@ describe "RootModel" do
         rootmodel.notes.length.should eq 1
     end
 
+    it "will not add a nil note" do
+        # given, when
+        rootmodel.add_note(nil)
+
+        # then
+        rootmodel.notes.length.should eq 0
+    end
+
+    it "will not add a nil organization" do
+        # given, when
+        rootmodel.add_organization(nil)
+
+        # then
+        rootmodel.organizations.length.should eq 0
+    end
+
+    it "will not add a nil deal" do
+        # given, when
+        rootmodel.add_deal(nil)
+
+        # then
+        rootmodel.deals.length.should eq 0
+    end
+
+    it "will not add a nil coworker" do
+        # given, when
+        rootmodel.add_coworker(nil)
+
+        # then
+        # 1 since we always have the import coworker
+        rootmodel.coworkers.length.should eq 1
+    end
+
     it "will not add a new organizations when the organizations is already added (same integration id)" do
         # given
         rootmodel.add_note({

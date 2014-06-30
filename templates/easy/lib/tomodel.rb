@@ -7,7 +7,7 @@ class Exporter
     def to_coworker(row)
         coworker = FruitToLime::Coworker.new
         # integration_id is typically the userId in Easy
-        # Must be set to be able to import the same file more 
+        # Must be set to be able to import the same file more
         # than once without creating duplicates
         coworker.integration_id = row['userId']
         coworker.parse_name_to_firstname_lastname_se(row['Name'])
@@ -15,15 +15,14 @@ class Exporter
         return coworker
     end
 
-    # Turns a row from the Easy exported Company.txt file into
-    # a fruit_to_lime model that is used to generate xml
-    # Uses rootmodel to locate other related stuff such coworker
-    def to_organization(row, rootmodel, coworkers)
+    # Turns a row from the Easy exported Company.txt file into a
+    # fruit_to_lime model that is used to generate xml
+    def to_organization(row, coworkers)
         organization = FruitToLime::Organization.new
         # integration_id is typically the company Id in Easy
-        # Must be set to be able to import the same file more 
+        # Must be set to be able to import the same file more
         # than once without creating duplicates
-        
+
         # Easy standard fields
         organization.integration_id = row['companyId']
         organization.name = row['company name']
@@ -52,10 +51,10 @@ class Exporter
             addr.zip_code = row['visit zip']
             addr.city = row['visit city']
         end
-        
+
         # Set Bisnode Id if present
         bisnode_id = row['Bisnode-id']
-        
+
         if bisnode_id && !bisnode_id.empty?
             organization.with_source do |source|
                 source.par_se(bisnode_id)
@@ -70,7 +69,7 @@ class Exporter
         # Responsible coworker for the organization.
         # For instance responsible sales rep.
         coworker_id = coworkers[row['userIndex - our reference']]
-        organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
+        organization.responsible_coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
 
         # Tags are set and defined at the same place
         # Setting a tag: Imported is useful for the user
@@ -87,22 +86,18 @@ class Exporter
         if row['Customer relation'] == '1.Customer'
             # We have made a deal with this organization.
             organization.relation = Relation::IsACustomer
-        end
         elsif row['Customer relation'] == '3.Partner'
             # We have made a deal with this organization.
             organization.relation = Relation::IsACustomer
-        end
         elsif row['Customer relation'] == '2.Prospect'
             # Something is happening with this organization, we might have
             # booked a meeting with them or created a deal, etc.
             organization.relation = Relation::WorkingOnIt
-        end
         elsif row['Customer relation'] == '4.Lost customer'
             # We had something going with this organization but we
             # couldn't close the deal and we don't think they will be a
             # customer to us in the foreseeable future.
             organization.relation = Relation::BeenInTouch
-        end
         else
             organization.relation = Relation::NoRelation
         end
@@ -112,14 +107,14 @@ class Exporter
 
     # Turns a row from the Easy exported Company-Person.txt file into
     # a fruit_to_lime model that is used to generate xml
-    # Uses rootmodel to locate employer organization
-    def to_person(row, rootmodel)
+    def to_person(row)
         person = FruitToLime::Person.new
-        
-        # Easy standard fields created in configure method
-        # Easy persons don't have a globally unique Id, they are only unique
-        # within the scope of the company, so we combine the referencId and the companyId
-        # to make a globally unique integration_id
+
+        # Easy standard fields created in configure method Easy
+        # persons don't have a globally unique Id, they are only
+        # unique within the scope of the company, so we combine the
+        # referenceId and the companyId to make a globally unique
+        # integration_id
         person.integration_id = "#{row['referenceId']}-#{row['companyId']}"
         person.first_name = row['First name']
         person.last_name = row['Last name']
@@ -132,7 +127,7 @@ class Exporter
 
         # Populate a Go custom field
         person.set_custom_value("shoe_size", row['shoe size'])
-        
+
         # Tags
         person.set_tag("Imported")
 
@@ -149,30 +144,29 @@ class Exporter
         end
 
         # set employer connection
-        employer = rootmodel.find_organization_by_integration_id(row['companyId'])
+        employer = @rootmodel.find_organization_by_integration_id(row['companyId'])
         if employer
             employer.add_employee person
         end
     end
 
     # Turns a row from the Easy exported Project.txt file into
-    # a fruit_to_lime model that is used to generate xml
+    # a fruit_to_lime model that is used to generate xml.
     # Uses includes hash to lookup organizations to connect
     # Uses coworkers hash to lookup coworkers to connect
-    # Uses rootmodel to find coworkers and organizations objects
-    def to_deal(row, rootmodel, includes, coworkers)
+    def to_deal(row, includes, coworkers)
         deal = FruitToLime::Deal.new
         # Easy standard fields
         deal.integration_id = row['projectId']
         deal.name = row['Name']
         deal.description = row['Description']
 
-        # Easy superfields        
+        # Easy superfields
         deal.order_date = row[' order date']
 
         coworker_id = coworkers[row['userIndex']]
-        deal.responsible_coworker = rootmodel.find_coworker_by_integration_id coworker_id
-        
+        deal.responsible_coworker = @rootmodel.find_coworker_by_integration_id coworker_id
+
         # Should be integer
         # The currency used in Easy should match the one used in Go
         deal.value = row['value']
@@ -183,8 +177,7 @@ class Exporter
 
         # Create a status object and set it's label to the value of the Easy field
         deal.status = FruitToLime::DealStatus.new
-            deal.status.label = row['Status']
-        
+        deal.status.label = row['Status']
 
         # Tags
         deal.set_tag("Imported")
@@ -192,56 +185,53 @@ class Exporter
         # Make the deal - organization connection
         if includes
             organization_id = includes[row['projectId']]
-            organization = rootmodel.find_organization_by_integration_id(organization_id)
+            organization = @rootmodel.find_organization_by_integration_id(organization_id)
             if organization
                 deal.customer = organization
             end
         end
-        
+
         return deal
     end
 
     # Turns a row from the Easy exported Company-History.txt file into
-    # a fruit_to_lime model that is used to generate xml
+    # a fruit_to_lime model that is used to generate xml.
     # Uses coworkers hash to lookup coworkers to connect
     # Uses people hash to lookup persons to connect
-    # Uses rootmodel to find coworkers and organizations objects
-    def to_organization_note(row, rootmodel, coworkers, people)
-        note = FruitToLime::Note.new()
-        
-        organization = rootmodel.find_organization_by_integration_id(row['companyId'])
-        
+    def to_organization_note(row, coworkers, people)
+        organization = @rootmodel.find_organization_by_integration_id(row['companyId'])
+
         coworker_id = coworkers[row['userIndex']]
-        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
+        coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if organization && coworker
+            note = FruitToLime::Note.new()
             note.organization = organization
             note.created_by = coworker
             note.person = organization.find_employee_by_integration_id(people[row['personIndex']])
             note.date = row['Date']
             note.text = "#{row['Category']}: #{row['History']}"
 
-            rootmodel.add_note(note) unless note.text.empty?
+            return note.text.empty? ? nil : note
         end
 
         return note
     end
 
-    # TODO: This could be improved to read a person from an organization 
-    # connected to this deal if any, but as it is a many to many connection
-    # between organizations and deals it's not a straight forward task
-
     # Turns a row from the Easy exported Project-History.txt file into
     # a fruit_to_lime model that is used to generate xml
     # Uses coworkers hash to lookup coworkers to connect
-    # Uses rootmodel to find coworkers and organizations objects
-    def to_deal_note(row, rootmodel, coworkers)
+    def to_deal_note(row, coworkers)
+        # TODO: This could be improved to read a person from an
+        # organization connected to this deal if any, but since it is
+        # a many to many connection between organizations and deals
+        # it's not a straight forward task
         note = FruitToLime::Note.new()
 
-        deal = rootmodel.find_deal_by_integration_id(row['projectId'])
-        
+        deal = @rootmodel.find_deal_by_integration_id(row['projectId'])
+
         coworker_id = coworkers[row['userIndex']]
-        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
+        coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if deal && coworker
             note.deal = deal
@@ -250,7 +240,7 @@ class Exporter
             # Raw history looks like this <category>: <person>: <text>
             note.text = row['RawHistory']
 
-            rootmodel.add_note(note) unless note.text.empty?
+            return note.text.empty? ? nil : note
         end
 
         return note
@@ -280,12 +270,12 @@ class Exporter
     def to_model(coworkers_filename, organization_filename, persons_filename, orgnotes_filename, includes_filename, deals_filename, dealnotes_filename)
         # A rootmodel is used to represent all entitite/models
         # that is exported
-        rootmodel = FruitToLime::RootModel.new
+        @rootmodel = FruitToLime::RootModel.new
         coworkers = Hash.new
         includes = Hash.new
         people = Hash.new
 
-        configure rootmodel
+        configure @rootmodel
 
         # coworkers
         # start with these since they are referenced
@@ -293,15 +283,14 @@ class Exporter
         if coworkers_filename && !coworkers_filename.empty?
             process_rows coworkers_filename do |row|
                 coworkers[row['userIndex']] = row['userId']
-                rootmodel.add_coworker(to_coworker(row))
-
+                @rootmodel.add_coworker(to_coworker(row))
             end
         end
 
         # organizations
         if organization_filename && !organization_filename.empty?
             process_rows organization_filename do |row|
-                rootmodel.add_organization(to_organization(row, rootmodel, coworkers))
+                @rootmodel.add_organization(to_organization(row, coworkers))
             end
         end
 
@@ -311,7 +300,7 @@ class Exporter
             process_rows persons_filename do |row|
                 people[row['personIndex']] = "#{row['referenceId']}-#{row['companyId']}"
                 # adds it self to the employer
-                to_person(row, rootmodel)
+                to_person(row)
             end
         end
 
@@ -319,25 +308,25 @@ class Exporter
         if orgnotes_filename && !orgnotes_filename.empty?
             process_rows orgnotes_filename do |row|
                 # adds itself if applicable
-                to_organization_note(row, rootmodel, coworkers, people)
+                @rootmodel.add_note(to_organization_note(row, coworkers, people))
             end
         end
 
         # Organization - Deal connection
-        # Reads the includes.txt and creats a hash 
+        # Reads the includes.txt and creats a hash
         # that connect organizations to deals
         if includes_filename && !includes_filename.empty?
             process_rows includes_filename do |row|
                 includes[row['projectId']] = row['companyId']
             end
         end
-        
+
         # deals
         # deals can reference coworkers (responsible), organizations
         # and persons (contact)
         if deals_filename && !deals_filename.empty?
             process_rows deals_filename do |row|
-                rootmodel.add_deal(to_deal(row, rootmodel, includes, coworkers))    
+                @rootmodel.add_deal(to_deal(row, includes, coworkers))
             end
         end
 
@@ -345,11 +334,11 @@ class Exporter
         if dealnotes_filename && !dealnotes_filename.empty?
             process_rows dealnotes_filename do |row|
                 # adds itself if applicable
-                to_deal_note(row, rootmodel, coworkers)
+                @rootmodel.add_note(to_deal_note(row, coworkers))
             end
         end
 
-        return rootmodel
+        return @rootmodel
     end
 
     def save_xml(file)

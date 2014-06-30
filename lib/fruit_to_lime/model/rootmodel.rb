@@ -62,8 +62,8 @@ module FruitToLime
         def add_coworker(coworker)
             @coworkers = [] if @coworkers == nil
 
-            if coworker == nil
-                raise "Missing coworker to add!"
+            if coworker.nil?
+                return nil
             end
 
             coworker = Coworker.new(coworker) if !coworker.is_a?(Coworker)
@@ -103,7 +103,7 @@ module FruitToLime
             @organizations = [] if @organizations.nil?
 
             if organization.nil?
-                raise "Missing organization to add"
+                return nil
             end
 
             organization = Organization.new(organization) if !organization.is_a?(Organization)
@@ -143,7 +143,7 @@ module FruitToLime
             @deals = [] if @deals.nil?
 
             if deal.nil?
-                raise "Missing deal to add"
+                return nil
             end
 
             deal = Deal.new(deal) if !deal.is_a?(Deal)
@@ -187,8 +187,8 @@ module FruitToLime
             @notes = [] if @notes == nil
 
             if note.nil?
-                raise "Missing note to add"
-            end
+                return nil
+             end
 
             note = Note.new(note) if !note.is_a?(Note)
 
@@ -202,13 +202,13 @@ module FruitToLime
             return note
         end
 
-        def with_new_note
-            @notes = [] if @notes == nil
+        # def with_new_note
+        #     @notes = [] if @notes == nil
 
-            note = Note.new
-            @notes.push note
-            yield note
-        end
+        #     note = Note.new
+        #     @notes.push note
+        #     yield note
+        # end
 
         def find_coworker_by_integration_id(integration_id)
             return @coworkers.find do |coworker|
@@ -335,7 +335,7 @@ module FruitToLime
 
         def with_non_empty_integration_id(objects)
             return objects.select do |obj|
-                obj.integration_id!=nil && !obj.integration_id.empty?
+                obj.integration_id != nil && !obj.integration_id.empty?
             end
         end
     end
