@@ -15,7 +15,7 @@ class Exporter
         return coworker
     end
 
-    # turns a row from the Easy exported Company.txt file into
+    # Turns a row from the Easy exported Company.txt file into
     # a fruit_to_lime model that is used to generate xml
     # Uses rootmodel to locate other related stuff such coworker
     def to_organization(row, rootmodel, coworkers)
@@ -29,6 +29,8 @@ class Exporter
         organization.name = row['company name']
         organization.central_phone_number = row['Telephone']
 
+        # NOTE!! if a bisnode-id is present maybe you want to
+        # consider not setting this.
         # Addresses consists of several parts in Go.
         # Lots of other systems have the address all in one
         # line, to be able to match when importing it is
@@ -44,6 +46,7 @@ class Exporter
         organization.email = row['e-mail']
         organization.web_site = row['website']
 
+        # Same as postal address
         organization.with_visit_address do |addr|
             addr.street = row['visit street']
             addr.zip_code = row['visit zip']
@@ -64,10 +67,10 @@ class Exporter
             organization.organization_number = row['orgnr']
         end
 
+        # Responsible coworker for the organization.
+        # For instance responsible sales rep.
         coworker_id = coworkers[row['userIndex - our reference']]
         organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
-        
-        # relation
 
         # Tags are set and defined at the same place
         # Setting a tag: Imported is useful for the user
@@ -78,13 +81,45 @@ class Exporter
         # has the options "A-customer", "B-customer", and "C-customer"
         organization.set_tag(row['customer category'])
 
+        # Relation
+        # let's say that there is a option field in Easy called 'Customer relation'
+        # with the options '1.Customer', '2.Prospect' '3.Partner' and '4.Lost customer'
+        if row['Customer relation'] == '1.Customer'
+            # We have made a deal with this organization.
+            organization.relation = Relation::IsACustomer
+        end
+        elsif row['Customer relation'] == '3.Partner'
+            # We have made a deal with this organization.
+            organization.relation = Relation::IsACustomer
+        end
+        elsif row['Customer relation'] == '2.Prospect'
+            # Something is happening with this organization, we might have
+            # booked a meeting with them or created a deal, etc.
+            organization.relation = Relation::WorkingOnIt
+        end
+        elsif row['Customer relation'] == '4.Lost customer'
+            # We had something going with this organization but we
+            # couldn't close the deal and we don't think they will be a
+            # customer to us in the foreseeable future.
+            organization.relation = Relation::BeenInTouch
+        end
+        else
+            organization.relation = Relation::NoRelation
+        end
+
         return organization
     end
 
+    # Turns a row from the Easy exported Company-Person.txt file into
+    # a fruit_to_lime model that is used to generate xml
+    # Uses rootmodel to locate employer organization
     def to_person(row, rootmodel)
         person = FruitToLime::Person.new
         
-        # Easy standard fields
+        # Easy standard fields created in configure method
+        # Easy persons don't have a globally unique Id, they are only unique
+        # within the scope of the company, so we combine the referencId and the companyId
+        # to make a globally unique integration_id
         person.integration_id = "#{row['referenceId']}-#{row['companyId']}"
         person.first_name = row['First name']
         person.last_name = row['Last name']
@@ -95,15 +130,22 @@ class Exporter
         person.email = row['e-mail']
         person.position = row['position']
 
-        person.set_custom_value("intrests", row['intrests'])
+        # Populate a Go custom field
         person.set_custom_value("shoe_size", row['shoe size'])
         
         # Tags
         person.set_tag("Imported")
 
+        # Checkbox fields
         # Xmas card field is a checkbox in Easy
         if row['Xmas card'] == "1"
             person.set_tag("Xmas card")
+        end
+
+        # Multioption fields or "Set"- fields
+        intrests = row['intrests'].split(';')
+        intrests.each do |intrest|
+            person.set_tag(intrest)
         end
 
         # set employer connection
@@ -113,6 +155,11 @@ class Exporter
         end
     end
 
+    # Turns a row from the Easy exported Project.txt file into
+    # a fruit_to_lime model that is used to generate xml
+    # Uses includes hash to lookup organizations to connect
+    # Uses coworkers hash to lookup coworkers to connect
+    # Uses rootmodel to find coworkers and organizations objects
     def to_deal(row, rootmodel, includes, coworkers)
         deal = FruitToLime::Deal.new
         # Easy standard fields
@@ -126,22 +173,23 @@ class Exporter
         coworker_id = coworkers[row['userIndex']]
         deal.responsible_coworker = rootmodel.find_coworker_by_integration_id coworker_id
         
-        # should be integer
-        # make the currency used in Easy matches the one used in Go
+        # Should be integer
+        # The currency used in Easy should match the one used in Go
         deal.value = row['value']
 
         # should be between 0 - 100
         # remove everything that is not an intiger
         deal.probability = row['probability'].gsub(/[^\d]/,"").to_i
 
+        # Create a status object and set it's label to the value of the Easy field
         deal.status = FruitToLime::DealStatus.new
             deal.status.label = row['Status']
         
 
-        # tags
+        # Tags
         deal.set_tag("Imported")
 
-        # find stuff connected to deal
+        # Make the deal - organization connection
         if includes
             organization_id = includes[row['projectId']]
             organization = rootmodel.find_organization_by_integration_id(organization_id)
@@ -153,6 +201,11 @@ class Exporter
         return deal
     end
 
+    # Turns a row from the Easy exported Company-History.txt file into
+    # a fruit_to_lime model that is used to generate xml
+    # Uses coworkers hash to lookup coworkers to connect
+    # Uses people hash to lookup persons to connect
+    # Uses rootmodel to find coworkers and organizations objects
     def to_organization_note(row, rootmodel, coworkers, people)
         note = FruitToLime::Note.new()
         
@@ -174,6 +227,14 @@ class Exporter
         return note
     end
 
+    # TODO: This could be improved to read a person from an organization 
+    # connected to this deal if any, but as it is a many to many connection
+    # between organizations and deals it's not a straight forward task
+
+    # Turns a row from the Easy exported Project-History.txt file into
+    # a fruit_to_lime model that is used to generate xml
+    # Uses coworkers hash to lookup coworkers to connect
+    # Uses rootmodel to find coworkers and organizations objects
     def to_deal_note(row, rootmodel, coworkers)
         note = FruitToLime::Note.new()
 
@@ -186,6 +247,7 @@ class Exporter
             note.deal = deal
             note.created_by = coworker
             note.date = row['Date']
+            # Raw history looks like this <category>: <person>: <text>
             note.text = row['RawHistory']
 
             rootmodel.add_note(note) unless note.text.empty?
@@ -200,8 +262,7 @@ class Exporter
         # :String and :Link. If no type is specified :String is used
         # as default.
         model.settings.with_person  do |person|
-            person.set_custom_field( { :integration_id => 'intrests', :title => 'Intrests', :type => :String} )
-            person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size'} )
+            person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
         end
     end
 
@@ -254,6 +315,7 @@ class Exporter
             end
         end
 
+        # organization notes
         if orgnotes_filename && !orgnotes_filename.empty?
             process_rows orgnotes_filename do |row|
                 # adds itself if applicable
@@ -261,21 +323,25 @@ class Exporter
             end
         end
 
-        # deals
-        # deals can reference coworkers (responsible), organizations
-        # and persons (contact)
+        # Organization - Deal connection
+        # Reads the includes.txt and creats a hash 
+        # that connect organizations to deals
         if includes_filename && !includes_filename.empty?
             process_rows includes_filename do |row|
                 includes[row['projectId']] = row['companyId']
             end
         end
         
+        # deals
+        # deals can reference coworkers (responsible), organizations
+        # and persons (contact)
         if deals_filename && !deals_filename.empty?
             process_rows deals_filename do |row|
                 rootmodel.add_deal(to_deal(row, rootmodel, includes, coworkers))    
             end
         end
 
+        # deal notes
         if dealnotes_filename && !dealnotes_filename.empty?
             process_rows dealnotes_filename do |row|
                 # adds itself if applicable
