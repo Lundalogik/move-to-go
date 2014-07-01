@@ -98,4 +98,15 @@ describe "Deal" do
         # then
         deal.value.should eq "100.10"
     end
+
+    it "should set value to 0 if value is nil" do
+        # given
+        deal.name = "The new deal"
+
+        # when
+        deal.value = nil
+
+        # then
+        deal.value.should eq 0
+    end
 end

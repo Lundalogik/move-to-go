@@ -116,17 +116,21 @@ module FruitToLime
         end
 
         def value=(value)
-            # we have had some issues with LIME Easy imports where the
-            # value was in the format "357 000". We need to remove
-            # those spaces.
-            fixed_value = value.gsub(" ", "")
-
-            if is_integer?(fixed_value)
-                @value = fixed_value
-            elsif is_float?(fixed_value)
-                @value = fixed_value
+            if value.nil?
+                @value = 0
             else
-                raise InvalidValueError, value
+                # we have had some issues with LIME Easy imports where
+                # the value was in the format "357 000". We need to
+                # remove those spaces.
+                fixed_value = value.gsub(" ", "")
+
+                if is_integer?(fixed_value)
+                    @value = fixed_value
+                elsif is_float?(fixed_value)
+                    @value = fixed_value
+                else
+                    raise InvalidValueError, value
+                end
             end
         end
 
