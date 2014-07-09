@@ -7,9 +7,9 @@ class Exporter
     # coworker
     def to_organization(row, rootmodel)
         organization = FruitToLime::Organization.new
-        # Integrationid is typically the id in the system that 
+        # Integrationid is typically the id in the system that
         # we are getting the csv from. Must be set to be able
-        # to import the same file more than once without 
+        # to import the same file more than once without
         # creating duplicates
         organization.integration_id = row['id']
         organization.name = row['name']
@@ -70,7 +70,7 @@ class Exporter
 
         # Tags and custom fields are set the same
         # way as on organizations
-        
+
         return coworker
     end
 
@@ -122,7 +122,13 @@ class Exporter
         deal.probability = 50           # should be between 0 - 100
         deal.order_date = '2014-01-05'  # Format ?
 
-        # status, how do we set this ?
+        # status, set this by either label, id or integration_id (use
+        # appropriate method to find status)
+        deal.status = rootmodel.settings.deal.find_status_by_label row['status']
+
+        # or set by existing status, search by label, integration_id
+        # (if string) or id (if integer).
+        # deal.status = "Won"
 
         return deal
     end
@@ -134,6 +140,14 @@ class Exporter
         # as default.
         model.settings.with_organization do |organization|
             organization.set_custom_field( { :integrationid => 'external_url', :title => 'Link to external system', :type => :Link } )
+        end
+
+        model.settings.with_deal do |deal|
+            deal.add_status({:label => "1. Kvalificering", :integration_id => "qualification"})
+            deal.add_status({:label => "Vunnen", :integration_id => "won",
+                                :assessment => FruitToLime::DealState::PositiveEndState })
+            deal.add_status({:label => "Lost", :integration_id => "Lost",
+                                :assessment => FruitToLime::DealState::NegativeEndState })
         end
     end
 

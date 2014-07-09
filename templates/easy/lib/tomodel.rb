@@ -215,10 +215,12 @@ class Exporter
         # remove everything that is not an intiger
         deal.probability = row['probability'].gsub(/[^\d]/,"").to_i unless row['probability'].nil?
 
-        # Create a status object and set it's label to the value of the Easy field
+        # Sets the deal's status to the value of the Easy field. This
+        # assumes that the status is already created in LIME Go. To
+        # create statuses during import add them to the settings
+        # during configure.
         if !row['Status'].empty?
-            deal.status = FruitToLime::DealStatus.new
-            deal.status.label = row['Status']
+            deal.status = row['Status']
         end
 
         # Tags
@@ -294,6 +296,13 @@ class Exporter
         # as default.
         model.settings.with_person  do |person|
             person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
+        end
+
+        model.settings.with_deal do |deal|
+            # assessment is default DealState::NoEndState
+            deal.add_status( {:label => '1. Kvalificering' })
+            deal.add_status( {:label => '2. Deal closed', :assessment => DealState::PositiveEndState })
+            deal.add_status( {:label => '4. Deal lost', :assessment => DealState::NegativeEndState })
         end
     end
 

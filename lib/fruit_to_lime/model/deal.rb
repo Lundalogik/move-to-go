@@ -91,6 +91,14 @@ module FruitToLime
                 error = "A name is required for deal.\n}"
             end
 
+            if !@status.nil? && @status.status_reference.nil?
+                error = "#{error}\nStatus must have a status reference."
+            end
+
+            if !@status.nil? && !@status.status_reference.nil? && @status.status_reference.validate.length > 0
+                error = "#{error}\n#{@status.status_reference.validate}"
+            end
+
             if error.length > 0
                 error = "#{error}\n#{serialize()}"
             end
@@ -98,9 +106,23 @@ module FruitToLime
             return error
         end
 
+
         def with_status
-            @status = DealStatus.new
+            @status = DealStatus.new if @status.nil?
             yield @status
+        end
+
+        # Sets the deal's status to the specifed status. The specifed
+        # status could be either a DealStatusSetting, a string or an
+        # integer. Use DealStatusSetting if you want to create new
+        # statuses during import (you will probably add the
+        # DealStatusSettings to the settings model). If the statuses
+        # already exists in the application use the status label
+        # (String) or id (Integer) here.
+        def status=(status)
+            @status = DealStatus.new if @status.nil?
+
+            @status.status_reference = DealStatusReference.from_deal_status(status)
         end
 
         def customer=(customer)

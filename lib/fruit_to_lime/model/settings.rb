@@ -3,7 +3,7 @@ module FruitToLime
     class Settings
         include SerializeHelper
         attr_reader :organization, :person, :deal
-        
+
         # @example Add custom fields available for organization
         #    rootmodel.settings.with_organization do |organization_settings|
         #        organization_settings.set_custom_field({:integration_id=>"link_to_bi_system", :title=>"Link to BI system"})
@@ -37,7 +37,7 @@ module FruitToLime
         # @see CustomField
         # @see RootModel
         def with_deal
-            @deal = ClassSettings.new if @deal ==nil
+            @deal = DealClassSettings.new if @deal ==nil
             yield @deal
         end
 

@@ -13,4 +13,7 @@ module FruitToLime
             super("#{value} is not a valid value.")
         end
     end
+
+    class InvalidDealStatusError < StandardError
+    end
 end

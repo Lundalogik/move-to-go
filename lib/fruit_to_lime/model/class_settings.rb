@@ -23,7 +23,7 @@ module FruitToLime
 
         # Set custom field. If there is already an existing custom field, then it is overwritten.
         def set_custom_field(obj)
-            @custom_fields = [] if @custom_fields == nil
+            @custom_fields = [] if @custom_fields.nil?
 
             if obj.is_a?(CustomField)
                 field = obj
