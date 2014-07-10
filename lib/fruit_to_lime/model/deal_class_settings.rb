@@ -47,7 +47,7 @@ module FruitToLime
         end
 
         def find_status_by_label(label)
-            return nil if @statuses.nil?
+            return nil if @statuses.nil? || label.nil?
 
             return @statuses.find do |status|
                 !status.label.nil? && status.label.casecmp(label) == 0
@@ -55,7 +55,7 @@ module FruitToLime
         end
 
         def find_status_by_integration_id(integration_id)
-            return nil if @statuses.nil?
+            return nil if @statuses.nil? || integration_id.nil?
 
             return @statuses.find do |status|
                 !status.integration_id.nil? && status.integration_id.casecmp(integration_id) == 0

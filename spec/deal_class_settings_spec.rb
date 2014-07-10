@@ -68,6 +68,18 @@ describe "DealClassSettings" do
         status.should eq nil
     end
 
+    it "should find nil by label if label is nil" do
+        # given
+        deal_class_settings.add_status({:label => "1. Kvalificering", :integration_id => "qualify"})
+        deal_class_settings.add_status({:label => "2. Skickat offert", :integration_id => "tender sent"})
+
+        # when
+        status = deal_class_settings.find_status_by_label(nil)
+
+        # then
+        status.should eq nil
+    end
+
     it "should find nil by integration id if no statuses are defined" do
         # given, when
         status = deal_class_settings.find_status_by_integration_id("3. Won")
@@ -76,6 +88,17 @@ describe "DealClassSettings" do
         status.should eq nil
     end
 
+    it "should find nil by integration id if integration id is nil" do
+        # given
+        deal_class_settings.add_status({:label => "1. Kvalificering", :integration_id => "qualify"})
+        deal_class_settings.add_status({:label => "2. Skickat offert", :integration_id => "tender sent"})
+
+        # when
+        status = deal_class_settings.find_status_by_integration_id(nil)
+
+        # then
+        status.should eq nil
+    end
 end
 
 
