@@ -31,7 +31,7 @@ module FruitToLime
     module ModelWithIntegrationIdSameAs
         # check if other is same as regarding integration_id or id
         def same_as?(other)
-            if @integration_id!=nil && @integration_id == other.integration_id
+            if @integration_id != nil && @integration_id == other.integration_id
                 return true
             end
             if @id != nil && @id == other.id

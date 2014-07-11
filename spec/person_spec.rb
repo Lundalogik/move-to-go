@@ -31,23 +31,21 @@ describe "Person" do
     end
 
     it "will set custom field with same id to the last value" do
-        person.set_custom_field({:id=>'the id',
-            :value=> 'the value'})
+        person.set_custom_field({ :integration_id => 'the id', :value=> 'the value' })
 
-        person.set_custom_field({:id=>'the id',
-            :value=> 'the value 2'})
+        person.set_custom_field({ :integration_id => 'the id', :value=> 'the value 2'})
         value = person.custom_values[0]
         field = value.field
 
         person.custom_values.length.should eq 1
-        field.id.should eq 'the id'
+        field.integration_id.should eq 'the id'
         value.value.should eq 'the value 2'
     end
 
     it "will set custom field (using set_custom_value) with same integration_id to the last value" do
-        person.set_custom_value('the id','the value')
+        person.set_custom_value('the id', 'the value')
 
-        person.set_custom_value('the id','the value 2')
+        person.set_custom_value('the id', 'the value 2')
         value = person.custom_values[0]
         field = value.field
 

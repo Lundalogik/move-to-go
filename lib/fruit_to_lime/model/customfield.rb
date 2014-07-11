@@ -2,7 +2,7 @@ module FruitToLime
     class CustomFieldReference
         include SerializeHelper, ModelWithIntegrationIdSameAs
 
-        attr_accessor :id, :integration_id
+        attr_accessor :integration_id
 
         def initialize(opt=nil)
             if opt != nil
@@ -14,7 +14,7 @@ module FruitToLime
         end
 
         def serialize_variables
-            [:id, :integration_id].map {|p| { :id => p, :type => :string } }
+            [:integration_id].map {|p| { :id => p, :type => :string } }
         end
 
         def get_import_rows

@@ -36,7 +36,7 @@ describe FruitToLime::SerializeHelper do
             v = FruitToLime::CustomValue.new
             v.value = "<text>"
             v.field = FruitToLime::CustomFieldReference.new()
-            v.field.id = "1"
+            v.field.integration_id = "1"
             FruitToLime::SerializeHelper::serialize(v,-1)
         }
         it "should contain encoded text" do
