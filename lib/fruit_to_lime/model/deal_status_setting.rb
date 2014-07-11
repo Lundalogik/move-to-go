@@ -24,7 +24,6 @@ module FruitToLime
 
         def to_reference()
             reference = DealStatusReference.new
-            reference.id = @id
             reference.label = @label
             reference.integration_id = @integration_id
 

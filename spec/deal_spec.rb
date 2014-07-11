@@ -152,7 +152,7 @@ describe "Deal" do
         deal.status.status_reference.integration_id.should eq "123"
     end
 
-    it "should set status_reference from label if status is a string" do
+    it "should set status_reference from label and integrationid if status is a string" do
         # This case should be used when the status is already defined
         # in the appliation and is referenced by label
 
@@ -166,24 +166,7 @@ describe "Deal" do
         deal.status.is_a?(FruitToLime::DealStatus).should eq true
         deal.status.status_reference.is_a?(FruitToLime::DealStatusReference).should eq true
         deal.status.status_reference.label.should eq "Driv"
-        deal.status.status_reference.id.nil?.should eq true
-    end
-
-    it "should set status_reference from id if status is an integer" do
-        # This case should be used when the status is already defined
-        # in the application and is referenced by id
-
-        # given
-        deal.name = "Deal with status from id"
-
-        # when
-        deal.status = 123
-
-        # then
-        deal.status.is_a?(FruitToLime::DealStatus).should eq true
-        deal.status.status_reference.is_a?(FruitToLime::DealStatusReference).should eq true
-        deal.status.status_reference.label.nil?.should eq true
-        deal.status.status_reference.id.should eq "123"
+        deal.status.status_reference.integration_id.should eq "Driv"
     end
 
     it "should raise error if status reference cant be created" do

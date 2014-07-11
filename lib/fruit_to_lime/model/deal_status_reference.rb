@@ -2,7 +2,7 @@ module FruitToLime
     class DealStatusReference
         include SerializeHelper
 
-        attr_accessor :id, :label, :integration_id
+        attr_accessor :label, :integration_id
 
         def initialize(opt = nil)
             if opt != nil
@@ -14,7 +14,7 @@ module FruitToLime
         end
 
         def serialize_variables
-            [:id, :integration_id, :label].map {|p| {:id => p, :type => :string} }
+            [:integration_id, :label].map {|p| {:id => p, :type => :string} }
         end
 
         def serialize_name
@@ -29,8 +29,6 @@ module FruitToLime
                 return deal_status.to_reference
             elsif deal_status.is_a?(String)
                 return DealStatusReference.new({:label => deal_status, :integration_id => deal_status})
-            elsif deal_status.is_a?(Integer)
-                return DealStatusReference.new({:id => deal_status.to_s })
             end
 
             raise InvalidDealStatusError
@@ -39,8 +37,8 @@ module FruitToLime
         def validate
             error = ""
 
-            if (@id.nil? || @id.empty?) && (@label.nil? || @label.empty?) && (@integration_id.nil? || @integration_id.empty?)
-                error = "id, label and integration_id can't all be nil or empty"
+            if (@label.nil? || @label.empty?) && (@integration_id.nil? || @integration_id.empty?)
+                error = "label and integration_id can't all be nil or empty"
             end
 
             return error
