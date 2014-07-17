@@ -1,3 +1,4 @@
+require 'date'
 module FruitToLime
     class OrganizationReference
         include SerializeHelper
@@ -42,6 +43,10 @@ module FruitToLime
 
         attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site,
         :postal_address, :visit_address, :central_phone_number, :source_data
+
+        # Sets/gets the date when this organization's relation was
+        # changed. Default is Now.
+        attr_reader :relation_last_modified
 
         attr_reader :employees, :responsible_coworker, :relation
         # you add custom values by using {#set_custom_value}
@@ -135,8 +140,18 @@ module FruitToLime
             if relation == Relation::NoRelation || relation == Relation::WorkingOnIt ||
                     relation == Relation::IsACustomer || relation == Relation::WasACustomer || relation == Relation::BeenInTouch
                 @relation = relation
+                @relation_last_modified = Time.now.strftime("%Y-%m-%d") if @relation_last_modified.nil? &&
+                    @relation != Relation::NoRelation
             else
                 raise InvalidRelationError
+            end
+        end
+
+        def relation_last_modified=(date)
+            begin
+                @relation_last_modified = @relation != Relation::NoRelation ? Date.parse(date).strftime("%Y-%m-%d") : nil
+            rescue
+                raise InvalidValueError, date
             end
         end
 
@@ -163,7 +178,8 @@ module FruitToLime
              { :id => :custom_values, :type => :custom_values },
              { :id => :tags, :type => :tags },
              { :id => :responsible_coworker, :type => :coworker_reference},
-             { :id => :relation, :type => :string }
+             { :id => :relation, :type => :string },
+             { :id => :relation_last_modified, :type => :string }
             ]
         end
 

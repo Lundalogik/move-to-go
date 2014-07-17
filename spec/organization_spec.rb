@@ -63,6 +63,54 @@ describe "Organization" do
             organization.relation = "hubbabubba"
         }.to raise_error(FruitToLime::InvalidRelationError)
     end
+
+    it "should not have a relation modified date if relation is NoRelation" do
+        # given, when
+        organization.relation = FruitToLime::Relation::NoRelation
+
+        # then
+        organization.relation_last_modified.nil?.should eq true
+    end
+
+    it "should have a relation modified date if relation is IsACustomer" do
+        # given, when
+        organization.relation = FruitToLime::Relation::IsACustomer
+
+        # then
+        organization.relation_last_modified.nil?.should eq false
+    end
+
+    it "should set relation last modified when relation is set" do
+        # given
+        organization.relation = FruitToLime::Relation::IsACustomer
+
+        # when
+        organization.relation_last_modified = "2014-07-01"
+
+        # then
+        organization.relation_last_modified.should eq "2014-07-01"
+    end
+
+    it "should not set relation last modified when relation is NoRelation" do
+        # given
+        organization.relation = FruitToLime::Relation::NoRelation
+
+        # when
+        organization.relation_last_modified = "2014-07-01"
+
+        # then
+        organization.relation_last_modified.nil?.should eq true
+    end
+
+    it "should only set relation last modified to valid date" do
+        # given
+        organization.relation = FruitToLime::Relation::IsACustomer
+
+        # when, then
+        expect {
+            organization.relation_last_modified = "hubbabubba"
+        }.to raise_error(FruitToLime::InvalidValueError)
+    end
 end
 
 describe "OrganizationReference" do

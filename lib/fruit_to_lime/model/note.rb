@@ -31,9 +31,9 @@ module FruitToLime
         end
 
         def get_import_rows
-            (serialize_variables+[
-                {:id=>:organization, :type=>:organization_reference},
-                {:id=>:person, :type=>:person_reference}
+            (serialize_variables + [
+                { :id => :organization, :type => :organization_reference},
+                { :id => :person, :type => :person_reference}
                 ]).map do |p|
                 map_to_row p
             end
