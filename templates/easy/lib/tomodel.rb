@@ -348,7 +348,7 @@ class Exporter
         # depends on organizations
         if persons_filename && !persons_filename.empty?
             process_rows persons_filename do |row|
-                people[row['personIndex']] = "#{row['referenceId']}-#{row['companyId']}"
+                people[row['personIndex']] = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
                 # adds it self to the employer
                 to_person(row)
             end
