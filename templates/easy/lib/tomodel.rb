@@ -301,8 +301,8 @@ class Exporter
         model.settings.with_deal do |deal|
             # assessment is default DealState::NoEndState
             deal.add_status( {:label => '1. Kvalificering' })
-            deal.add_status( {:label => '2. Deal closed', :assessment => DealState::PositiveEndState })
-            deal.add_status( {:label => '4. Deal lost', :assessment => DealState::NegativeEndState })
+            deal.add_status( {:label => '2. Deal closed', :assessment => FruitToLime::DealState::PositiveEndState })
+            deal.add_status( {:label => '4. Deal lost', :assessment => FruitToLime::DealState::NegativeEndState })
         end
     end
 

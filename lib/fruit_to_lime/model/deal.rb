@@ -7,7 +7,13 @@ module FruitToLime
             [ :id, :integration_id ].map { |prop| {:id => prop, :type => :string} }
         end
 
-        def initalize()
+        def initialize(opt = nil)
+            if opt != nil
+                serialize_variables.each do |var|
+                    value = opt[var[:id]]
+                    instance_variable_set("@" + var[:id].to_s, value) if value != nil
+                end
+            end
         end
 
         def to_s
@@ -23,7 +29,7 @@ module FruitToLime
                 return nil
             elsif deal.is_a?(Deal)
                 return deal.to_reference
-            elsif person.is_a?(DealReference)
+            elsif deal.is_a?(DealReference)
                 return deal
             end
         end

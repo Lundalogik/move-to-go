@@ -224,6 +224,20 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 1
     end
 
+    it "will add a new link" do
+        # given
+        link = FruitToLime::Link.new
+        link.integration_id = "123key"
+        link.url = "http://dropbox.com/files/readme.txt"
+
+        # when
+        rootmodel.add_link link
+
+        # then
+        rootmodel.documents.find_link_by_integration_id("123key").url.should eq "http://dropbox.com/files/readme.txt"
+        rootmodel.documents.links.length.should eq 1
+    end
+
     it "will not add a new organizations when the organizations is already added (same integration id)" do
         # given
         rootmodel.add_note({
@@ -335,5 +349,23 @@ describe "RootModel" do
         rootmodel.organizations.push org2
 
         rootmodel.sanity_check.should eq "Duplicate person integration_id: 1."
+    end
+
+    it "will report when two links has the same integration id during sanity check" do
+        # given
+        link1 = FruitToLime::Link.new
+        link1.integration_id = "1"
+
+        link2 = FruitToLime::Link.new
+        link2.integration_id = "2"
+
+        rootmodel.add_link link1
+        rootmodel.add_link link2
+
+        # when
+        link2.integration_id = "1"
+
+        # then
+        rootmodel.sanity_check.should eq "Duplicate link integration_id: 1."
     end
 end

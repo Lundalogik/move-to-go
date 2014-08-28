@@ -7,6 +7,9 @@ module FruitToLime
         attr_accessor :import_coworker
 
         attr_accessor :settings, :organizations, :coworkers, :deals, :notes
+
+        attr_reader :documents
+
         def serialize_variables
             [
              {:id => :settings, :type => :settings},
@@ -14,6 +17,7 @@ module FruitToLime
              {:id => :organizations, :type => :organizations},
              {:id => :deals, :type => :deals},
              {:id => :notes, :type => :notes},
+             {:id => :documents, :type => :documents},
             ]
         end
 
@@ -33,6 +37,7 @@ module FruitToLime
             @coworkers.push @import_coworker
             @deals = []
             @notes = []
+            @documents = Documents.new
         end
 
         # Adds the specifed coworker object to the model.
@@ -202,13 +207,12 @@ module FruitToLime
             return note
         end
 
-        # def with_new_note
-        #     @notes = [] if @notes == nil
+        def add_link(link)
+            @documents = Documents.new if @documents == nil
 
-        #     note = Note.new
-        #     @notes.push note
-        #     yield note
-        # end
+            return @documents.add_link(link)
+        end
+
 
         def find_coworker_by_integration_id(integration_id)
             return @coworkers.find do |coworker|
@@ -282,6 +286,12 @@ module FruitToLime
                 error = "#{error}\nDuplicate person integration_id: #{dups_error_items.join(", ")}."
             end
 
+            dups = get_integration_id_duplicates(with_non_empty_integration_id(@documents.links))
+            dups_error_items = (dups.collect{|l| l.integration_id}).compact
+            if dups_error_items.length > 0
+                error = "#{error}\nDuplicate link integration_id: #{dups_error_items.join(", ")}."
+            end
+
             return error.strip
         end
 
@@ -307,6 +317,13 @@ module FruitToLime
             @notes.each do |note|
                 validation_message = note.validate
 
+                if !validation_message.empty?
+                    error = "#{error}\n#{validation_message}"
+                end
+            end
+
+            @documents.links.each do |link|
+                validation_message = link.validate
                 if !validation_message.empty?
                     error = "#{error}\n#{validation_message}"
                 end
