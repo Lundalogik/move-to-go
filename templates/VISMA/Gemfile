@@ -1,0 +1,7 @@
+source 'http://rubygems.org'
+
+gem 'rspec'
+gem 'roo'
+gem 'thor'
+gem 'fruit_to_lime'
+gem 'bdf'
