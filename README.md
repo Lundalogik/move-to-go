@@ -8,8 +8,9 @@ Organizations, Persons, Deals, Notes and Documents can be imported to LIME Go.
 
 Fruit_to_lime is a [ruby gem](https://rubygems.org/gems/fruit_to_lime). Install with 
 
-> gem install fruit_to_lime
-
+```shell
+gem install fruit_to_lime
+```
 
 ## Working with templates
 
