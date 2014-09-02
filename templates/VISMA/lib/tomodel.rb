@@ -85,7 +85,7 @@ class Converter
         # Set note properties from the row.
         organization = @rootmodel.find_organization_by_integration_id(row['KUNDNR'])
         unless organization.nil?
-            note.organization = organization.to_reference
+            note.organization = organization
         end
         note.created_by = @rootmodel.import_coworker
         note.text = row['ANTECK_1']
