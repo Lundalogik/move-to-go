@@ -32,16 +32,18 @@ fruit_to_lime list_templates
 
 To create a new project, create a new folder and in that folder run
 
+```shell
 > fruit_to_lime unpack_template TEMPLATE
+```
 
 You'll now have a folder structure looking like this:
-	
-	./convert.rb
-	./Gemfile
-	./lib/
-		./tomodel.rb
-	./Rakefile.rb
-	./spec/
+    
+    ./convert.rb
+    ./Gemfile
+    ./lib/
+        ./tomodel.rb
+    ./Rakefile.rb
+    ./spec/
 
 If you have Bundler installed run to get the required gems for the template:
 
@@ -88,7 +90,7 @@ def to_model(coworkers_filename, organization_filename, persons_filename, deals_
     # organizations
     if organization_filename != nil
         process_rows organization_filename do |row|
-            rootmodel.organizations.push(to_organization(row, rootmodel))
+            rootmodel.add_organization(to_organization(row, rootmodel))
         end
     end
 
@@ -106,7 +108,7 @@ def to_model(coworkers_filename, organization_filename, persons_filename, deals_
     # and persons (contact)
     if deals_filename != nil
         process_rows deals_filename do |row|
-            rootmodel.deals.push(to_deal(row, rootmodel))
+            rootmodel.add_deal(to_deal(row, rootmodel))
         end
     end
 
