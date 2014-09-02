@@ -43,10 +43,9 @@ class Converter
         end
     end
 
-
     def to_organization(row)
         organization = FruitToLime::Organization.new()
-        
+
         #Add tags:
         organization.set_tag "Importerad"
         organization.set_tag "Kund"
@@ -83,7 +82,7 @@ class Converter
 
         # *** TODO:
         #
-        # Set note properties from the row. 
+        # Set note properties from the row.
         organization = @rootmodel.find_organization_by_integration_id(row['KUNDNR'])
         unless organization.nil?
             note.organization = organization.to_reference
@@ -112,11 +111,7 @@ class Converter
     end
 
     def to_model()
-        # *** TODO:
-        #
-
-        # First we read each database into seperate
-        # variables
+        # First we read each database into separate variables
         puts "Reading data from './Databas/'"
         organization_rows = DBF::Table.new("./Databas/KUND.DBF")
         person_rows = DBF::Table.new("./Databas/KONTAKT.DBF")
@@ -126,39 +121,35 @@ class Converter
         @rootmodel = FruitToLime::RootModel.new
 
         # And configure the model if we have any custom fields
-        puts "Adding custom fileds to model"
+        puts "Adding custom fields to model"
         configure @rootmodel
-
 
         # Then create organizations, they are only referenced by
         # coworkers.
         puts "Importing Organization..."
-        nbrOrgs = 0
         organization_rows.each do |row|
             if not row.nil?
                 if not row["NAMN"] == ""
                     @rootmodel.add_organization(to_organization(row))
-                    nbrOrgs = nbrOrgs + 1
                 end
             end
-            #
         end
-        puts "Imported #{nbrOrgs} Organization"
+        puts "Imported #{@rootmodel.organizations.length} Organization"
 
         # Add people and link them to their organizations
         puts "Importing Persons..."
-        nbrPersons = 0
+        imported_person_count = 0
         person_rows.each do |row|
             # People are special since they are not added directly to
             # the root model
             if not row.nil?
                 if not row["KUNDNR"] == "" and not row["NAMN"] == ""
                     import_person_to_organization(row)
-                    nbrPersons = nbrPersons + 1
+                    imported_person_count = nbrPersons + 1
                 end
             end
         end
-        puts "Imported #{nbrPersons} Persons"
+        puts "Imported #{imported_person_count} Persons"
 
         # Deals can connected to coworkers, organizations and people.
         # deal_rows.each do |row|
@@ -173,7 +164,6 @@ class Converter
                 if row['ANTECK_1'].length > 0
                     @rootmodel.add_note(to_note(row))
                 end
-              
             end
         end
 
