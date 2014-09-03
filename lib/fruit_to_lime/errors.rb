@@ -16,4 +16,7 @@ module FruitToLime
 
     class InvalidDealStatusError < StandardError
     end
+
+    class InvalidNoteClassificationError < StandardError
+    end
 end

@@ -1,9 +1,13 @@
 module FruitToLime
     class Note
         include SerializeHelper
-        attr_accessor :id, :text, :integration_id, :classification, :date
+        attr_accessor :id, :text, :integration_id, :date
 
         attr_reader :organization, :created_by, :person, :deal
+
+        # The note's classification. It should be a value from
+        # {#NoteClassification}. The default value is Comment.
+        attr_reader :classification
 
         def initialize(opt = nil)
             if !opt.nil?
@@ -12,6 +16,8 @@ module FruitToLime
                     instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
                 end
             end
+
+            @classification = NoteClassification::Comment if @classification.nil?
         end
 
         def serialize_variables
@@ -57,6 +63,17 @@ module FruitToLime
 
         def deal=(deal)
             @deal = DealReference.from_deal(deal)
+        end
+
+        def classification=(classification)
+            if classification == NoteClassification::Comment || classification == NoteClassification::SalesCall ||
+                    classification == NoteClassification::TalkedTo || classification == NoteClassification::TriedToReach ||
+                    classification == NoteClassification::ClientVisit
+                @classification = classification
+            else
+                raise InvalidNoteClassificationError
+            end
+
         end
 
         def validate

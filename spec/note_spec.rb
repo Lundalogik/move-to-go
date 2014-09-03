@@ -95,4 +95,16 @@ describe "Note" do
         # then
         note.deal.is_a?(FruitToLime::DealReference).should eq true
     end
+
+    it "should have Comment as default classification" do
+        # then
+        note.classification.should eq FruitToLime::NoteClassification::Comment
+    end
+
+    it "should not accept invalid classifications" do
+        # when, then
+        expect {
+            note.classification = "hubbabubba"
+        }.to raise_error(FruitToLime::InvalidNoteClassificationError)
+    end
 end
