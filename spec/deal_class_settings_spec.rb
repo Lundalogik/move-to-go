@@ -1,16 +1,16 @@
 require "spec_helper"
-require "fruit_to_lime"
+require "go_import"
 
 describe "DealClassSettings" do
     let(:deal_class_settings) {
-        FruitToLime::DealClassSettings.new
+        GoImport::DealClassSettings.new
     }
 
     it "should not allow new deal status without a label" do
         # given, when
         begin
             deal_class_settings.add_status({:integration_id => "123"})
-        rescue FruitToLime::InvalidDealStatusError
+        rescue GoImport::InvalidDealStatusError
         end
 
         # then
@@ -22,18 +22,18 @@ describe "DealClassSettings" do
         status = deal_class_settings.add_status({:label => "1. Kvalificering"})
 
         # then
-        status.assessment.should eq FruitToLime::DealState::NotAnEndState
+        status.assessment.should eq GoImport::DealState::NotAnEndState
     end
 
     it "should set assessment if specified" do
         # given, when
         status = deal_class_settings.add_status({
                                                     :label => "4. Won deal",
-                                                    :assessment => FruitToLime::DealState::PositiveEndState
+                                                    :assessment => GoImport::DealState::PositiveEndState
                                                 })
 
         # then
-        status.assessment.should eq FruitToLime::DealState::PositiveEndState
+        status.assessment.should eq GoImport::DealState::PositiveEndState
     end
 
     it "should find a status by case insensitive label" do

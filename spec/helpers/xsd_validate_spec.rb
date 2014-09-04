@@ -1,12 +1,10 @@
-
 require 'spec_helper'
-require 'fruit_to_lime'
+require 'go_import'
 require 'nokogiri'
-describe FruitToLime::SerializeHelper do
-
+describe GoImport::SerializeHelper do
     describe "Validate according to xsd" do
         let(:validate_result) {
-            i = FruitToLime::RootModel.new
+            i = GoImport::RootModel.new
             i.settings.with_organization do |s|
                 s.set_custom_field({:integration_id=>"2", :title=>"cf title"})
                 s.set_custom_field({:integration_id=>"3", :title=>"cf title2"})
@@ -17,7 +15,7 @@ describe FruitToLime::SerializeHelper do
                 :last_name=>"Anka",
                 :email=>"kalle.anka@vonanka.com"
             })
-            o = FruitToLime::Organization.new
+            o = GoImport::Organization.new
             o.name = "Ankeborgs bibliotek"
             o.with_source do |source|
                 source.par_se('122345')
@@ -33,7 +31,7 @@ describe FruitToLime::SerializeHelper do
             o.with_visit_address do |addr|
                 addr.city = "Gaaseborg"
             end
-            coworker = FruitToLime::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
+            coworker = GoImport::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
             o.responsible_coworker = coworker
 
             emp = o.add_employee({
@@ -47,12 +45,11 @@ describe FruitToLime::SerializeHelper do
             xsd_file = File.join(File.dirname(__FILE__), '..', 'sample_data', 'schema0.xsd')
 
             xsd = Nokogiri::XML::Schema(File.read(xsd_file))
-            doc = Nokogiri::XML(FruitToLime::SerializeHelper::serialize(i,-1))
+            doc = Nokogiri::XML(GoImport::SerializeHelper::serialize(i,-1))
             xsd.validate(doc)
         }
         it "Should not contain validation errors" do
             expect(validate_result).to eq([])
         end
-
     end
 end

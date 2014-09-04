@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fruit_to_lime (2.3.1)
+    go_import (2.3.1)
       bundler
       iso_country_codes
       nokogiri
@@ -41,7 +41,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  fruit_to_lime!
+  go_import!
   global_phone (= 1.0.1)
   rake
   rspec (>= 2.14)

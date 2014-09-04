@@ -1,10 +1,10 @@
 # encoding: utf-8
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "Coworker" do
     let(:coworker) {
-        FruitToLime::Coworker.new
+        GoImport::Coworker.new
     }
 
     describe "parse_name_to_firstname_lastname_se" do

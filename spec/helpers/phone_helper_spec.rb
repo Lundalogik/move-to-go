@@ -1,14 +1,14 @@
 require 'spec_helper'
-require 'fruit_to_lime'
+require 'go_import'
 
-describe FruitToLime::PhoneHelper do
+describe GoImport::PhoneHelper do
     before(:each) do
-        FruitToLime::PhoneHelper.set_country_code(:se)
+        GoImport::PhoneHelper.set_country_code(:se)
     end
 
     it "should parse phonenumbers" do
         # given, when
-        nice_number = FruitToLime::PhoneHelper.parse_numbers("0709-685226")
+        nice_number = GoImport::PhoneHelper.parse_numbers("0709-685226")
 
         # then
         nice_number.should eq "+46709685226"
@@ -19,7 +19,7 @@ describe FruitToLime::PhoneHelper do
         source = "046 - 270 48 00, 0709-685226"
 
         # when
-        home, mobile = FruitToLime::PhoneHelper.parse_numbers(source)
+        home, mobile = GoImport::PhoneHelper.parse_numbers(source)
 
         # then
         home.should eq "+46462704800"
@@ -31,7 +31,7 @@ describe FruitToLime::PhoneHelper do
         source = "046 - 270 48 00/ 0709-685226"
 
         # when
-        home, mobile = FruitToLime::PhoneHelper.parse_numbers(source, '/')
+        home, mobile = GoImport::PhoneHelper.parse_numbers(source, '/')
 
         # then
         home.should eq "+46462704800"
@@ -45,9 +45,9 @@ describe FruitToLime::PhoneHelper do
         source3 = "031-712 44 00\\\\ 0707 38 52 72/, 031 71 244 04"
 
         # when
-        home1, mobile1 = FruitToLime::PhoneHelper.parse_numbers(source1, ['/', ',', "\\\\"])
-        home2, mobile2 = FruitToLime::PhoneHelper.parse_numbers(source2, ['/', ',', "\\\\"])
-        home3, mobile3, direct3 = FruitToLime::PhoneHelper.parse_numbers(source3, ['/', ',', "\\\\"])
+        home1, mobile1 = GoImport::PhoneHelper.parse_numbers(source1, ['/', ',', "\\\\"])
+        home2, mobile2 = GoImport::PhoneHelper.parse_numbers(source2, ['/', ',', "\\\\"])
+        home3, mobile3, direct3 = GoImport::PhoneHelper.parse_numbers(source3, ['/', ',', "\\\\"])
 
         # then
         home1.should eq "+46462704800"
@@ -66,7 +66,7 @@ describe FruitToLime::PhoneHelper do
         source = "im not a number"
 
         # when
-        number = FruitToLime::PhoneHelper.parse_numbers(source)
+        number = GoImport::PhoneHelper.parse_numbers(source)
 
         # then
         number.should eq "im not a number"
@@ -77,7 +77,7 @@ describe FruitToLime::PhoneHelper do
         source = "im not a number"
 
         # when
-        number = FruitToLime::PhoneHelper.parse_numbers_strict(source)
+        number = GoImport::PhoneHelper.parse_numbers_strict(source)
 
         # then
         number.should eq ""
@@ -88,8 +88,8 @@ describe FruitToLime::PhoneHelper do
         source = "22 13 00 30"
 
         # when
-        FruitToLime::PhoneHelper.set_country_code(:no)
-        number = FruitToLime::PhoneHelper.parse_numbers(source)
+        GoImport::PhoneHelper.set_country_code(:no)
+        number = GoImport::PhoneHelper.parse_numbers(source)
 
         # then
         number.should eq "+4722130030"

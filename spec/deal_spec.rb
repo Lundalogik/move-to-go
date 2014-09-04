@@ -1,42 +1,42 @@
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "Deal" do
     let(:deal){
-        FruitToLime::Deal.new
+        GoImport::Deal.new
     }
 
     it "will auto convert org to org.ref during assignment" do
         # given
-        org = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+        org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
         # when
         deal.customer = org
 
         # then
-        deal.customer.is_a?(FruitToLime::OrganizationReference).should eq true
+        deal.customer.is_a?(GoImport::OrganizationReference).should eq true
     end
 
     it "will auto convert coworker to coworker.ref during assignment" do
         # given
-        coworker = FruitToLime::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
+        coworker = GoImport::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
 
         # when
         deal.responsible_coworker = coworker
 
         # then
-        deal.responsible_coworker.is_a?(FruitToLime::CoworkerReference).should eq true
+        deal.responsible_coworker.is_a?(GoImport::CoworkerReference).should eq true
     end
 
     it "will auto convert person to person.ref during assignment" do
         # given
-        person = FruitToLime::Person.new({:integration_id => "123"})
+        person = GoImport::Person.new({:integration_id => "123"})
 
         # when
         deal.customer_contact = person
 
         # then
-        deal.customer_contact.is_a?(FruitToLime::PersonReference).should eq true
+        deal.customer_contact.is_a?(GoImport::PersonReference).should eq true
     end
 
     it "will fail on validation if name is empty" do
@@ -99,7 +99,7 @@ describe "Deal" do
         # when, then
         expect {
             deal.value = "Im not a number"
-        }.to raise_error(FruitToLime::InvalidValueError)
+        }.to raise_error(GoImport::InvalidValueError)
     end
 
     it "should set value if value is an integer" do
@@ -140,14 +140,14 @@ describe "Deal" do
 
         # given
         deal.name = "Deal with status from deal_status_setting"
-        deal_status_setting = FruitToLime::DealStatusSetting.new({:integration_id => "123", :label => "Driv"})
+        deal_status_setting = GoImport::DealStatusSetting.new({:integration_id => "123", :label => "Driv"})
 
         # when
         deal.status = deal_status_setting
 
         # then
-        deal.status.is_a?(FruitToLime::DealStatus).should eq true
-        deal.status.status_reference.is_a?(FruitToLime::DealStatusReference).should eq true
+        deal.status.is_a?(GoImport::DealStatus).should eq true
+        deal.status.status_reference.is_a?(GoImport::DealStatusReference).should eq true
         deal.status.status_reference.label.should eq "Driv"
         deal.status.status_reference.integration_id.should eq "123"
     end
@@ -163,8 +163,8 @@ describe "Deal" do
         deal.status = "Driv"
 
         # then
-        deal.status.is_a?(FruitToLime::DealStatus).should eq true
-        deal.status.status_reference.is_a?(FruitToLime::DealStatusReference).should eq true
+        deal.status.is_a?(GoImport::DealStatus).should eq true
+        deal.status.status_reference.is_a?(GoImport::DealStatusReference).should eq true
         deal.status.status_reference.label.should eq "Driv"
         deal.status.status_reference.integration_id.should eq "Driv"
     end
@@ -175,8 +175,8 @@ describe "Deal" do
 
         # when, then
         expect {
-            deal.status = FruitToLime::DealStatus.new({:id => 123})
-        }.to raise_error(FruitToLime::InvalidDealStatusError)
+            deal.status = GoImport::DealStatus.new({:id => 123})
+        }.to raise_error(GoImport::InvalidDealStatusError)
     end
 
 end

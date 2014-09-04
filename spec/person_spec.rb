@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "Person" do
     let(:person) {
-        FruitToLime::Person.new
+        GoImport::Person.new
     }
 
     it "can set a customfield" do
@@ -92,13 +92,13 @@ describe "Person" do
 
     it "should auto convert org to org.ref during assignment" do
         # given
-        org = FruitToLime::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+        org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
         # when
         person.organization = org
 
         # then
-        person.organization.is_a?(FruitToLime::OrganizationReference).should eq true
+        person.organization.is_a?(GoImport::OrganizationReference).should eq true
     end
 
     describe "parse_name_to_firstname_lastname_se" do

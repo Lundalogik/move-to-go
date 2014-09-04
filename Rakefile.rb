@@ -2,7 +2,7 @@
 require 'rspec/core/rake_task'
 require 'fileutils'
 require 'tmpdir'
-require './lib/fruit_to_lime/templating.rb'
+require './lib/go_import/templating.rb'
 
 RSpec::Core::RakeTask.new(:spec)
 
@@ -10,7 +10,7 @@ task :default => :spec
 task :test => :spec
 
 require 'bundler/gem_helper'
-#Bundler::GemHelper.install_tasks({:dir=>File.dirname(__FILE__),:name=>'fruit_to_lime'})
+#Bundler::GemHelper.install_tasks({:dir=>File.dirname(__FILE__),:name=>'go_import'})
 
 desc "Build gem"
 task :build do
@@ -30,7 +30,7 @@ task :release do
 end
 
 
-task :install_fruit_to_lime do
+task :install_go_import do
     sh "bundle install"
 end
 
@@ -38,8 +38,8 @@ require 'rubygems'
 require 'rubygems/gem_runner'
 require 'rubygems/exceptions'
 
-task :uninstall_fruit_to_lime do
-    ['fruit_to_lime','fruit-to-lime'].each do |tool|
+task :uninstall_go_import do
+    ['go_import','fruit-to-lime'].each do |tool|
         begin
             Gem::GemRunner.new.run ['uninstall', tool, '-a', '-x']
         rescue Gem::SystemExitException => e
@@ -48,8 +48,8 @@ task :uninstall_fruit_to_lime do
     end
 end
 
-desc "test fruit to lime gem"
-task :test_fruit_to_lime => [:uninstall_fruit_to_lime, :install_fruit_to_lime, :spec]
+desc "test go import gem"
+task :test_go_import => [:uninstall_go_import, :install_go_import, :spec]
 
 task :clean_temporary_templates_folder do
     unpack_path = File.expand_path("unpacked", Dir.tmpdir)
@@ -89,6 +89,6 @@ task :sqlserver_template_spec => [:clean_temporary_templates_folder] do
     unpack_template_and_run_specs 'sqlserver'
 end
 
-desc "specs for fruit_to_lime and templates"
+desc "specs for go_import and templates"
 task :spec_and_templates => [:spec, :csv_template_spec, :excel_template_spec] do
 end

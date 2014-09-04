@@ -1,12 +1,12 @@
 # encoding: UTF-8
-require 'fruit_to_lime'
+require 'go_import'
 
 # Customize this file to suit your input files.
 #
-# Documentation fruit_to_lime can be found at
-# http://rubygems.org/gems/fruit_to_lime
+# Documentation go_import can be found at
+# http://rubygems.org/gems/go_import
 #
-# Fruit_to_lime contains all objects in LIME Go such as organization,
+# go_import contains all objects in LIME Go such as organization,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 
@@ -19,7 +19,7 @@ require 'fruit_to_lime'
 # Follow these steps:
 #
 # 1) Export all data from KONTAKT.mdb to a folder named Export located
-# in the folder created by fruit_to_lime unpack_template. Export data
+# in the folder created by go_import unpack_template. Export data
 # using the magical tool called PowerSellMigrationExport.exe that can
 # be found in K:\Lundalogik\LIME Easy\Tillbehör\Migrationsexport.
 #
@@ -32,9 +32,9 @@ require 'fruit_to_lime'
 # when your customer has approved the import, run it on production.
 class Exporter
     # Turns a user from the User.txt Easy Export file into
-    # a fruit_to_lime coworker.
+    # a go_import coworker.
     def to_coworker(row)
-        coworker = FruitToLime::Coworker.new
+        coworker = GoImport::Coworker.new
         # integration_id is typically the userId in Easy
         # Must be set to be able to import the same file more
         # than once without creating duplicates
@@ -48,9 +48,9 @@ class Exporter
     end
 
     # Turns a row from the Easy exported Company.txt file into a
-    # fruit_to_lime organization.
+    # go_import organization.
     def to_organization(row, coworkers)
-        organization = FruitToLime::Organization.new
+        organization = GoImport::Organization.new
         # integration_id is typically the company Id in Easy
         # Must be set to be able to import the same file more
         # than once without creating duplicates
@@ -121,30 +121,30 @@ class Exporter
         # with the options '1.Customer', '2.Prospect' '3.Partner' and '4.Lost customer'
         if row['Customer relation'] == '1.Customer'
             # We have made a deal with this organization.
-            organization.relation = FruitToLime::Relation::IsACustomer
+            organization.relation = GoImport::Relation::IsACustomer
         elsif row['Customer relation'] == '3.Partner'
             # We have made a deal with this organization.
-            organization.relation = FruitToLime::Relation::IsACustomer
+            organization.relation = GoImport::Relation::IsACustomer
         elsif row['Customer relation'] == '2.Prospect'
             # Something is happening with this organization, we might have
             # booked a meeting with them or created a deal, etc.
-            organization.relation = FruitToLime::Relation::WorkingOnIt
+            organization.relation = GoImport::Relation::WorkingOnIt
         elsif row['Customer relation'] == '4.Lost customer'
             # We had something going with this organization but we
             # couldn't close the deal and we don't think they will be a
             # customer to us in the foreseeable future.
-            organization.relation = FruitToLime::Relation::BeenInTouch
+            organization.relation = GoImport::Relation::BeenInTouch
         else
-            organization.relation = FruitToLime::Relation::NoRelation
+            organization.relation = GoImport::Relation::NoRelation
         end
 
         return organization
     end
 
     # Turns a row from the Easy exported Company-Person.txt file into
-    # a fruit_to_lime model that is used to generate xml
+    # a go_import model that is used to generate xml
     def to_person(row)
-        person = FruitToLime::Person.new
+        person = GoImport::Person.new
 
         # Easy standard fields created in configure method Easy
         # persons don't have a globally unique Id, they are only
@@ -191,11 +191,11 @@ class Exporter
     end
 
     # Turns a row from the Easy exported Project.txt file into
-    # a fruit_to_lime model that is used to generate xml.
+    # a go_import model that is used to generate xml.
     # Uses includes hash to lookup organizations to connect
     # Uses coworkers hash to lookup coworkers to connect
     def to_deal(row, includes, coworkers)
-        deal = FruitToLime::Deal.new
+        deal = GoImport::Deal.new
         # Easy standard fields
         deal.integration_id = row['PowerSellProjectID']
         deal.name = row['Name']
@@ -239,7 +239,7 @@ class Exporter
     end
 
     # Turns a row from the Easy exported Company-History.txt file into
-    # a fruit_to_lime model that is used to generate xml.
+    # a go_import model that is used to generate xml.
     # Uses coworkers hash to lookup coworkers to connect
     # Uses people hash to lookup persons to connect
     def to_organization_note(row, coworkers, people)
@@ -249,7 +249,7 @@ class Exporter
         coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if organization && coworker
-            note = FruitToLime::Note.new()
+            note = GoImport::Note.new()
             note.organization = organization
             note.created_by = coworker
             note.person = organization.find_employee_by_integration_id(people[row['idPerson']])
@@ -263,7 +263,7 @@ class Exporter
     end
 
     # Turns a row from the Easy exported Project-History.txt file into
-    # a fruit_to_lime model that is used to generate xml
+    # a go_import model that is used to generate xml
     # Uses coworkers hash to lookup coworkers to connect
     def to_deal_note(row, coworkers)
         # TODO: This could be improved to read a person from an
@@ -276,7 +276,7 @@ class Exporter
         coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if deal && coworker
-            note = FruitToLime::Note.new()
+            note = GoImport::Note.new()
             note.deal = deal
             note.created_by = coworker
             note.date = row['Date']
@@ -301,8 +301,8 @@ class Exporter
         model.settings.with_deal do |deal|
             # assessment is default DealState::NoEndState
             deal.add_status( {:label => '1. Kvalificering' })
-            deal.add_status( {:label => '2. Deal closed', :assessment => FruitToLime::DealState::PositiveEndState })
-            deal.add_status( {:label => '4. Deal lost', :assessment => FruitToLime::DealState::NegativeEndState })
+            deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
+            deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
         end
     end
 
@@ -311,7 +311,7 @@ class Exporter
         data = '"' + data.gsub("\t", "\"\t\"") + '"'
         data = data.gsub("\n", "\"\n\"")
 
-        rows = FruitToLime::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
+        rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
         rows.each do |row|
             yield row
         end
@@ -320,7 +320,7 @@ class Exporter
     def to_model(coworkers_filename, organization_filename, persons_filename, orgnotes_filename, includes_filename, deals_filename, dealnotes_filename)
         # A rootmodel is used to represent all entitite/models
         # that is exported
-        @rootmodel = FruitToLime::RootModel.new
+        @rootmodel = GoImport::RootModel.new
         coworkers = Hash.new
         includes = Hash.new
         people = Hash.new
@@ -393,7 +393,7 @@ class Exporter
 
     def save_xml(file)
         File.open(file,'w') do |f|
-            f.write(FruitToLime::SerializeHelper::serialize(to_xml_model))
+            f.write(GoImport::SerializeHelper::serialize(to_xml_model))
         end
     end
 end

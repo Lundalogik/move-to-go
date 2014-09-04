@@ -1,13 +1,13 @@
 require 'spec_helper'
-require 'fruit_to_lime'
+require 'go_import'
 
-describe FruitToLime::SerializeHelper do
+describe GoImport::SerializeHelper do
 
     describe "Serialize note" do
         let(:serialized) {
-            n = FruitToLime::Note.new
+            n = GoImport::Note.new
             n.text = "text"
-            FruitToLime::SerializeHelper::serialize(n,-1)
+            GoImport::SerializeHelper::serialize(n,-1)
         }
         it "should contain text" do
             serialized.should match(/<Text>[\n ]*text[\n ]*<\/Text>/)
@@ -22,9 +22,9 @@ describe FruitToLime::SerializeHelper do
 
     describe "Serialize note with xml inside" do
         let(:serialized) {
-            n = FruitToLime::Note.new
+            n = GoImport::Note.new
             n.text = "<text>"
-            FruitToLime::SerializeHelper::serialize(n,-1)
+            GoImport::SerializeHelper::serialize(n,-1)
         }
         it "should contain encoded text" do
             serialized.should match(/<Text>[\n ]*&lt;text&gt;[\n ]*<\/Text>/)
@@ -33,11 +33,11 @@ describe FruitToLime::SerializeHelper do
 
     describe "Serialize custom value with xml inside" do
         let(:serialized) {
-            v = FruitToLime::CustomValue.new
+            v = GoImport::CustomValue.new
             v.value = "<text>"
-            v.field = FruitToLime::CustomFieldReference.new()
+            v.field = GoImport::CustomFieldReference.new()
             v.field.integration_id = "1"
-            FruitToLime::SerializeHelper::serialize(v,-1)
+            GoImport::SerializeHelper::serialize(v,-1)
         }
         it "should contain encoded text" do
             serialized.should match(/<Value>[\n ]*&lt;text&gt;[\n ]*<\/Value>/)
@@ -47,8 +47,8 @@ describe FruitToLime::SerializeHelper do
 
     describe "Serialize without data" do
         let(:serialized) {
-            p = FruitToLime::Person.new
-            FruitToLime::SerializeHelper::serialize(p,-1)
+            p = GoImport::Person.new
+            GoImport::SerializeHelper::serialize(p,-1)
         }
         it "should not contain fields that are not set" do
             serialized.should_not match(/<Email>/)
@@ -64,7 +64,7 @@ describe FruitToLime::SerializeHelper do
 
     describe "Serialize person" do
         let(:serialized) {
-            p = FruitToLime::Person.new
+            p = GoImport::Person.new
             p.id = "1"
             p.first_name = "Kalle"
             p.last_name = "Anka"
@@ -82,7 +82,7 @@ describe FruitToLime::SerializeHelper do
             p.set_custom_field({:integration_id=>"2", :value=>"cf value"})
             p.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
             p.set_custom_field({:integration_id=>"4", :value=>"cf <Bj\u{00F6}rk>"})
-            FruitToLime::SerializeHelper::serialize(p,-1)
+            GoImport::SerializeHelper::serialize(p,-1)
         }
         it "should contain first and last name" do
             serialized.should match(/<FirstName>[\n ]*Kalle[\n ]*<\/FirstName>/)
@@ -121,7 +121,7 @@ describe FruitToLime::SerializeHelper do
     end
     describe "Serialize organization" do
         let(:serialized) {
-            o = FruitToLime::Organization.new
+            o = GoImport::Organization.new
             o.name = "Ankeborgs bibliotek"
             o.with_source do |source|
                 source.par_se('122345')
@@ -142,7 +142,7 @@ describe FruitToLime::SerializeHelper do
                 :first_name => "Kalle",
                 :last_name => "Anka"
             })
-            FruitToLime::SerializeHelper::serialize(o,-1)
+            GoImport::SerializeHelper::serialize(o,-1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
@@ -178,11 +178,11 @@ describe FruitToLime::SerializeHelper do
 
     describe "Serialize goimport" do
         let(:serialized) {
-            i = FruitToLime::RootModel.new
-            o = FruitToLime::Organization.new
+            i = GoImport::RootModel.new
+            o = GoImport::Organization.new
             o.name = "Ankeborgs bibliotek"
             i.organizations.push(o)
-            FruitToLime::SerializeHelper::serialize(i,-1)
+            GoImport::SerializeHelper::serialize(i,-1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
@@ -196,7 +196,7 @@ describe FruitToLime::SerializeHelper do
     end
     describe "Get import rows" do
         describe "for person" do
-            let(:import_rows) { FruitToLime::Person.new.get_import_rows }
+            let(:import_rows) { GoImport::Person.new.get_import_rows }
             it "should contain integration id" do
                 import_rows.should include({:id=>'integration_id', :name=>'Integration id', :type=>:string})
                 import_rows.should include({:id=>'id', :name=>'Go id', :type=>:string})
@@ -227,7 +227,7 @@ describe FruitToLime::SerializeHelper do
             end
         end
         describe "for organization" do
-            let(:import_rows) { FruitToLime::Organization.new.get_import_rows }
+            let(:import_rows) { GoImport::Organization.new.get_import_rows }
             it "should contain integration id" do
                 import_rows.should include({:id=>'integration_id', :name=>'Integration id', :type=>:string})
                 import_rows.should include({:id=>'id', :name=>'Go id', :type=>:string})

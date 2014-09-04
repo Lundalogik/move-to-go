@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "RootModel" do
     let(:rootmodel) {
-        FruitToLime::RootModel.new
+        GoImport::RootModel.new
     }
 
     it "will contain integration coworker by default" do
@@ -23,7 +23,7 @@ describe "RootModel" do
     end
 
     it "can add a coworker from a new coworker" do
-        coworker = FruitToLime::Coworker.new
+        coworker = GoImport::Coworker.new
         coworker.integration_id = "123key"
         coworker.first_name="Kalle"
         coworker.last_name="Anka"
@@ -48,7 +48,7 @@ describe "RootModel" do
                 :last_name=>"Anka",
                 :email=>"knatte.anka@vonanka.com"
             })
-        }.to raise_error(FruitToLime::AlreadyAddedError)
+        }.to raise_error(GoImport::AlreadyAddedError)
         rootmodel.find_coworker_by_integration_id("123key").first_name.should eq "Kalle"
         rootmodel.coworkers.length.should eq 2
     end
@@ -64,7 +64,7 @@ describe "RootModel" do
 
     it "can add an organization from a new organization" do
         # given
-        organization = FruitToLime::Organization.new
+        organization = GoImport::Organization.new
         organization.integration_id = "123key"
         organization.name = "Beagle Boys"
 
@@ -91,7 +91,7 @@ describe "RootModel" do
                 :integration_id => "123key",
                 :name => "Beagle Boys 2"
             })
-        }.to raise_error(FruitToLime::AlreadyAddedError)
+        }.to raise_error(GoImport::AlreadyAddedError)
         rootmodel.find_organization_by_integration_id("123key").name.should eq "Beagle Boys"
         rootmodel.organizations.length.should eq 1
     end
@@ -107,7 +107,7 @@ describe "RootModel" do
 
     it "can add a deal from a new deal" do
         # given
-        deal = FruitToLime::Deal.new
+        deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big deal"
 
@@ -121,7 +121,7 @@ describe "RootModel" do
 
     it "will set reponsible coworker to import_coworker if none specifed" do
         # given
-        deal = FruitToLime::Deal.new
+        deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big deal"
 
@@ -134,10 +134,10 @@ describe "RootModel" do
 
     it "will not set reponsible coworker to import_coworker if specifed" do
         # given
-        deal = FruitToLime::Deal.new
+        deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big deal"
-        coworker = FruitToLime::Coworker.new
+        coworker = GoImport::Coworker.new
         coworker.integration_id = "123"
         deal.responsible_coworker = coworker
 
@@ -163,7 +163,7 @@ describe "RootModel" do
                 :integration_id => "123key",
                 :name => "Bigger deal"
             })
-        }.to raise_error(FruitToLime::AlreadyAddedError)
+        }.to raise_error(GoImport::AlreadyAddedError)
         rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
         rootmodel.deals.length.should eq 1
     end
@@ -179,7 +179,7 @@ describe "RootModel" do
 
     it "can add a note from a new note" do
         # given
-        note = FruitToLime::Note.new
+        note = GoImport::Note.new
         note.integration_id = "123key"
         note.text = "This is a note"
 
@@ -226,7 +226,7 @@ describe "RootModel" do
 
     it "will add a new link" do
         # given
-        link = FruitToLime::Link.new
+        link = GoImport::Link.new
         link.integration_id = "123key"
         link.url = "http://dropbox.com/files/readme.txt"
 
@@ -252,14 +252,14 @@ describe "RootModel" do
                 :integration_id => "123key",
                 :text => "This is another note"
             })
-        }.to raise_error(FruitToLime::AlreadyAddedError)
+        }.to raise_error(GoImport::AlreadyAddedError)
         rootmodel.notes.length.should eq 1
         rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
     end
 
     it "Will find a person by integration id" do
         # given
-        organization = FruitToLime::Organization.new
+        organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
         organization.add_employee({
             :integration_id => "123",
@@ -280,7 +280,7 @@ describe "RootModel" do
 
     it "Will find a person by integration id from an organization with many employees" do
         # given
-        organization = FruitToLime::Organization.new
+        organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
         organization.add_employee({
             :integration_id => "123",
@@ -305,11 +305,11 @@ describe "RootModel" do
     end
 
     it "will ignore empty integration ids during sanity check" do
-        org1 = FruitToLime::Organization.new
+        org1 = GoImport::Organization.new
         org1.name = "company 1"
         rootmodel.organizations.push org1
 
-        org2 = FruitToLime::Organization.new
+        org2 = GoImport::Organization.new
         org2.name = "company 2"
         rootmodel.organizations.push org2
 
@@ -317,12 +317,12 @@ describe "RootModel" do
     end
 
     it "will report when the same integration id is used during sanity check" do
-        org1 = FruitToLime::Organization.new
+        org1 = GoImport::Organization.new
         org1.integration_id = "1"
         org1.name = "company 1"
         rootmodel.organizations.push org1
 
-        org2 = FruitToLime::Organization.new
+        org2 = GoImport::Organization.new
         org2.integration_id = "1"
         org2.name = "company 2"
         rootmodel.organizations.push org2
@@ -331,19 +331,19 @@ describe "RootModel" do
     end
 
     it "will report when the same integrationid on person is used during sanity check" do
-        org1 = FruitToLime::Organization.new
+        org1 = GoImport::Organization.new
         org1.integration_id = "1"
         org1.name = "company 1"
-        person1 = FruitToLime::Person.new
+        person1 = GoImport::Person.new
         person1.integration_id = '1'
         org1.add_employee person1
 
         rootmodel.organizations.push org1
 
-        org2 = FruitToLime::Organization.new
+        org2 = GoImport::Organization.new
         org2.integration_id = "2"
         org2.name = "company 2"
-        person2 = FruitToLime::Person.new
+        person2 = GoImport::Person.new
         person2.integration_id = '1'
         org2.add_employee person2
         rootmodel.organizations.push org2
@@ -353,10 +353,10 @@ describe "RootModel" do
 
     it "will report when two links has the same integration id during sanity check" do
         # given
-        link1 = FruitToLime::Link.new
+        link1 = GoImport::Link.new
         link1.integration_id = "1"
 
-        link2 = FruitToLime::Link.new
+        link2 = GoImport::Link.new
         link2.integration_id = "2"
 
         rootmodel.add_link link1

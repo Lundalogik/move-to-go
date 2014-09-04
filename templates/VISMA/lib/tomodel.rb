@@ -1,14 +1,14 @@
-﻿require 'fruit_to_lime'
+﻿require 'go_import'
 require 'roo'
 require 'dbf'
 
 # Customize this file to suit your input for a VISMA database.
 # You'll need KUND.DBS and KONTAKTER.DBS
 #
-# Documentation fruit_to_lime can be found at
-# http://rubygems.org/gems/fruit_to_lime
+# Documentation go_import can be found at
+# http://rubygems.org/gems/go_import
 #
-# Fruit_to_lime contains all objects in LIME Go such as organization,
+# go_import contains all objects in LIME Go such as organization,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 
@@ -44,7 +44,7 @@ class Converter
     end
 
     def to_organization(row)
-        organization = FruitToLime::Organization.new()
+        organization = GoImport::Organization.new()
 
         #Add tags:
         organization.set_tag "Importerad"
@@ -68,8 +68,8 @@ class Converter
         organization.central_phone_number = row['TEL']
 
         # Sets the organization's relation. Relation must be a value
-        # from FruitToLime::Relation.
-        organization.relation = FruitToLime::Relation::IsACustomer
+        # from GoImport::Relation.
+        organization.relation = GoImport::Relation::IsACustomer
 
         #Fill data to custom fields
         organization.set_custom_field({:integration_id=>"ackoms", :value=>row["ACKOMS"]})
@@ -78,7 +78,7 @@ class Converter
     end
 
     def to_note(row)
-        note = FruitToLime::Note.new()
+        note = GoImport::Note.new()
 
         # *** TODO:
         #
@@ -94,18 +94,18 @@ class Converter
     end
 
     def to_person(row)
-        person = FruitToLime::Person.new()
+        person = GoImport::Person.new()
 
         # *** TODO:
         #
         # Set person properties from the row.
 
         person.parse_name_to_firstname_lastname_se(row['NAMN'])
-        if FruitToLime::EmailHelper.is_valid?(row['EPOST'])
+        if GoImport::EmailHelper.is_valid?(row['EPOST'])
             person.email = row['EPOST']
         end
-        person.mobile_phone_number = FruitToLime::PhoneHelper.parse_numbers(row['MBTEL'], [",", "/", "\\"])
-        person.direct_phone_number = FruitToLime::PhoneHelper.parse_numbers(row['TEL'], [",", "/", "\\"])
+        person.mobile_phone_number = GoImport::PhoneHelper.parse_numbers(row['MBTEL'], [",", "/", "\\"])
+        person.direct_phone_number = GoImport::PhoneHelper.parse_numbers(row['TEL'], [",", "/", "\\"])
 
         return person
     end
@@ -118,7 +118,7 @@ class Converter
 
         # Then we create a rootmodel that should contain all data that
         # should be exported to LIME Go.
-        @rootmodel = FruitToLime::RootModel.new
+        @rootmodel = GoImport::RootModel.new
 
         # And configure the model if we have any custom fields
         puts "Adding custom fields to model"

@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require "thor"
+#require "go-import"
+
+#desc "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data."
+
+
+class GoImportCommandLine < Thor
+
+    desc "about", "About go-import"
+    def about()
+        puts "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data."
+        puts ""
+    end
+
+    desc "list-sources", "Lists the available sources"
+    def list_sources()
+        puts "List all sources, enumerate from file system"
+    end
+
+    desc "new", "Creates a new migration project with a specifed name and source"
+    def new(project_name, source_name)
+        puts "Create a new project named '#{project_name}' using source '#{source_name}'"
+    end
+
+
+    desc "run", "Executes the current project and create a go-import.xml file. Existing go-import.xml will be overwritten, use -o to specify a different filename"
+    def run_import()
+        # run is a Thor reserved word and cant be used as a method name
+        puts "Run go-import, run!"
+    end
+end
+
+GoImportCommandLine.start(ARGV)
+#GoImportCommandLine.start()
+
+
+
+# require "thor"
+# require "go_import"
+
+# class Cli < Thor
+#     desc "unpack_template NAME PATH", "Unpacks template with NAME in specified PATH or current directory if missing."
+#     def unpack_template(name, path = nil)
+#         path = '.' if path == nil
+#         path = File.absolute_path(path)
+#         templates_path = File.expand_path("../templates", File.dirname(__FILE__))
+#         templating = FruitToLime::Templating.new templates_path
+#         templating.unpack(name, path)
+#     end
+
+#     desc "list_templates", "Lists all templates"
+#     def list_templates()
+#         templates_path = File.expand_path("../templates", File.dirname(__FILE__))
+#         templating = FruitToLime::Templating.new templates_path
+#         list_of_templates = templating.list
+#         puts list_of_templates
+#     end
+# end
+
+# Cli.start(ARGV)

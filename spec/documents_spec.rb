@@ -1,14 +1,14 @@
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "Documents" do
     let(:documents) {
-        FruitToLime::Documents.new
+        GoImport::Documents.new
     }
 
     it "can add a new link" do
         # given
-        link = FruitToLime::Link.new
+        link = GoImport::Link.new
         link.integration_id = "123key"
         link.url = "http://dropbox.com/files/readme.txt"
 
@@ -28,7 +28,7 @@ describe "Documents" do
         # when, then
         expect {
             documents.add_link({ :integration_id => "123", :url => "http://drive.google.com" })
-        }.to raise_error(FruitToLime::AlreadyAddedError)
+        }.to raise_error(GoImport::AlreadyAddedError)
         documents.links.length.should eq 1
         documents.find_link_by_integration_id("123").url.should eq "http://dropbox.com"
     end

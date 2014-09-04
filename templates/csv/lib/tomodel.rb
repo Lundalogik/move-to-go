@@ -1,12 +1,12 @@
-require 'fruit_to_lime'
+require 'go_import'
 
 class Exporter
     # turns a row from the organization cssv file into
-    # a fruit_to_lime model that is used to generate xml
+    # a go_import model that is used to generate xml
     # Uses rootmodel to locate other related stuff such
     # coworker
     def to_organization(row, rootmodel)
-        organization = FruitToLime::Organization.new
+        organization = GoImport::Organization.new
         # Integrationid is typically the id in the system that
         # we are getting the csv from. Must be set to be able
         # to import the same file more than once without
@@ -58,7 +58,7 @@ class Exporter
     end
 
     def to_coworker(row)
-        coworker = FruitToLime::Coworker.new
+        coworker = GoImport::Coworker.new
         coworker.integration_id = row['id']
         coworker.first_name = row['first_name']
         coworker.last_name = row['last_name']
@@ -75,7 +75,7 @@ class Exporter
     end
 
     def to_person(row, rootmodel)
-        person = FruitToLime::Person.new
+        person = GoImport::Person.new
         person.integration_id = row['id']
         # Note that Go has separate first and last names
         # Some splitting might be necessary
@@ -102,7 +102,7 @@ class Exporter
     end
 
     def to_deal(row, rootmodel)
-        deal = FruitToLime::Deal.new
+        deal = GoImport::Deal.new
         deal.integration_id = row['id']
         deal.name = row['name']
         # should be integer, same currency should be used in
@@ -145,15 +145,15 @@ class Exporter
         model.settings.with_deal do |deal|
             deal.add_status({:label => "1. Kvalificering", :integration_id => "qualification"})
             deal.add_status({:label => "Vunnen", :integration_id => "won",
-                                :assessment => FruitToLime::DealState::PositiveEndState })
+                                :assessment => GoImport::DealState::PositiveEndState })
             deal.add_status({:label => "Lost", :integration_id => "Lost",
-                                :assessment => FruitToLime::DealState::NegativeEndState })
+                                :assessment => GoImport::DealState::NegativeEndState })
         end
     end
 
     def process_rows(file_name)
         data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1")
-        rows = FruitToLime::CsvHelper::text_to_hashes(data)
+        rows = GoImport::CsvHelper::text_to_hashes(data)
         rows.each do |row|
             yield row
         end
@@ -162,7 +162,7 @@ class Exporter
     def to_model(coworkers_filename, organization_filename, persons_filename, deals_filename)
         # A rootmodel is used to represent all entitite/models
         # that is exported
-        rootmodel = FruitToLime::RootModel.new
+        rootmodel = GoImport::RootModel.new
 
         configure rootmodel
 
@@ -205,7 +205,7 @@ class Exporter
 
     def save_xml(file)
         File.open(file,'w') do |f|
-            f.write(FruitToLime::SerializeHelper::serialize(to_xml_model))
+            f.write(GoImport::SerializeHelper::serialize(to_xml_model))
         end
     end
 end

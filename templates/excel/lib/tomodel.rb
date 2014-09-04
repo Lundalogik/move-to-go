@@ -1,12 +1,12 @@
-require 'fruit_to_lime'
+require 'go_import'
 require 'roo'
 
 # Customize this file to suit your input (excel) file.
 #
-# Documentation fruit_to_lime can be found at
-# http://rubygems.org/gems/fruit_to_lime
+# Documentation go_import can be found at
+# http://rubygems.org/gems/go_import
 #
-# Fruit_to_lime contains all objects in LIME Go such as organization,
+# go_import contains all objects in LIME Go such as organization,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 
@@ -41,7 +41,7 @@ class Converter
     end
 
     def to_coworker(row)
-        coworker = FruitToLime::Coworker.new()
+        coworker = GoImport::Coworker.new()
 
         # *** TODO:
         #
@@ -49,7 +49,7 @@ class Converter
 
         coworker.parse_name_to_firstname_lastname_se row['Namn/Titel']
         coworker.integration_id = row['Namn/Titel']
-        if FruitToLime::EmailHelper.is_valid?(row['Email'])
+        if GoImport::EmailHelper.is_valid?(row['Email'])
             coworker.email = row['Email']
         end
 
@@ -57,7 +57,7 @@ class Converter
     end
 
     def to_deal(row)
-        deal = FruitToLime::Deal.new()
+        deal = GoImport::Deal.new()
 
         # *** TODO:
         #
@@ -67,7 +67,7 @@ class Converter
     end
 
     def to_organization(row)
-        organization = FruitToLime::Organization.new()
+        organization = GoImport::Organization.new()
         organization.set_tag "Importerad"
 
         # Integrationid is typically the id in the system that we are
@@ -76,8 +76,8 @@ class Converter
         organization.integration_id = row['ID']
 
         # Sets the organization's relation. Relation must be a value
-        # from FruitToLime::Relation.
-        organization.relation = FruitToLime::Relation::IsACustomer
+        # from GoImport::Relation.
+        organization.relation = GoImport::Relation::IsACustomer
 
         # *** TODO:
         #
@@ -89,24 +89,24 @@ class Converter
     end
 
     def to_person(row)
-        person = FruitToLime::Person.new()
+        person = GoImport::Person.new()
 
         # *** TODO:
         #
         # Set person properties from the row.
 
         person.parse_name_to_firstname_lastname_se(row['Namn'])
-        if FruitToLime::EmailHelper.is_valid?(row['Email'])
+        if GoImport::EmailHelper.is_valid?(row['Email'])
             person.email = row['Email']
         end
         person.mobile_phone_number, person.direct_phone_number =
-            FruitToLime::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
+            GoImport::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
 
         return person
     end
 
     def to_note(row)
-        note = FruitToLime::Note.new()
+        note = GoImport::Note.new()
 
         # *** TODO:
         #
@@ -128,7 +128,7 @@ class Converter
 
         # First we read each sheet from the excel file into separate
         # variables
-        excel_workbook = FruitToLime::ExcelHelper.Open(in_data_filename)
+        excel_workbook = GoImport::ExcelHelper.Open(in_data_filename)
         organization_rows = excel_workbook.rows_for_sheet 'Foretag'
         person_rows = excel_workbook.rows_for_sheet 'Kontaktperson'
         note_rows = excel_workbook.rows_for_sheet 'Anteckningar'
@@ -136,7 +136,7 @@ class Converter
 
         # Then we create a rootmodel that should contain all data that
         # should be exported to LIME Go.
-        @rootmodel = FruitToLime::RootModel.new
+        @rootmodel = GoImport::RootModel.new
 
         # And configure the model if we have any custom fields
         configure @rootmodel

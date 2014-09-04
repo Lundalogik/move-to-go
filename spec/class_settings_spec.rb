@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'fruit_to_lime'
+require 'go_import'
 
 describe "ClassSettings" do
     let(:class_settings) {
-        FruitToLime::ClassSettings.new
+        GoImport::ClassSettings.new
     }
 
     it "can set custom field and if there is already an existing custom field, then it is overwritten." do

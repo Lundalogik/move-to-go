@@ -1,4 +1,4 @@
-require 'fruit_to_lime'
+require 'go_import'
 require 'roo'
 require 'date'
 
