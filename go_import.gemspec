@@ -25,7 +25,7 @@ EOF
     s.add_development_dependency 'rake'
 
     s.files         = Dir.glob('lib/**/*.rb') + Dir.glob('bin/**/*') +
-        Dir.glob('templates/**/*') + Dir.glob('lib/go_import/global_phone.json')
+        Dir.glob('sources/**/*', File::FNM_DOTMATCH) + Dir.glob('lib/go_import/global_phone.json')
     s.test_files    = Dir.glob('spec/**/*.rb')
     s.executables   = ['go-import']
     s.require_paths = ['lib']

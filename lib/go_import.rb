@@ -15,4 +15,5 @@ module GoImport
     require 'go_import/email_helper'
     require 'go_import/excel_helper'
     require 'go_import/templating'
+    require 'go_import/source'
 end

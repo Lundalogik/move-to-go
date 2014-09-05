@@ -1,62 +1,96 @@
 #!/usr/bin/env ruby
 
 require "thor"
-#require "go-import"
-
-#desc "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data."
-
+require "go_import"
 
 class GoImportCommandLine < Thor
 
     desc "about", "About go-import"
     def about()
-        puts "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data."
+        puts "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that will make it easy for you to migrate your data."
         puts ""
     end
 
     desc "list-sources", "Lists the available sources"
     def list_sources()
-        puts "List all sources, enumerate from file system"
+        puts "The following sources are available:"
+        puts
+
+        sources = GoImport::Sources.new(source_path)
+        sources.list().each do |s|
+            puts "\t#{s}"
+        end
+
+        puts "\nCreate a new project with 'go-import new' with one of these sources."
     end
 
     desc "new", "Creates a new migration project with a specifed name and source"
-    def new(project_name, source_name)
-        puts "Create a new project named '#{project_name}' using source '#{source_name}'"
-    end
+    option(:project,
+           :desc => "Name of the project. The project will be created in a folder with the same name.",
+           :type => :string,
+           :required => true)
+    option(:source,
+           :desc => "Name of the source to use. Use list-sources to show available sources.",
+           :type => :string,
+           :required => true)
+    def new(project = nil, source = nil)
+        sources = GoImport::Sources.new(source_path)
 
+        if sources.create_project_from_source(options.project, options.source)
+            puts "\nProject '#{options.project}' created from source '#{options.source}'."
+            puts "Modify the #{options.project}/converter.rb script to suit your source."
+            puts "Use 'go-import run' from the project directory to create the xml file for LIME Go."
+        end
+    end
 
     desc "run", "Executes the current project and create a go-import.xml file. Existing go-import.xml will be overwritten, use -o to specify a different filename"
     def run_import()
         # run is a Thor reserved word and cant be used as a method name
-        puts "Run go-import, run!"
+
+        runner_dir = ".go_import"
+
+        if Dir.exists?(runner_dir) == false
+            puts "This doesnt look like a go-import project. Are you in the right directory or did you mess with the '#{runner_dir}' folder?"
+            return
+        end
+
+        runner_file = File.expand_path('./.go_import/runner.rb', Dir.pwd)
+        if File.exists?(runner_file) == false
+            puts "I can't run this project. Did you mess with the '#{runner_dir}' folder?"
+            return
+        end
+
+        require(runner_file)
+
+        # the source must implement the convert_source method that
+        # returns an instance of GoImport::RootModel
+        model = convert_source()
+
+        go_data_filename = "go.xml"
+
+        error = model.sanity_check
+        if error.empty?
+            validation_errors = model.validate
+
+            if validation_errors.empty?
+                model.serialize_to_file(go_data_filename)
+                puts "Source has been been converted into '#{go_data_filename}'."
+            else
+                puts "Source could not be converted due to"
+                puts validation_errors
+            end
+        else
+            puts "Source could not be converted due to"
+            puts error
+        end
+
+    end
+
+    private
+    def source_path()
+        File.expand_path("../sources", File.dirname(__FILE__))
     end
 end
 
 GoImportCommandLine.start(ARGV)
-#GoImportCommandLine.start()
 
-
-
-# require "thor"
-# require "go_import"
-
-# class Cli < Thor
-#     desc "unpack_template NAME PATH", "Unpacks template with NAME in specified PATH or current directory if missing."
-#     def unpack_template(name, path = nil)
-#         path = '.' if path == nil
-#         path = File.absolute_path(path)
-#         templates_path = File.expand_path("../templates", File.dirname(__FILE__))
-#         templating = FruitToLime::Templating.new templates_path
-#         templating.unpack(name, path)
-#     end
-
-#     desc "list_templates", "Lists all templates"
-#     def list_templates()
-#         templates_path = File.expand_path("../templates", File.dirname(__FILE__))
-#         templating = FruitToLime::Templating.new templates_path
-#         list_of_templates = templating.list
-#         puts list_of_templates
-#     end
-# end
-
-# Cli.start(ARGV)
