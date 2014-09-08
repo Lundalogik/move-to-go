@@ -11,6 +11,11 @@ require 'roo'
 # relative to this folder.
 EXCEL_FILE = "template.xlsx"
 
+# *** TODO:
+# * add constants for SHEET_NAMES.
+# * move to_go into runner?
+
+
 # Then you need to modify the script below according to the TODO
 # comments.
 
