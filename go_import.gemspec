@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-    s.name        = 'go-import'
+    s.name        = 'go_import'
     s.version     = '3.0.0'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game']
