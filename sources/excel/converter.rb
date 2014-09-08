@@ -11,10 +11,11 @@ require 'roo'
 # relative to this folder.
 EXCEL_FILE = "template.xlsx"
 
-# *** TODO:
-# * add constants for SHEET_NAMES.
-# * move to_go into runner?
-
+COWORKER_SHEET = "Medarbetare"
+ORGANIZATION_SHEET = "Företag"
+PERSON_SHEET = "Kontaktperson"
+DEAL_SHEET = "Affär"
+NOTE_SHEET = "Anteckningar"
 
 # Then you need to modify the script below according to the TODO
 # comments.
@@ -24,78 +25,20 @@ EXCEL_FILE = "template.xlsx"
 # go-import run
 
 class Converter
-    def to_go()
-        # *** TODO:
-        #
-        # Modify the name of the sheets. Or add/remove sheets based on
-        # your Excel file.
-
-        # First we read each sheet from the excel file into separate
-        # variables
-        excel_workbook = GoImport::ExcelHelper.Open(EXCEL_FILE)
-        organization_rows = excel_workbook.rows_for_sheet 'Företag'
-        person_rows = excel_workbook.rows_for_sheet 'Kontaktperson'
-        note_rows = excel_workbook.rows_for_sheet 'Anteckningar'
-        coworker_rows = excel_workbook.rows_for_sheet 'Medarbetare'
-
-        # You should NOT have to modify this method below this line.
-        # BUT you MUST modify the other methods below.
-
-        # Then we create a rootmodel that will contain all data that
-        # should be exported to LIME Go.
-        @rootmodel = GoImport::RootModel.new
-
-        # And configure the model if we have any custom fields
-        configure @rootmodel
-
-        # Now start to read data from the excel file and add to the
-        # rootmodel. We begin with coworkers since they are referenced
-        # from everywhere (orgs, deals, notes)
-        coworker_rows.each do |row|
-            @rootmodel.add_coworker(to_coworker(row))
-        end
-
-        # Then create organizations, they are only referenced by
-        # coworkers.
-        organization_rows.each do |row|
-            @rootmodel.add_organization(to_organization(row))
-        end
-
-        # Add people and link them to their organizations
-        person_rows.each do |row|
-            # People are special since they are not added directly to
-            # the root model
-            import_person_to_organization(row)
-        end
-
-        # Deals can connected to coworkers, organizations and people.
-        # deal_rows.each do |row|
-        #     @rootmodel.add_deal(to_deal(row))
-        # end
-
-        # Notes must be owned by a coworker and the be added to
-        # organizations and notes and might refernce a person
-        note_rows.each do |row|
-            @rootmodel.add_note(to_note(row))
-        end
-
-        return @rootmodel
-    end
-
-    def configure(model)
-        # *** TODO: Add custom field to your model here. Custom fields
+    def configure(rootmodel)
+        # *** TODO: Add custom field to your rootmodel here. Custom fields
         # can be added to organization, deal and person. Valid types
         # are :String and :Link. If no type is specified :String is
         # used as default.
 
-        # model.settings.with_organization do |organization|
+        # rootmodel.settings.with_organization do |organization|
         #     organization.set_custom_field( { :integrationid => 'source', :title => 'Källa', :type => :Link } )
         # end
     end
 
-    def import_person_to_organization(row)
-        person = to_person(row)
-        organization = @rootmodel.find_organization_by_integration_id(row['ID'])
+    def import_person_to_organization(row, rootmodel)
+        person = to_person(row, rootmodel)
+        organization = rootmodel.find_organization_by_integration_id(row['ID'])
 
         if !organization.nil?
             organization.add_employee(person)
@@ -118,7 +61,7 @@ class Converter
         return coworker
     end
 
-    def to_deal(row)
+    def to_deal(row, rootmodel)
         deal = GoImport::Deal.new()
 
         # *** TODO:
@@ -128,7 +71,7 @@ class Converter
         return deal
     end
 
-    def to_organization(row)
+    def to_organization(row, rootmodel)
         organization = GoImport::Organization.new()
         organization.set_tag "Importerad"
 
@@ -153,7 +96,7 @@ class Converter
         return organization
     end
 
-    def to_person(row)
+    def to_person(row, rootmodel)
         person = GoImport::Person.new()
 
         # *** TODO:
@@ -170,15 +113,15 @@ class Converter
         return person
     end
 
-    def to_note(row)
+    def to_note(row, rootmodel)
         note = GoImport::Note.new()
 
         # *** TODO:
         #
         # Set note properties from the row.
 
-        note.organization = @rootmodel.find_organization_by_integration_id(row['ID'])
-        note.created_by = @rootmodel.find_coworker_by_integration_id(row['Skapad av'])
+        note.organization = rootmodel.find_organization_by_integration_id(row['ID'])
+        note.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av'])
         note.text = row['Text']
         note.date = row['Skapad den']
 

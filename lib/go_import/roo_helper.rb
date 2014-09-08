@@ -20,6 +20,14 @@ module GoImport
             return rows_for_sheet(@default_sheet)
         end
 
+        # Returns true if the current workbook has a sheet with the
+        # specifed name. This is case sensitive.
+        def has_sheet?(name)
+            sheet = @data.sheets.find { |s| s.to_s == name}
+
+            return !sheet.nil?
+        end
+
         # @example transform xlsx file into rows for the second sheet
         #     data = Roo::Excelx.new(organizations_path)
         #     rows = GoImport::RooHelper.new(data).rows_for_sheet(data.sheets[1])
