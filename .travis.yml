@@ -12,4 +12,4 @@ install:
  - bundle install
 
 script:
- - bundle exec rake spec_and_templates
+ - bundle exec rake spec
