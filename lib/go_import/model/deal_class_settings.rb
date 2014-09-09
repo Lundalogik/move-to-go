@@ -1,4 +1,5 @@
 # encoding: utf-8
+require_relative 'class_settings'
 
 module GoImport
     class DealClassSettings < ClassSettings
