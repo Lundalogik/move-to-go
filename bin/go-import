@@ -43,7 +43,11 @@ class GoImportCommandLine < Thor
         end
     end
 
-    desc "run", "Executes the current project and create a go-import.xml file. Existing go-import.xml will be overwritten, use -o to specify a different filename"
+    desc "run", "Executes the current project and create a go.xml file. Existing go.xml will be overwritten, use --output to specify a different filename"
+    option(:output,
+           :desc => "Name of the file where the converted source will be saved. This file should be sent to LIME Go. If the file already exist it will be replaced.",
+           :type => :string,
+           :required => false)
     def run_import()
         # run is a Thor reserved word and cant be used as a method name
 
@@ -66,7 +70,7 @@ class GoImportCommandLine < Thor
         # returns an instance of GoImport::RootModel
         model = convert_source()
 
-        go_data_filename = "go.xml"
+        go_data_filename = options.output.nil? == true ? "go.xml" : options.output
 
         error = model.sanity_check
         if error.empty?
