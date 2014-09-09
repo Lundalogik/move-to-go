@@ -1,9 +1,9 @@
 #!/usr/bin/env rake
 require 'rspec/core/rake_task'
-require 'fileutils'
-require 'tmpdir'
-require './lib/go_import/templating.rb'
-require './lib/go_import/source.rb'
+#require 'fileutils'
+#require 'tmpdir'
+#require './lib/go_import/templating.rb'
+#require './lib/go_import/source.rb'
 
 RSpec::Core::RakeTask.new(:spec)
 
