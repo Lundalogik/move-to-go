@@ -4,9 +4,9 @@ rvm:
   - 1.9.3
   - 2.0.0
 
-before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq freetds-dev
+#before_install:
+# - sudo apt-get update -qq
+# - sudo apt-get install -qq freetds-dev
 
 install:
  - bundle install
