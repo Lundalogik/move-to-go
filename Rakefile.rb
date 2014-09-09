@@ -5,7 +5,13 @@ require 'rspec/core/rake_task'
 #require './lib/go_import/templating.rb'
 #require './lib/go_import/source.rb'
 
-RSpec::Core::RakeTask.new(:spec)
+task :spec do |t|
+    system "rspec"
+    if ! $?.success?
+        puts "Failed: rspec with #{$?}"
+        raise "failed!"
+    end
+end
 
 task :default => :spec
 task :test => :spec
