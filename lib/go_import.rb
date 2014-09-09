@@ -7,7 +7,6 @@ module GoImport
     require 'go_import/errors'
     require 'go_import/serialize_helper'
     require 'go_import/model_helpers'
-    #FruitToLime::require_all_in 'go_import/model/*.rb'
     GoImport::require_all_in 'go_import/model/*.rb'
     require 'go_import/csv_helper'
     require 'go_import/roo_helper'
