@@ -1,4 +1,4 @@
-# Fruit_To_LIME [![Build Status](https://travis-ci.org/Lundalogik/fruit_to_lime.png?branch=master)](https://travis-ci.org/Lundalogik/fruit_to_lime) 
+# Fruit_To_LIME [![Build Status](https://travis-ci.org/Lundalogik/go_import.png?branch=master)](https://travis-ci.org/Lundalogik/fruit_to_lime) 
 
 ## What is Fruit_To_LIME?
 Fruit_To_LIME is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any input and generate pretty looking xml-files that LIME Go likes.
