@@ -9,7 +9,7 @@ require 'roo'
 
 # First set the name of the Excel file to convert. It is a filename
 # relative to this folder.
-EXCEL_FILE = "template.xlsx"
+EXCEL_FILE = "sample-data.xlsx"
 
 COWORKER_SHEET = "Medarbetare"
 ORGANIZATION_SHEET = "Företag"
