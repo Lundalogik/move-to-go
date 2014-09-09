@@ -1,6 +1,0 @@
-source 'http://rubygems.org'
-
-gem 'rspec'
-gem 'thor'
-gem 'go_import'
-gem 'tiny_tds'
