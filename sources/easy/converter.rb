@@ -30,7 +30,7 @@ require 'go_import'
 #
 # 4) Upload go.xml to LIME Go. First test your import on staging and
 # when your customer has approved the import, run it on production.
-class Exporter
+class Converter
     # Turns a user from the User.txt Easy Export file into
     # a go_import coworker.
     def to_coworker(row)
@@ -49,7 +49,7 @@ class Exporter
 
     # Turns a row from the Easy exported Company.txt file into a
     # go_import organization.
-    def to_organization(row, coworkers)
+    def to_organization(row, coworkers, rootmodel)
         organization = GoImport::Organization.new
         # integration_id is typically the company Id in Easy
         # Must be set to be able to import the same file more
@@ -98,14 +98,14 @@ class Exporter
         end
 
         # Only set other Bisnode fields if the Bisnode Id is empty
-        if bisnode_id.empty?
+        if bisnode_id && bisnode_id.empty?
             organization.web_site = row['website']
         end
 
         # Responsible coworker for the organization.
         # For instance responsible sales rep.
         coworker_id = coworkers[row['idUser-Responsible']]
-        organization.responsible_coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
+        organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         # Tags are set and defined at the same place
         # Setting a tag: Imported is useful for the user
@@ -143,7 +143,7 @@ class Exporter
 
     # Turns a row from the Easy exported Company-Person.txt file into
     # a go_import model that is used to generate xml
-    def to_person(row)
+    def to_person(row, rootmodel)
         person = GoImport::Person.new
 
         # Easy standard fields created in configure method Easy
@@ -156,7 +156,7 @@ class Exporter
         person.last_name = row['Last name']
 
         # set employer connection
-        employer = @rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
+        employer = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
         if employer
             employer.add_employee person
         end
@@ -194,7 +194,7 @@ class Exporter
     # a go_import model that is used to generate xml.
     # Uses includes hash to lookup organizations to connect
     # Uses coworkers hash to lookup coworkers to connect
-    def to_deal(row, includes, coworkers)
+    def to_deal(row, includes, coworkers, rootmodel)
         deal = GoImport::Deal.new
         # Easy standard fields
         deal.integration_id = row['PowerSellProjectID']
@@ -205,7 +205,7 @@ class Exporter
         deal.order_date = row['order date']
 
         coworker_id = coworkers[row['isUser-Ansvarig']]
-        deal.responsible_coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
+        deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         # Should be integer
         # The currency used in Easy should match the one used in Go
@@ -219,7 +219,7 @@ class Exporter
         # assumes that the status is already created in LIME Go. To
         # create statuses during import add them to the settings
         # during configure.
-        if !row['Status'].empty?
+        if !row['Status'].nil? && !row['Status'].empty?
             deal.status = row['Status']
         end
 
@@ -229,7 +229,7 @@ class Exporter
         # Make the deal - organization connection
         if includes
             organization_id = includes[row['PowerSellProjectID']]
-            organization = @rootmodel.find_organization_by_integration_id(organization_id)
+            organization = rootmodel.find_organization_by_integration_id(organization_id)
             if organization
                 deal.customer = organization
             end
@@ -242,11 +242,11 @@ class Exporter
     # a go_import model that is used to generate xml.
     # Uses coworkers hash to lookup coworkers to connect
     # Uses people hash to lookup persons to connect
-    def to_organization_note(row, coworkers, people)
-        organization = @rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
+    def to_organization_note(row, coworkers, people, rootmodel)
+        organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
 
         coworker_id = coworkers[row['idUser']]
-        coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
+        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if organization && coworker
             note = GoImport::Note.new()
@@ -265,15 +265,15 @@ class Exporter
     # Turns a row from the Easy exported Project-History.txt file into
     # a go_import model that is used to generate xml
     # Uses coworkers hash to lookup coworkers to connect
-    def to_deal_note(row, coworkers)
+    def to_deal_note(row, coworkers, rootmodel)
         # TODO: This could be improved to read a person from an
         # organization connected to this deal if any, but since it is
         # a many to many connection between organizations and deals
         # it's not a straight forward task
-        deal = @rootmodel.find_deal_by_integration_id(row['PowerSellProjectID'])
+        deal = rootmodel.find_deal_by_integration_id(row['PowerSellProjectID'])
 
         coworker_id = coworkers[row['idUser']]
-        coworker = @rootmodel.find_coworker_by_integration_id(coworker_id)
+        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         if deal && coworker
             note = GoImport::Note.new()
@@ -289,147 +289,21 @@ class Exporter
         return nil
     end
 
-    def configure(model)
-        # add custom field to your model here. Custom fields can be
-        # added to organization, deal and person. Valid types are
+    def configure(rootmodel)
+        # add custom field to your rootmodel here. Custom fields can
+        # be added to organization, deal and person. Valid types are
         # :String and :Link. If no type is specified :String is used
         # as default.
-        model.settings.with_person  do |person|
+        rootmodel.settings.with_person  do |person|
             person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
         end
 
-        model.settings.with_deal do |deal|
+        rootmodel.settings.with_deal do |deal|
             # assessment is default DealState::NoEndState
             deal.add_status( {:label => '1. Kvalificering' })
             deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
             deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
         end
     end
-
-    def process_rows(file_name)
-        data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1").strip().gsub('"', '')
-        data = '"' + data.gsub("\t", "\"\t\"") + '"'
-        data = data.gsub("\n", "\"\n\"")
-
-        rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
-        rows.each do |row|
-            yield row
-        end
-    end
-
-    def to_model(coworkers_filename, organization_filename, persons_filename, orgnotes_filename, includes_filename, deals_filename, dealnotes_filename)
-        # A rootmodel is used to represent all entitite/models
-        # that is exported
-        @rootmodel = GoImport::RootModel.new
-        coworkers = Hash.new
-        includes = Hash.new
-        people = Hash.new
-
-        configure @rootmodel
-
-        # coworkers
-        # start with these since they are referenced
-        # from everywhere....
-        if coworkers_filename && !coworkers_filename.empty?
-            process_rows coworkers_filename do |row|
-                coworkers[row['userIndex']] = row['userId']
-                @rootmodel.add_coworker(to_coworker(row))
-            end
-        end
-
-        # organizations
-        if organization_filename && !organization_filename.empty?
-            process_rows organization_filename do |row|
-                @rootmodel.add_organization(to_organization(row, coworkers))
-            end
-        end
-
-        # persons
-        # depends on organizations
-        if persons_filename && !persons_filename.empty?
-            process_rows persons_filename do |row|
-                people[row['personIndex']] = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
-                # adds it self to the employer
-                to_person(row)
-            end
-        end
-
-        # organization notes
-        if orgnotes_filename && !orgnotes_filename.empty?
-            process_rows orgnotes_filename do |row|
-                # adds itself if applicable
-                @rootmodel.add_note(to_organization_note(row, coworkers, people))
-            end
-        end
-
-        # Organization - Deal connection
-        # Reads the includes.txt and creats a hash
-        # that connect organizations to deals
-        if includes_filename && !includes_filename.empty?
-            process_rows includes_filename do |row|
-                includes[row['PowerSellProjectID']] = row['PowerSellCompanyID']
-            end
-        end
-
-        # deals
-        # deals can reference coworkers (responsible), organizations
-        # and persons (contact)
-        if deals_filename && !deals_filename.empty?
-            process_rows deals_filename do |row|
-                @rootmodel.add_deal(to_deal(row, includes, coworkers))
-            end
-        end
-
-        # deal notes
-        if dealnotes_filename && !dealnotes_filename.empty?
-            process_rows dealnotes_filename do |row|
-                # adds itself if applicable
-                @rootmodel.add_note(to_deal_note(row, coworkers))
-            end
-        end
-
-        return @rootmodel
-    end
-
-    def save_xml(file)
-        File.open(file,'w') do |f|
-            f.write(GoImport::SerializeHelper::serialize(to_xml_model))
-        end
-    end
 end
 
-require "thor"
-require "fileutils"
-require 'pathname'
-
-class Cli < Thor
-    desc "to_go", "Generates a Go XML file"
-    method_option :output, :desc => "Path to file where xml will be output", :default => "export.xml", :type => :string, :required => true
-    method_option :coworkers, :desc => "Path to coworkers csv file", :type => :string, :required => true
-    method_option :organizations, :desc => "Path to organization csv file", :type => :string, :required => true
-    method_option :persons, :desc => "Path to persons csv file", :type => :string, :required => true
-    method_option :orgnotes, :desc => "Path to organization notes file", :type => :string, :required => true
-    method_option :includes, :desc => "Path to include file", :type => :string, :required => true
-    method_option :deals, :desc => "Path to deals csv file", :type => :string, :required => true
-    method_option :dealnotes, :desc => "Path to deal notes file", :type => :string, :required => true
-    def to_go
-        output = options.output
-        exporter = Exporter.new()
-        model = exporter.to_model(options.coworkers, options.organizations, options.persons, options.orgnotes, options.includes, options.deals,  options.dealnotes)
-        error = model.sanity_check
-        if error.empty?
-            validation_errors = model.validate
-
-            if validation_errors.empty?
-                model.serialize_to_file(output)
-                puts "Generated Go XML file: '#{output}'."
-            else
-                puts "Could not generate file due to"
-                puts validation_errors
-            end
-        else
-            puts "Could not generate file due to"
-            puts error
-        end
-    end
-end

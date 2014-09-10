@@ -3,113 +3,101 @@
 require 'go_import'
 require_relative("../converter")
 
+EXPORT_FOLDER = 'export'
+COWORKER_FILE = "#{EXPORT_FOLDER}/User.txt"
+ORGANIZATION_FILE = "#{EXPORT_FOLDER}/Company.txt"
+ORGANIZATION_NOTE_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
+ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
+PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
+INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
+DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
+DEAL_NOTE_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
+
 def convert_source
     puts "Trying to convert LIME Easy source to LIME Go..."
 
+    if !make_sure_database_has_been_exported
+        puts "You must export KONTAKT.mdb to the #{EXPORT_FOLDER} folder."
+        raise
+    end
+
     converter = Converter.new
-
-    # *** TODO:
-    #
-    # Modify the name of the sheets. Or add/remove sheets based on
-    # your Excel file.
-
-    # First we read each sheet from the excel file into separate
-    # variables
-    excel_workbook = GoImport::ExcelHelper.Open(EXCEL_FILE)
-
-    if defined?(COWORKER_SHEET)
-        if excel_workbook.has_sheet?(COWORKER_SHEET)
-            coworker_rows = excel_workbook.rows_for_sheet COWORKER_SHEET
-        else
-            puts "Warning: can't find sheet '#{COWORKER_SHEET}'"
-        end
-    end
-
-    if defined?(ORGANIZATION_SHEET)
-        if excel_workbook.has_sheet?(ORGANIZATION_SHEET)
-            organization_rows = excel_workbook.rows_for_sheet ORGANIZATION_SHEET
-        else
-            puts "Warning: can't find sheet '#{ORGANIZATION_SHEET}'"
-        end
-    end
-
-    if defined?(PERSON_SHEET)
-        if excel_workbook.has_sheet?(PERSON_SHEET)
-            person_rows = excel_workbook.rows_for_sheet PERSON_SHEET
-        else
-            puts "Warning: can't find sheet '#{PERSON_SHEET}'"
-        end
-    end
-
-    if defined?(DEAL_SHEET)
-        if excel_workbook.has_sheet?(DEAL_SHEET)
-            deal_rows = excel_workbook.rows_for_sheet DEAL_SHEET
-        else
-            puts "Warning: can't find sheet '#{DEAL_SHEET}'"
-        end
-    end
-
-    if defined?(NOTE_SHEET)
-        if excel_workbook.has_sheet?(NOTE_SHEET)
-            note_rows = excel_workbook.rows_for_sheet NOTE_SHEET
-        else
-            puts "Warning: can't find sheet '#{NOTE_SHEET}'"
-        end
-    end
-
-    # Then we create a rootmodel that will contain all data that
-    # should be exported to LIME Go.
     rootmodel = GoImport::RootModel.new
 
-    # And configure the model if we have any custom fields
     converter.configure rootmodel
 
-    # Now start to read data from the excel file and add to the
-    # rootmodel. We begin with coworkers since they are referenced
-    # from everywhere (orgs, deals, notes)
-    if defined?(coworker_rows) && !coworker_rows.nil?
-        puts "Trying to convert coworkers..."
-        coworker_rows.each do |row|
-            rootmodel.add_coworker(converter.to_coworker(row))
-        end
+    coworkers = Hash.new
+    includes = Hash.new
+    people = Hash.new
+
+    # coworkers
+    # start with these since they are referenced
+    # from everywhere....
+    process_rows COWORKER_FILE do |row|
+        coworkers[row['userIndex']] = row['userId']
+        rootmodel.add_coworker(converter.to_coworker(row))
     end
 
-    # Then create organizations, they are only referenced by
-    # coworkers.
-    if defined?(organization_rows) && !organization_rows.nil?
-        puts "Trying to convert organizations..."
-        organization_rows.each do |row|
-            rootmodel.add_organization(converter.to_organization(row, rootmodel))
-        end
+    # organizations
+    process_rows ORGANIZATION_FILE do |row|
+        rootmodel.add_organization(converter.to_organization(row, coworkers, rootmodel))
     end
 
-    # Add people and link them to their organizations
-    if defined?(person_rows) && !person_rows.nil?
-        puts "Trying to convert persons..."
-        person_rows.each do |row|
-            # People are special since they are not added directly to
-            # the root model
-            converter.import_person_to_organization(row, rootmodel)
-        end
+    # persons
+    # depends on organizations
+    process_rows PERSON_FILE do |row|
+        people[row['personIndex']] = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
+        # adds it self to the employer
+        converter.to_person(row, rootmodel)
     end
 
-    # Deals can connected to coworkers, organizations and people.
-    if defined?(deal_rows) && !deal_rows.nil?
-        puts "Trying to convert deals..."
-        deal_rows.each do |row|
-            rootmodel.add_deal(converter.to_deal(row, rootmodel))
-        end
+    # organization notes
+    process_rows ORGANIZATION_NOTE_FILE do |row|
+        # adds itself if applicable
+        rootmodel.add_note(converter.to_organization_note(row, coworkers, people, rootmodel))
     end
 
-    # Notes must be owned by a coworker and the be added to
-    # organizations and notes and might refernce a person
-    if defined?(note_rows) && !note_rows.nil?
-        puts "Trying to convert notes..."
-        note_rows.each do |row|
-            rootmodel.add_note(converter.to_note(row, rootmodel))
-        end
+    # Organization - Deal connection
+    # Reads the includes.txt and creats a hash
+    # that connect organizations to deals
+    process_rows INCLUDE_FILE do |row|
+        includes[row['PowerSellProjectID']] = row['PowerSellCompanyID']
+    end
+
+    # deals
+    # deals can reference coworkers (responsible), organizations
+    # and persons (contact)
+    process_rows DEAL_FILE do |row|
+        rootmodel.add_deal(converter.to_deal(row, includes, coworkers, rootmodel))
+    end
+
+    # deal notes
+    process_rows DEAL_NOTE_FILE do |row|
+        # adds itself if applicable
+        rootmodel.add_note(converter.to_deal_note(row, coworkers, rootmodel))
     end
 
     return rootmodel
 end
 
+def process_rows(file_name)
+    data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1").strip().gsub('"', '')
+    data = '"' + data.gsub("\t", "\"\t\"") + '"'
+    data = data.gsub("\n", "\"\n\"")
+
+    rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
+        rows.each do |row|
+        yield row
+    end
+end
+
+def make_sure_database_has_been_exported()
+    return File.exists?(COWORKER_FILE) &&
+        File.exists?(ORGANIZATION_FILE) &&
+        File.exists?(ORGANIZATION_NOTE_FILE) &&
+        File.exists?(ORGANIZATION_DOCUMENT_FILE) &&
+        File.exists?(PERSON_FILE) &&
+        File.exists?(INCLUDE_FILE) &&
+        File.exists?(DEAL_FILE) &&
+        File.exists?(DEAL_NOTE_FILE)
+end
