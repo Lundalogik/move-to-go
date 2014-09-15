@@ -101,6 +101,4 @@ describe "Link" do
         # then
         link.created_by.is_a?(GoImport::CoworkerReference).should eq true
     end
-
-
 end

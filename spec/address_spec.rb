@@ -1,4 +1,4 @@
-require 'spec_helper'
+require_relative 'spec_helper'
 require 'go_import'
 
 describe GoImport::Address do
@@ -29,7 +29,7 @@ describe GoImport::Address do
             let (:parse_result){
                 address = GoImport::Address.new
                 line = "CZ-140 00 PRAHA 4"
-                address.parse_zip_and_address_se(line)          
+                address.parse_zip_and_address_se(line)
             }
             it "should be nil" do
                 parse_result.should == nil
@@ -39,7 +39,7 @@ describe GoImport::Address do
             let (:parse_result){
                 address = GoImport::Address.new
                 line = "0511  HELSINKI"
-                address.parse_zip_and_address_se(line)          
+                address.parse_zip_and_address_se(line)
             }
             it "should be nil" do
                 parse_result.should == nil

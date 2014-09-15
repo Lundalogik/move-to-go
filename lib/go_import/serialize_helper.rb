@@ -25,8 +25,8 @@ module GoImport
                         if (raw_var.respond_to?(:serialize_variables))
                             SerializeHelper::serialize_variables_rexml(element, raw_var)
                         elsif (raw_var.is_a?(Array))
-                            raw_var.each do |raw_var_elem| 
-                                SerializeHelper::serialize_rexml(element, raw_var_elem) 
+                            raw_var.each do |raw_var_elem|
+                                SerializeHelper::serialize_rexml(element, raw_var_elem)
                             end
                         else
                             element.text = raw_var.to_s.encode('UTF-8')
@@ -71,7 +71,7 @@ module GoImport
 
         # @!visibility private
         def self.serialize_to_file(file, obj)
-            File.open(file, 'w') do |f|
+            ::File.open(file, 'w') do |f|
                 f.write(SerializeHelper::serialize(obj))
             end
         end

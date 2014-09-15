@@ -213,6 +213,11 @@ module GoImport
             return @documents.add_link(link)
         end
 
+        def add_file(file)
+            @documents = Documents.new if @documents == nil
+
+            return @documents.add_file(file)
+        end
 
         def find_coworker_by_integration_id(integration_id)
             return @coworkers.find do |coworker|

@@ -3,15 +3,14 @@ module GoImport
     #  This class is the container for all documents, ie links and
     #  files.
     class Documents
-        # *** TODO: add files when supported by the backend.
-
         include SerializeHelper
 
-        attr_accessor :links
+        attr_reader :links, :files
 
         def serialize_variables
             [
-             {:id => :links, @type => :links}
+             {:id => :links, @type => :links},
+             {:id => :files, @type => :files}
             ]
         end
 
@@ -21,6 +20,7 @@ module GoImport
 
         def initialize
             @links = []
+            @files = []
         end
 
         def add_link(link)
@@ -34,10 +34,10 @@ module GoImport
 
             if (!link.integration_id.nil? && link.integration_id.length > 0) &&
                     find_link_by_integration_id(link.integration_id) != nil
-                raise AlreadyAddedError, "Already added a link with integration_id #{link.integration_id}"
+                raise AlreadyAddedError, "Already added a link with integration_id '#{link.integration_id}'."
             end
 
-            @links.push(link)
+            @links.push link
 
             return link
         end
@@ -45,6 +45,31 @@ module GoImport
         def find_link_by_integration_id(integration_id)
             return @links.find do |link|
                 link.integration_id == integration_id
+            end
+        end
+
+        def add_file(file)
+            @files = [] if @files == nil
+
+            if file.nil?
+                return nil
+            end
+
+            file = File.new(file) if !file.is_a?(File)
+
+            if (!file.integration_id.nil? && file.integration_id.length > 0) &&
+                    find_file_by_integration_id(file.integration_id) != nil
+                raise AlreadyAddedError, "Already added a file with integration_id '#{file.integration_id}'."
+            end
+
+            @files.push file
+
+            return file
+        end
+
+        def find_file_by_integration_id(integration_id)
+            return @files.find do |file|
+                file.integration_id = integration_id
             end
         end
     end

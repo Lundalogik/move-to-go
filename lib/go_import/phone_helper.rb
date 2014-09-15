@@ -4,7 +4,7 @@ module GoImport
     # The PhoneHelper helps you parse and format phone number strings
     # into pretty looking numbers.
     class PhoneHelper
-        GlobalPhone.db_path = File.join(File.dirname(__FILE__), 'global_phone.json')
+        GlobalPhone.db_path = ::File.join(::File.dirname(__FILE__), 'global_phone.json')
         GlobalPhone.default_territory_name = :se
 
         # Sets the country code used during parsning. The default is

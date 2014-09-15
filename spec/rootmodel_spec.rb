@@ -238,6 +238,20 @@ describe "RootModel" do
         rootmodel.documents.links.length.should eq 1
     end
 
+    it "will add a new file" do
+        # given
+        file = GoImport::File.new
+        file.integration_id = "123key"
+        file.path = "k:\kontakt\databas\dokument"
+
+        # when
+        rootmodel.add_file file
+
+        # then
+        rootmodel.documents.find_file_by_integration_id("123key").path.should eq "k:\kontakt\databas\dokument"
+        rootmodel.documents.files.length.should eq 1
+    end
+
     it "will not add a new organizations when the organizations is already added (same integration id)" do
         # given
         rootmodel.add_note({

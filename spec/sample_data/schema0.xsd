@@ -225,6 +225,7 @@
   <xs:complexType name="Documents">
       <xs:sequence>
           <xs:element minOccurs="0" maxOccurs="1" name="Links" type="ArrayOfLink" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Files" type="ArrayOfFile" />
       </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ArrayOfLink">
@@ -237,6 +238,23 @@
           <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="Url" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Descriptio" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
+      </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfFile">
+      <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="File" type="File" nillable="true" />
+      </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="File">
+      <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Path" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="Descriptio" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
