@@ -26,6 +26,7 @@ FILE_SHEET = "Dokument"
 # go-import run
 
 # If you want to include any file in the import.
+FILES_FOLDER = "D:\\go-import\\file-test\\files"
 
 class Converter
     def configure(rootmodel)

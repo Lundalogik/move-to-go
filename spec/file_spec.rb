@@ -57,6 +57,23 @@ describe "File" do
         file.validate.length.should be > 0
     end
 
+    it "knows when a path is not relative" do
+        # given
+        file.path = "c:\files\myfile.doc"
+
+        # when, then
+        file.has_relative_path?().should eq false
+    end
+
+    it "knows when a path is relative" do
+        # given
+        file.path = "files/myfile.doc"
+
+        # when, then
+        file.has_relative_path?().should eq true
+    end
+
+
     it "will use filename from path as name if name set not explicit" do
         # given
         file.path = "some/files/myfile.docx"

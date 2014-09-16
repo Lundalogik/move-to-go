@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'zip'
+require 'securerandom'
 
 module GoImport
     # The root model for Go import. This class is the container for everything else.
@@ -337,6 +338,13 @@ module GoImport
                 end
             end
 
+            @documents.files.each do |file|
+                validation_message = file.validate
+                if !validation_message.empty?
+                    error = "#{error}\n#{validation_message}"
+                end
+            end
+
             return error.strip
         end
 
@@ -349,11 +357,8 @@ module GoImport
 
         # @!visibility private
         # zip-filename is the name of the zip file to create
-        #
-        # files_folder is the name of the folder where the files are
-        # stored. When importing files with relative path, this file
-        # is the base for those files.
-        def save_to_zip(zip_filename, files_folder)
+        def save_to_zip(zip_filename)
+            puts "Trying to save to '#{zip_filename}'..."
             # saves the model to a zipfile that contains xml data and
             # document files.
 
@@ -362,20 +367,40 @@ module GoImport
             end
 
             Zip::File.open(zip_filename, Zip::File::CREATE) do |zip_file|
-                # 1) go.xml - with all data from source
+                puts "Trying to add files to zip..."
+                # We must add files first to the zip file since we
+                # will set each file's location_in_zip_file when the
+                # zip file is created.
+
+                if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
+                    puts "Files with relative path are imported from '#{FILES_FOLDER}'."
+                    root_folder = FILES_FOLDER
+                else
+                    puts "Files with relative path are imported from the current folder (#{Dir.pwd})."
+                    root_folder = Dir.pwd
+                end
+
+                # 1) files/ - a folder with all files referenced from
+                # the source.
+                documents.files.each do |file|
+                    # we dont need to check that the file exists since
+                    # we assume that rootmodel.validate has been
+                    # called before save_to_zip.
+                    if file.has_relative_path?
+                        file.location_in_zip_file = "files/#{file.path}"
+                        zip_file.add(file.location_in_zip_file, "#{root_folder}/#{file.path}")
+                    else
+                        file.location_in_zip_file = "files/__abs/#{SecureRandom.uuid}/#{::File.basename(file.path).to_s}"
+                        zip_file.add(file.location_in_zip_file, file.path)
+                    end
+                end
+
+                # 2) go.xml - with all data from source
+                puts "Trying to add organizations, persons, etc to zip..."
                 go_data_file = Tempfile.new('go')
                 serialize_to_file(go_data_file)
                 zip_file.add('go.xml', go_data_file)
                 go_data_file.unlink
-
-                # 2) files/ - a folder with all files referenced from
-                # the source.
-
-                # *** TODO: handle absolute path for file.path
-                documents.files.each do |file|
-                    puts "Adding #{file.path}..."
-                    zip_file.add("files/#{file.path}", "#{files_folder}/#{file.path}")
-                end
             end
         end
 

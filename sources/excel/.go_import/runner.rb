@@ -9,20 +9,26 @@ def convert_source
 
     converter = Converter.new
 
-    # *** TODO:
-    #
-    # Modify the name of the sheets. Or add/remove sheets based on
-    # your Excel file.
-
     # First we read each sheet from the excel file into separate
     # variables
+
+    if defined?(EXCEL_FILE) && !EXCEL_FILE.empty?()
+        if !::File.exists?(EXCEL_FILE)
+            puts "ERROR: Cant find excel file to import: '#{EXCEL_FILE}'."
+            raise
+        end
+    else
+        puts "ERROR: You must set EXCEL_FILE in converter.rb to point to the excel file that should be imported."
+        raise
+    end
+
     excel_workbook = GoImport::ExcelHelper.Open(EXCEL_FILE)
 
     if defined?(COWORKER_SHEET)
         if excel_workbook.has_sheet?(COWORKER_SHEET)
             coworker_rows = excel_workbook.rows_for_sheet COWORKER_SHEET
         else
-            puts "Warning: can't find sheet '#{COWORKER_SHEET}'"
+            puts "WARNING: can't find sheet '#{COWORKER_SHEET}'"
         end
     end
 
@@ -30,7 +36,7 @@ def convert_source
         if excel_workbook.has_sheet?(ORGANIZATION_SHEET)
             organization_rows = excel_workbook.rows_for_sheet ORGANIZATION_SHEET
         else
-            puts "Warning: can't find sheet '#{ORGANIZATION_SHEET}'"
+            puts "WARNING: can't find sheet '#{ORGANIZATION_SHEET}'"
         end
     end
 
@@ -38,7 +44,7 @@ def convert_source
         if excel_workbook.has_sheet?(PERSON_SHEET)
             person_rows = excel_workbook.rows_for_sheet PERSON_SHEET
         else
-            puts "Warning: can't find sheet '#{PERSON_SHEET}'"
+            puts "WARNING: can't find sheet '#{PERSON_SHEET}'"
         end
     end
 
@@ -46,7 +52,7 @@ def convert_source
         if excel_workbook.has_sheet?(DEAL_SHEET)
             deal_rows = excel_workbook.rows_for_sheet DEAL_SHEET
         else
-            puts "Warning: can't find sheet '#{DEAL_SHEET}'"
+            puts "WARNING: can't find sheet '#{DEAL_SHEET}'"
         end
     end
 
@@ -54,7 +60,7 @@ def convert_source
         if excel_workbook.has_sheet?(NOTE_SHEET)
             note_rows = excel_workbook.rows_for_sheet NOTE_SHEET
         else
-            puts "Warning: can't find sheet '#{NOTE_SHEET}'"
+            puts "WARNING: can't find sheet '#{NOTE_SHEET}'"
         end
     end
 
@@ -62,10 +68,9 @@ def convert_source
         if excel_workbook.has_sheet?(FILE_SHEET)
             file_rows = excel_workbook.rows_for_sheet FILE_SHEET
         else
-            puts "Warning: can't find sheet '#{FILE_SHEET}'"
+            puts "WARNING: can't find sheet '#{FILE_SHEET}'"
         end
     end
-
 
     # Then we create a rootmodel that will contain all data that
     # should be exported to LIME Go.

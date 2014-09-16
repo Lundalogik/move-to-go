@@ -13,6 +13,11 @@ module GoImport
 
         attr_writer :name
 
+        # zip_path is used internally when the file is stored in the
+        # zip file that is sent to LIME Go. You should not modify this
+        # property
+        attr_accessor :location_in_zip_file
+
         def initialize(opt = nil)
             if !opt.nil?
                 serialize_variables.each do |myattr|
@@ -27,7 +32,7 @@ module GoImport
         end
 
         def serialize_variables
-            [ :id, :integration_id, :path, :name, :description ].map {
+            [ :id, :integration_id, :path, :name, :description, :location_in_zip_file ].map {
                 |p| {
                     :id => p,
                     :type => :string
@@ -50,6 +55,10 @@ module GoImport
             return @name
         end
 
+        def has_relative_path?()
+            return Pathname.new(@path).relative?
+        end
+
         def organization=(org)
             @organization = OrganizationReference.from_organization(org)
         end
@@ -66,24 +75,38 @@ module GoImport
             error = String.new
 
             if @path.nil? || @path.empty?
-                error = "Url is required for link\n"
+                error = "Path is required for file.\n"
+            end
+
+            if has_relative_path?()
+                if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
+                    root_folder = FILES_FOLDER
+                else
+                    root_folder = Dir.pwd
+                end
+
+                if !::File.exists?("#{root_folder}/#{@path}")
+                    error = "#{error}Can't find file '#{root_folder}/#{@path}'.\n"
+                end
+            else
+                if !::File.exists?(@path)
+                    error = "#{error}Can't find file '#{@path}'.\n"
+                end
             end
 
             if @created_by.nil?
-                error = "#{error}Created_by is required for link\n"
+                error = "#{error}Created_by is required for file.\n"
             end
 
             if @organization.nil? && @deal.nil?
-                error = "#{error}A link must have either an organization or a deal\n"
+                error = "#{error}A file must have either an organization or a deal.\n"
             end
 
             if !@organization.nil? && !@deal.nil?
-                error = "#{error}A link can't be attached to both an organization and a deal"
+                error = "#{error}A file can't be attached to both an organization and a deal."
             end
 
             return error
         end
-
-
     end
 end

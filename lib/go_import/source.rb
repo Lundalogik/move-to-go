@@ -54,13 +54,13 @@ module GoImport
         private
         def copy_source_to_folder(source_name, project_name)
             puts "Trying to create project '#{project_name}' from source '#{source_name}'..."
-            FileUtils.cp_r File.expand_path(source_name, @path), project_name
+            FileUtils.cp_r ::File.expand_path(source_name, @path), project_name
         end
 
         private
         def install_gems_for_project(project_name)
             puts "Trying to verify that all required gems are installed..."
-            Dir.chdir(File.expand_path(project_name, Dir.pwd)) do
+            Dir.chdir(::File.expand_path(project_name, Dir.pwd)) do
                 exec_but_dont_show_unless_error('bundle install --verbose')
             end
         end
