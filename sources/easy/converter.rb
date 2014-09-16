@@ -26,10 +26,14 @@ require 'go_import'
 # 2) Modify this file (the to_* methods) according to your customer's
 # KONTAKT.mdb and wishes.
 #
-# 3) Run easy-to-go.bat in a command prompt.
+# 3) Run go-import run
 #
-# 4) Upload go.xml to LIME Go. First test your import on staging and
+# 4) Upload go.zip to LIME Go. First test your import on staging and
 # when your customer has approved the import, run it on production.
+#
+# You will get a WARNING from 'go-import run' about FILES_FOLDER has
+# not been set. You can ignore the warning since documents are
+# exported with an absolute path from LIME Easy.
 class Converter
     # Turns a user from the User.txt Easy Export file into
     # a go_import coworker.
@@ -260,6 +264,20 @@ class Converter
         end
 
         return nil
+    end
+
+    def to_organization_document(row, coworkers, rootmodel)
+        file = GoImport::File.new()
+
+        file.integration_id = row['PowerSellDocumentID']
+        file.path = row['Path']
+        file.name = row['Comment']
+
+        coworker_id = coworkers[row['idUser-Created']]
+        file.created_by = rootmodel.find_coworker_by_integration_id(coworker_id)
+        file.organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
+
+        return file
     end
 
     # Turns a row from the Easy exported Project-History.txt file into

@@ -69,7 +69,7 @@ module GoImport
 
         def find_file_by_integration_id(integration_id)
             return @files.find do |file|
-                file.integration_id = integration_id
+                file.integration_id == integration_id
             end
         end
     end

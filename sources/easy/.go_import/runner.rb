@@ -17,7 +17,7 @@ def convert_source
     puts "Trying to convert LIME Easy source to LIME Go..."
 
     if !make_sure_database_has_been_exported
-        puts "You must export KONTAKT.mdb to the #{EXPORT_FOLDER} folder."
+        puts "ERROR: You must export KONTAKT.mdb to the #{EXPORT_FOLDER} folder."
         raise
     end
 
@@ -34,7 +34,7 @@ def convert_source
     # start with these since they are referenced
     # from everywhere....
     process_rows COWORKER_FILE do |row|
-        coworkers[row['userIndex']] = row['userId']
+        coworkers[row['idUser']] = row['PowerSellUserID']
         rootmodel.add_coworker(converter.to_coworker(row))
     end
 
@@ -75,6 +75,11 @@ def convert_source
     process_rows DEAL_NOTE_FILE do |row|
         # adds itself if applicable
         rootmodel.add_note(converter.to_deal_note(row, coworkers, rootmodel))
+    end
+
+    # company documents
+    process_rows ORGANIZATION_DOCUMENT_FILE do |row|
+        rootmodel.add_file(converter.to_organization_document(row, coworkers, rootmodel))
     end
 
     return rootmodel
