@@ -1,4 +1,7 @@
 # encoding: utf-8
+
+require 'zip'
+
 module GoImport
     # The root model for Go import. This class is the container for everything else.
     class RootModel
@@ -342,6 +345,38 @@ module GoImport
             element_name = serialize_name
             elem = doc.add_element(element_name,{"Version"=>"v2_0"})
             SerializeHelper::serialize_variables_rexml(elem, self)
+        end
+
+        # @!visibility private
+        # zip-filename is the name of the zip file to create
+        #
+        # files_folder is the name of the folder where the files are
+        # stored. When importing files with relative path, this file
+        # is the base for those files.
+        def save_to_zip(zip_filename, files_folder)
+            # saves the model to a zipfile that contains xml data and
+            # document files.
+
+            if ::File.exists?(zip_filename)
+                ::File.delete zip_filename
+            end
+
+            Zip::File.open(zip_filename, Zip::File::CREATE) do |zip_file|
+                # 1) go.xml - with all data from source
+                go_data_file = Tempfile.new('go')
+                serialize_to_file(go_data_file)
+                zip_file.add('go.xml', go_data_file)
+                go_data_file.unlink
+
+                # 2) files/ - a folder with all files referenced from
+                # the source.
+
+                # *** TODO: handle absolute path for file.path
+                documents.files.each do |file|
+                    puts "Adding #{file.path}..."
+                    zip_file.add("files/#{file.path}", "#{files_folder}/#{file.path}")
+                end
+            end
         end
 
         private

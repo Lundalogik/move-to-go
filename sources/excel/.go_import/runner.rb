@@ -58,6 +58,15 @@ def convert_source
         end
     end
 
+    if defined?(FILE_SHEET)
+        if excel_workbook.has_sheet?(FILE_SHEET)
+            file_rows = excel_workbook.rows_for_sheet FILE_SHEET
+        else
+            puts "Warning: can't find sheet '#{FILE_SHEET}'"
+        end
+    end
+
+
     # Then we create a rootmodel that will contain all data that
     # should be exported to LIME Go.
     rootmodel = GoImport::RootModel.new
@@ -108,6 +117,13 @@ def convert_source
         puts "Trying to convert notes..."
         note_rows.each do |row|
             rootmodel.add_note(converter.to_note(row, rootmodel))
+        end
+    end
+
+    if defined?(file_rows) && !file_rows.nil?
+        puts "Trying to convert files..."
+        file_rows.each do |row|
+            rootmodel.add_file(converter.to_file(row, rootmodel))
         end
     end
 

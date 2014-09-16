@@ -3,6 +3,8 @@
 require "thor"
 require "go_import"
 
+RUNNER_DIR = ".go_import"
+
 class GoImportCommandLine < Thor
 
     desc "about", "About go-import"
@@ -43,6 +45,36 @@ class GoImportCommandLine < Thor
         end
     end
 
+    desc "run-with-files", "Executes the current project and create a go.zip file with data and files. Existing go.zip will be overwritten, use --output to specify a different filename."
+    option(:output,
+           :desc => "Name of the file where the converted source will be saved. This file should be sent to LIME Go. If the file already exist it will be replaced.",
+           :type => :string,
+           :required => false)
+    option(:files_folder,
+           :desc => "Name of the folder where current files are stored. This is the folder where documents are stored. Default is 'files'",
+           :type => :string,
+           :required => false)
+    def run_import_with_files()
+        if !is_valid_goimport_project?
+            return
+        end
+
+        runner_file = File.expand_path("./#{RUNNER_DIR}/runner.rb", Dir.pwd)
+        require(runner_file)
+        model = convert_source()
+
+        is_ok, error_msg = can_be_serialized?(model)
+        if is_ok
+            go_data_zip = options.output.nil? == true ? "go.zip" : options.output
+            files_folder = options.files_folder.nil? == true ? "files" : options.files_folder
+            model.save_to_zip(go_data_zip, files_folder)
+            puts "Source has been been converted into '#{go_data_zip}'."
+        else
+            puts "Source could not be converted due to"
+            puts error_msg
+        end
+    end
+
     desc "run", "Executes the current project and create a go.xml file. Existing go.xml will be overwritten, use --output to specify a different filename"
     option(:output,
            :desc => "Name of the file where the converted source will be saved. This file should be sent to LIME Go. If the file already exist it will be replaced.",
@@ -51,43 +83,62 @@ class GoImportCommandLine < Thor
     def run_import()
         # run is a Thor reserved word and cant be used as a method name
 
-        runner_dir = ".go_import"
-
-        if Dir.exists?(runner_dir) == false
-            puts "This doesnt look like a go-import project. Are you in the right directory or did you mess with the '#{runner_dir}' folder?"
+        if !is_valid_goimport_project?()
             return
         end
 
-        runner_file = File.expand_path('./.go_import/runner.rb', Dir.pwd)
-        if File.exists?(runner_file) == false
-            puts "I can't run this project. Did you mess with the '#{runner_dir}' folder?"
-            return
-        end
-
+        runner_file = File.expand_path("./#{RUNNER_DIR}/runner.rb", Dir.pwd)
         require(runner_file)
 
         # the source must implement the convert_source method that
         # returns an instance of GoImport::RootModel
         model = convert_source()
 
-        go_data_filename = options.output.nil? == true ? "go.xml" : options.output
-
-        error = model.sanity_check
-        if error.empty?
-            validation_errors = model.validate
-
-            if validation_errors.empty?
-                model.serialize_to_file(go_data_filename)
-                puts "Source has been been converted into '#{go_data_filename}'."
-            else
-                puts "Source could not be converted due to"
-                puts validation_errors
-            end
+        is_ok, error_msg = can_be_serialized?(model)
+        if is_ok
+            go_data_filename = options.output.nil? == true ? "go.xml" : options.output
+            model.serialize_to_file(go_data_filename)
+            puts "Source has been been converted into '#{go_data_filename}'."
         else
             puts "Source could not be converted due to"
-            puts error
+            puts error_msg
+        end
+    end
+
+    private
+    def can_be_serialized?(rootmodel)
+        is_ok = false
+        error = rootmodel.sanity_check
+        if error.empty?
+            error = rootmodel.validate
+
+            if error.empty?
+                is_ok = true
+            end
         end
 
+        return [is_ok, error]
+    end
+
+
+    private
+    def is_valid_goimport_project?()
+        puts "looking for #{RUNNER_DIR}"
+        if Dir.exists?(RUNNER_DIR) == false
+            puts "This doesnt look like a go-import project. Are you in the right directory or did you mess with the '#{RUNNER_DIR}' folder?"
+            return false
+        end
+
+        puts "looking for file"
+        runner_file = File.expand_path("./#{RUNNER_DIR}/runner.rb", Dir.pwd)
+        puts "filename: #{runner_file}"
+        if File.exists?(runner_file) == false
+            puts "I can't run this project. Did you mess with the '#{RUNNER_DIR}' folder?"
+            return false
+        end
+
+        puts "This is a valid goimport project"
+        return true
     end
 
     private

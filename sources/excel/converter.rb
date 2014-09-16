@@ -16,6 +16,7 @@ ORGANIZATION_SHEET = "Företag"
 PERSON_SHEET = "Kontaktperson"
 DEAL_SHEET = "Affär"
 NOTE_SHEET = "Anteckningar"
+FILE_SHEET = "Dokument"
 
 # Then you need to modify the script below according to the TODO
 # comments.
@@ -23,6 +24,8 @@ NOTE_SHEET = "Anteckningar"
 # To generate the xml-file that should be sent to LIME Go with the
 # command:
 # go-import run
+
+# If you want to include any file in the import.
 
 class Converter
     def configure(rootmodel)
@@ -126,5 +129,17 @@ class Converter
         note.date = row['Skapad den']
 
         return note
+    end
+
+    def to_file(row, rootmodel)
+        file = GoImport::File.new()
+
+        file.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
+        file.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
+        file.name = row['Namn']
+        file.description = row['Kommentar']
+        file.path = row['Path']
+
+        return file
     end
 end
