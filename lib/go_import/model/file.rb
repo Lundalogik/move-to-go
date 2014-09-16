@@ -76,21 +76,21 @@ module GoImport
 
             if @path.nil? || @path.empty?
                 error = "Path is required for file.\n"
-            end
-
-            if has_relative_path?()
-                if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
-                    root_folder = FILES_FOLDER
-                else
-                    root_folder = Dir.pwd
-                end
-
-                if !::File.exists?("#{root_folder}/#{@path}")
-                    error = "#{error}Can't find file '#{root_folder}/#{@path}'.\n"
-                end
             else
-                if !::File.exists?(@path)
-                    error = "#{error}Can't find file '#{@path}'.\n"
+                if has_relative_path?()
+                    if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
+                        root_folder = FILES_FOLDER
+                    else
+                        root_folder = Dir.pwd
+                    end
+
+                    if !::File.exists?("#{root_folder}/#{@path}")
+                        error = "#{error}Can't find file '#{root_folder}/#{@path}'.\n"
+                    end
+                else
+                    if !::File.exists?(@path)
+                        error = "#{error}Can't find file '#{@path}'.\n"
+                    end
                 end
             end
 
