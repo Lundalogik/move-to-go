@@ -7,11 +7,13 @@ require_relative '../serialize_helper'
 module GoImport
     class File
         include SerializeHelper
-        attr_accessor :id, :integration_id, :path, :description
+        attr_accessor :id, :integration_id, :description
 
         attr_reader :organization, :created_by, :deal
 
-        attr_writer :name
+        attr_reader :path
+
+        attr_reader :name
 
         # zip_path is used internally when the file is stored in the
         # zip file that is sent to LIME Go. You should not modify this
@@ -45,14 +47,31 @@ module GoImport
                 ]
         end
 
-        def name
+        def path=(path)
+            @path = path
+
+            # when path is set, we should set the name to the path's
+            # filename if name is NOT set already
+
+            # Hm. this might introduce a bug if we set path twice and
+            # never explicity set the name (it will get the name of
+            # the first file)
+
+            if (@name.nil? || @name.empty?) && (!@path.nil? && !@path.empty?)
+                @name = Pathname.new(path).basename.to_s
+            end
+        end
+
+        def name=(name)
+            @name = name
+
+            # a file must have a name, hence this.
+
             if @name.nil? || @name.empty?
-                if !@path.nil?
-                    return Pathname.new(path).basename.to_s
+                if !@path.nil? && !@path.empty?
+                    @name = Pathname.new(@path).basename.to_s
                 end
             end
-
-            return @name
         end
 
         def has_relative_path?()
@@ -92,6 +111,10 @@ module GoImport
                         error = "#{error}Can't find file '#{@path}'.\n"
                     end
                 end
+            end
+
+            if @name.nil? || @name.empty?
+                error = "#{error}A file must have a name.\n"
             end
 
             if @created_by.nil?
