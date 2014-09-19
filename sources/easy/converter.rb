@@ -1,6 +1,10 @@
 # encoding: UTF-8
 require 'go_import'
 
+
+ORGANIZATION_RESPONSIBLE_FIELD = "Responsible"
+DEAL_RESPONSIBLE_FIELD = "Responsible"
+IMPORT_DOCUMENTS = false
 # Customize this file to suit your input files.
 #
 # Documentation go_import can be found at
@@ -35,37 +39,11 @@ require 'go_import'
 # not been set. You can ignore the warning since documents are
 # exported with an absolute path from LIME Easy.
 class Converter
-    # Turns a user from the User.txt Easy Export file into
-    # a go_import coworker.
-    def to_coworker(row)
-        coworker = GoImport::Coworker.new
-        # integration_id is typically the userId in Easy
-        # Must be set to be able to import the same file more
-        # than once without creating duplicates
-
-        # NOTE: You shouldn't have to modify this method
-
-        coworker.integration_id = row['PowerSellUserID']
-        coworker.parse_name_to_firstname_lastname_se(row['Name'])
-
-        return coworker
-    end
-
     # Turns a row from the Easy exported Company.txt file into a
     # go_import organization.
-    def to_organization(row, coworkers, rootmodel)
-        organization = GoImport::Organization.new
-        # integration_id is typically the company Id in Easy
-        # Must be set to be able to import the same file more
-        # than once without creating duplicates
-
-        # Easy standard fields
-        organization.integration_id = row['PowerSellCompanyID']
-        organization.name = row['Company name']
-        organization.central_phone_number = row['Telephone']
-
-        # *** TODO: Customize below this line (address, superfield,
-        # relation, etc)
+    def to_organization(organization, row)
+        # *** TODO: Customize this method to include address, 
+        # superfields, relation, etc)
 
         # NOTE!! if a bisnode-id is present maybe you want to consider
         # not setting this (because if you set the address LIME Go
@@ -79,8 +57,6 @@ class Converter
             address.city = row['city']
             address.location = row['location']
         end
-
-        # Easy superfields
 
         # Same as postal address
         organization.with_visit_address do |addr|
@@ -105,11 +81,6 @@ class Converter
         if bisnode_id && bisnode_id.empty?
             organization.web_site = row['website']
         end
-
-        # Responsible coworker for the organization.
-        # For instance responsible sales rep.
-        coworker_id = coworkers[row['idUser-Responsible']]
-        organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         # Tags are set and defined at the same place
         # Setting a tag: Imported is useful for the user
@@ -147,24 +118,7 @@ class Converter
 
     # Turns a row from the Easy exported Company-Person.txt file into
     # a go_import model that is used to generate xml
-    def to_person(row, rootmodel)
-        person = GoImport::Person.new
-
-        # Easy standard fields created in configure method Easy
-        # persons don't have a globally unique Id, they are only
-        # unique within the scope of the company, so we combine the
-        # referenceId and the companyId to make a globally unique
-        # integration_id
-        person.integration_id = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
-        person.first_name = row['First name']
-        person.last_name = row['Last name']
-
-        # set employer connection
-        employer = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
-        if employer
-            employer.add_employee person
-        end
-
+    def to_person(person, row)
         # *** TODO: Customize below this line (superfields, tags, etc)
 
         # Easy superfields
@@ -196,20 +150,9 @@ class Converter
 
     # Turns a row from the Easy exported Project.txt file into
     # a go_import model that is used to generate xml.
-    # Uses includes hash to lookup organizations to connect
-    # Uses coworkers hash to lookup coworkers to connect
-    def to_deal(row, includes, coworkers, rootmodel)
-        deal = GoImport::Deal.new
-        # Easy standard fields
-        deal.integration_id = row['PowerSellProjectID']
-        deal.name = row['Name']
-        deal.description = row['Description']
-
+    def to_deal(deal, row)
         # Easy superfields
         deal.order_date = row['order date']
-
-        coworker_id = coworkers[row['isUser-Ansvarig']]
-        deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
 
         # Should be integer
         # The currency used in Easy should match the one used in Go
@@ -230,81 +173,7 @@ class Converter
         # Tags
         deal.set_tag("Imported")
 
-        # Make the deal - organization connection
-        if includes
-            organization_id = includes[row['PowerSellProjectID']]
-            organization = rootmodel.find_organization_by_integration_id(organization_id)
-            if organization
-                deal.customer = organization
-            end
-        end
-
         return deal
-    end
-
-    # Turns a row from the Easy exported Company-History.txt file into
-    # a go_import model that is used to generate xml.
-    # Uses coworkers hash to lookup coworkers to connect
-    # Uses people hash to lookup persons to connect
-    def to_organization_note(row, coworkers, people, rootmodel)
-        organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
-
-        coworker_id = coworkers[row['idUser']]
-        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
-
-        if organization && coworker
-            note = GoImport::Note.new()
-            note.organization = organization
-            note.created_by = coworker
-            note.person = organization.find_employee_by_integration_id(people[row['idPerson']])
-            note.date = row['Date']
-            note.text = "#{row['Category']}: #{row['History']}"
-
-            return note.text.empty? ? nil : note
-        end
-
-        return nil
-    end
-
-    def to_organization_document(row, coworkers, rootmodel)
-        file = GoImport::File.new()
-
-        file.integration_id = row['PowerSellDocumentID']
-        file.path = row['Path']
-        file.name = row['Comment']
-
-        coworker_id = coworkers[row['idUser-Created']]
-        file.created_by = rootmodel.find_coworker_by_integration_id(coworker_id)
-        file.organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
-
-        return file
-    end
-
-    # Turns a row from the Easy exported Project-History.txt file into
-    # a go_import model that is used to generate xml
-    # Uses coworkers hash to lookup coworkers to connect
-    def to_deal_note(row, coworkers, rootmodel)
-        # TODO: This could be improved to read a person from an
-        # organization connected to this deal if any, but since it is
-        # a many to many connection between organizations and deals
-        # it's not a straight forward task
-        deal = rootmodel.find_deal_by_integration_id(row['PowerSellProjectID'])
-
-        coworker_id = coworkers[row['idUser']]
-        coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
-
-        if deal && coworker
-            note = GoImport::Note.new()
-            note.deal = deal
-            note.created_by = coworker
-            note.date = row['Date']
-            # Raw history looks like this <category>: <person>: <text>
-            note.text = row['RawHistory']
-
-            return note.text.empty? ? nil : note
-        end
-
-        return nil
     end
 
     def configure(rootmodel)
