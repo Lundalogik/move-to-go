@@ -41,7 +41,7 @@ require 'go_import'
 # Edit these constants to fir your needs
 
 # determines if documents should be imported.
-IMPORT_DOCUMENTS = true
+# IMPORT_DOCUMENTS = true
 
 # set the name of the company-resposible field.
 # ORGANIZATION_RESPONSIBLE_FIELD = "Responsible"

@@ -143,6 +143,8 @@ def init_person(row, rootmodel)
     if employer
         employer.add_employee person
     end
+
+    return person
 end
 
 # Turns a row from the Easy exported Company-History.txt file into
@@ -203,6 +205,8 @@ def init_deal(row, rootmodel, includes)
             deal.customer = organization
         end
     end
+
+    return deal
 end
 
 # Turns a row from the Easy exported Project-History.txt file into
