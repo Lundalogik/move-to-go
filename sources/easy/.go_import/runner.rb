@@ -15,7 +15,7 @@ DEAL_NOTE_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
 
 def convert_source
     puts "Trying to convert LIME Easy source to LIME Go..."
-    
+
     if !make_sure_database_has_been_exported
         puts "ERROR: You must export KONTAKT.mdb to the #{EXPORT_FOLDER} folder."
         raise
@@ -90,7 +90,7 @@ def convert_source
             rootmodel.add_file(to_organization_document(row, coworkers, rootmodel))
         end
     end
-    
+
 
     return rootmodel
 end
@@ -239,23 +239,23 @@ end
 
 def validate_constants()
     if !defined?(ORGANIZATION_RESPONSIBLE_FIELD)
-        puts "WARNING! You have not defined a resposible coworker field on organizations. 
-        If you don't have such a field, you can just ignore this warning and press . 
-        Otherwise you should define 'ORGANIZATION_RESPONSIBLE_FIELD' in converter.rb 
+        puts "WARNING: You have not defined a resposible coworker field for organization.
+        If you don't have such a field, you can just ignore this warning.
+        Otherwise you should define 'ORGANIZATION_RESPONSIBLE_FIELD' in converter.rb
         with the value of the field name in Easy (e.g 'Ansvarig')."
     end
 
     if !defined?(DEAL_RESPONSIBLE_FIELD)
-        puts "WARNING! You have not defined a resposible coworker field on deals. 
-        If you don't have such a field, you can just ignore this warning. 
-        Otherwise you should define 'DEAL_RESPONSIBLE_FIELD' in converter.rb 
-        with the value of the field name in Easy (e.g 'Ansvarig')." 
+        puts "WARNING: You have not defined a resposible coworker field for deal.
+        If you don't have such a field, you can just ignore this warning.
+        Otherwise you should define 'DEAL_RESPONSIBLE_FIELD' in converter.rb
+        with the value of the field name in Easy (e.g 'Ansvarig')."
     end
 
     if !defined?(IMPORT_DOCUMENTS) || IMPORT_DOCUMENTS.nil? || !IMPORT_DOCUMENTS
-        puts "WARNING! You are about to run the import without documents. 
+        puts "WARNING: You are about to run the import without documents.
         If that is your intention then you can ignore this warning.
-        Otherwise you should define 'IMPORT_DOCUMENTS' in converter.rb 
+        Otherwise you should define 'IMPORT_DOCUMENTS' in converter.rb
         with the value 'true'."
     end
 end

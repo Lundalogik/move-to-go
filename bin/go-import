@@ -26,7 +26,7 @@ class GoImportCommandLine < Thor
         puts "\nCreate a new project with 'go-import new' with one of these sources."
     end
 
-    desc "new PROJECT SOURCE", "Creates a new migration project with a specifed name and source"
+    desc "new <PROJECT> <SOURCE>", "Creates a new migration project with a specifed name and source"
     def new(project, source)
         sources = GoImport::Sources.new(source_path)
 
