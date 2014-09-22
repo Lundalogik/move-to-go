@@ -9,7 +9,7 @@ class GoImportCommandLine < Thor
 
     desc "about", "About go-import"
     def about()
-        puts "go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that will make it easy for you to migrate your data."
+        puts "go-import is an import tool for LIME Go. It can take virtually any input source and create import data files that LIME Go likes. go-import has some predefined sources that will make it easy for you to migrate your data."
         puts ""
     end
 
@@ -26,22 +26,14 @@ class GoImportCommandLine < Thor
         puts "\nCreate a new project with 'go-import new' with one of these sources."
     end
 
-    desc "new", "Creates a new migration project with a specifed name and source"
-    option(:project,
-           :desc => "Name of the project. The project will be created in a folder with the same name.",
-           :type => :string,
-           :required => true)
-    option(:source,
-           :desc => "Name of the source to use. Use list-sources to show available sources.",
-           :type => :string,
-           :required => true)
-    def new(project = nil, source = nil)
+    desc "new PROJECT SOURCE", "Creates a new migration project with a specifed name and source"
+    def new(project, source)
         sources = GoImport::Sources.new(source_path)
 
-        if sources.create_project_from_source(options.project, options.source)
-            puts "\nProject '#{options.project}' created from source '#{options.source}'."
-            puts "Modify the #{options.project}/converter.rb script to suit your source."
-            puts "Use 'go-import run' from the project directory to create the xml file for LIME Go."
+        if sources.create_project_from_source(project, source)
+            puts "\nProject '#{project}' created from source '#{source}'."
+            puts "Modify the #{project}/converter.rb script to suit your source."
+            puts "Use 'go-import run' from the project directory to create the zip file for LIME Go."
         end
     end
 

@@ -32,7 +32,7 @@ go-import list-sources
 To create a new project with
 
 ```shell
-go-import new --project=excel-migration --source=excel
+go-import new excel-migration excel
 ```
 
 This will create a folder named excel-migration from the source excel. It is good practice to name the project after the customer that are doing the migration for.
