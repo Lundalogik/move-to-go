@@ -1,7 +1,0 @@
-source 'http://rubygems.org'
-
-gem 'rspec'
-gem 'roo'
-gem 'thor'
-gem 'go_import'
-gem 'dbf'
