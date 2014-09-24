@@ -8,7 +8,7 @@ describe "File" do
 
     it "is valid when it has path, created_by and organization" do
         # given
-        file.path = "spec\\sample_data\\offert.docx"
+        file.path = "spec/sample_data/offert.docx"
         file.created_by = GoImport::CoworkerReference.new( { :integration_id => "123" } )
         file.organization = GoImport::OrganizationReference.new( { :integration_id => "456" } )
 
@@ -19,7 +19,7 @@ describe "File" do
     it "is valid when it has name, path, created_by and deal" do
         # given
         file.name = "Offert"
-        file.path = "spec\\sample_data\\offert.docx"
+        file.path = "spec/sample_data/offert.docx"
         file.created_by = GoImport::CoworkerReference.new( { :integration_id => "123" } )
         file.deal = GoImport::DealReference.new( { :integration_id => "456" } )
 
