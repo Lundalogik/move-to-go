@@ -89,9 +89,11 @@ def convert_source
         process_rows ORGANIZATION_DOCUMENT_FILE do |row|
             rootmodel.add_file(to_organization_document(row, coworkers, rootmodel))
         end
+
+        process_rows PROJECT_DOCUMENT_FILE do |row|
+            rootmodel.add_file(from_project_document_to_organization_document(row, coworker, rootmodel))
+        end
     end
-
-
     return rootmodel
 end
 
@@ -183,6 +185,18 @@ def to_organization_document(row, coworkers, rootmodel)
     file.organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
 
     return file
+end
+
+def from_project_document_to_organization_document(row, coworkers, includes, rootmodel)
+    file = GoImport::File.new()
+    file.integration_id = row['PowerSellDocumentID']
+    file.path = row['Path']
+    file.name = row['Comment']
+    coworker_id = coworkers[row['idUser-Created']]
+    file.created_by = rootmodel.find_coworker_by_integration_id(coworker_id)
+
+    organization_id = includes[row['PowerSellProjectID']]
+    file.organization = rootmodel.find_organization_by_integration_id(organization_id)
 end
 
 def init_deal(row, rootmodel, includes)
