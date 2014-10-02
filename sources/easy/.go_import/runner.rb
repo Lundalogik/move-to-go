@@ -12,6 +12,7 @@ PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
 INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
 DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
 DEAL_NOTE_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
+PROJECT_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Project-Document.txt"
 
 def convert_source
     puts "Trying to convert LIME Easy source to LIME Go..."
@@ -28,22 +29,18 @@ def convert_source
 
     converter.configure rootmodel
 
-    coworkers = Hash.new
     includes = Hash.new
-    people = Hash.new
 
     # coworkers
     # start with these since they are referenced
     # from everywhere....
     process_rows COWORKER_FILE do |row|
-        coworkers[row['idUser']] = row['PowerSellUserID']
-
         rootmodel.add_coworker(to_coworker(row))
     end
 
     # organizations
     process_rows ORGANIZATION_FILE do |row|
-        organization = init_organization(row)
+        organization = init_organization(row, rootmodel)
         rootmodel.add_organization(
             converter.to_organization(organization, row))
     end
@@ -51,7 +48,6 @@ def convert_source
     # persons
     # depends on organizations
     process_rows PERSON_FILE do |row|
-        people[row['personIndex']] = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
         # init method also adds the person to the employer
         person = init_person(row, rootmodel)
         converter.to_person(person, row)
@@ -60,14 +56,14 @@ def convert_source
     # organization notes
     process_rows ORGANIZATION_NOTE_FILE do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_organization_note(row, coworkers, people, rootmodel))
+        rootmodel.add_note(to_organization_note(row, rootmodel))
     end
 
     # Organization - Deal connection
     # Reads the includes.txt and creats a hash
     # that connect organizations to deals
     process_rows INCLUDE_FILE do |row|
-        includes[row['PowerSellProjectID']] = row['PowerSellCompanyID']
+        includes[row['idProject']] = row['idCompany']
     end
 
     # deals
@@ -81,17 +77,17 @@ def convert_source
     # deal notes
     process_rows DEAL_NOTE_FILE do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_deal_note(row, coworkers, rootmodel))
+        rootmodel.add_note(to_deal_note(row, rootmodel))
     end
 
     # company documents
     if defined?(IMPORT_DOCUMENTS) && !IMPORT_DOCUMENTS.nil? && IMPORT_DOCUMENTS
         process_rows ORGANIZATION_DOCUMENT_FILE do |row|
-            rootmodel.add_file(to_organization_document(row, coworkers, rootmodel))
+            rootmodel.add_file(to_organization_document(row, rootmodel))
         end
 
         process_rows PROJECT_DOCUMENT_FILE do |row|
-            rootmodel.add_file(from_project_document_to_organization_document(row, coworker, rootmodel))
+            rootmodel.add_file(from_project_document_to_organization_document(row, rootmodel))
         end
     end
     return rootmodel
@@ -102,17 +98,17 @@ def to_coworker(row)
     # integration_id is typically the userId in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates
-    coworker.integration_id = row['PowerSellUserID']
+    coworker.integration_id = row['idUser']
     coworker.parse_name_to_firstname_lastname_se(row['Name'])
     return coworker
 end
 
-def init_organization(row)
+def init_organization(row, rootmodel)
     organization = GoImport::Organization.new
     # integration_id is typically the company Id in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates
-    organization.integration_id = row['PowerSellCompanyID']
+    organization.integration_id = row['idCompany']
 
     # Easy standard fields
     organization.name = row['Company name']
@@ -121,7 +117,7 @@ def init_organization(row)
     if defined?(ORGANIZATION_RESPONSIBLE_FIELD) && !ORGANIZATION_RESPONSIBLE_FIELD.nil? && !ORGANIZATION_RESPONSIBLE_FIELD.empty?
         # Responsible coworker for the organization.
         # For instance responsible sales rep.
-        coworker_id = coworkers[row["idUser-#{ORGANIZATION_RESPONSIBLE_FIELD}"]]
+        coworker_id = row["idUser-#{ORGANIZATION_RESPONSIBLE_FIELD}"]
         organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
     end
 
@@ -136,12 +132,12 @@ def init_person(row, rootmodel)
     # unique within the scope of the company, so we combine the
     # referenceId and the companyId to make a globally unique
     # integration_id
-    person.integration_id = "#{row['PowerSellReferenceID']}-#{row['PowerSellCompanyID']}"
+    person.integration_id = row['idPerson']
     person.first_name = row['First name']
     person.last_name = row['Last name']
 
     # set employer connection
-    employer = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
+    employer = rootmodel.find_organization_by_integration_id(row['idCompany'])
     if employer
         employer.add_employee person
     end
@@ -151,19 +147,15 @@ end
 
 # Turns a row from the Easy exported Company-History.txt file into
 # a go_import model that is used to generate xml.
-# Uses coworkers hash to lookup coworkers to connect
-# Uses people hash to lookup persons to connect
-def to_organization_note(row, coworkers, people, rootmodel)
-    organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
-
-    coworker_id = coworkers[row['idUser']]
-    coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
+def to_organization_note(row, rootmodel)
+    organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
+    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
 
     if organization && coworker
         note = GoImport::Note.new()
         note.organization = organization
         note.created_by = coworker
-        note.person = organization.find_employee_by_integration_id(people[row['idPerson']])
+        note.person = organization.find_employee_by_integration_id(row['idPerson'])
         note.date = row['Date']
         note.text = "#{row['Category']}: #{row['History']}"
 
@@ -173,47 +165,47 @@ def to_organization_note(row, coworkers, people, rootmodel)
     return nil
 end
 
-def to_organization_document(row, coworkers, rootmodel)
+def to_organization_document(row, rootmodel)
     file = GoImport::File.new()
 
-    file.integration_id = row['PowerSellDocumentID']
+    file.integration_id = "o-#{row['idDocument']}"
     file.path = row['Path']
     file.name = row['Comment']
 
-    coworker_id = coworkers[row['idUser-Created']]
-    file.created_by = rootmodel.find_coworker_by_integration_id(coworker_id)
-    file.organization = rootmodel.find_organization_by_integration_id(row['PowerSellCompanyID'])
+    file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
+    file.organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
 
     return file
 end
 
-def from_project_document_to_organization_document(row, coworkers, includes, rootmodel)
+def from_project_document_to_organization_document(row, includes, rootmodel)
     file = GoImport::File.new()
-    file.integration_id = row['PowerSellDocumentID']
+
+    file.integration_id = "d-#{row['idDocument']}"
     file.path = row['Path']
     file.name = row['Comment']
-    coworker_id = coworkers[row['idUser-Created']]
-    file.created_by = rootmodel.find_coworker_by_integration_id(coworker_id)
 
-    organization_id = includes[row['PowerSellProjectID']]
+    file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
+
+    organization_id = includes[row['idProject']]
     file.organization = rootmodel.find_organization_by_integration_id(organization_id)
 end
 
 def init_deal(row, rootmodel, includes)
     deal = GoImport::Deal.new
 
-    deal.integration_id = row['PowerSellProjectID']
+    deal.integration_id = row['idProject']
     deal.name = row['Name']
     deal.description = row['Description']
 
     if defined?(DEAL_RESPONSIBLE_FIELD) && !DEAL_RESPONSIBLE_FIELD.nil? && !DEAL_RESPONSIBLE_FIELD.empty?
-        coworker_id = coworkers[row["isUser-#{DEAL_RESPONSIBLE_FIELD}"]]
+        coworker_id = row["isUser-#{DEAL_RESPONSIBLE_FIELD}"]
         deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
     end
 
     # Make the deal - organization connection
     if includes
-        organization_id = includes[row['PowerSellProjectID']]
+        organization_id = includes[row['idProject']]
         organization = rootmodel.find_organization_by_integration_id(organization_id)
         if organization
             deal.customer = organization
@@ -225,16 +217,13 @@ end
 
 # Turns a row from the Easy exported Project-History.txt file into
 # a go_import model that is used to generate xml
-# Uses coworkers hash to lookup coworkers to connect
-def to_deal_note(row, coworkers, rootmodel)
+def to_deal_note(row, rootmodel)
     # TODO: This could be improved to read a person from an
     # organization connected to this deal if any, but since it is
     # a many to many connection between organizations and deals
     # it's not a straight forward task
-    deal = rootmodel.find_deal_by_integration_id(row['PowerSellProjectID'])
-
-    coworker_id = coworkers[row['idUser']]
-    coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
+    deal = rootmodel.find_deal_by_integration_id(row['idProject'])
+    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
 
     if deal && coworker
         note = GoImport::Note.new()
@@ -294,5 +283,6 @@ def make_sure_database_has_been_exported()
         File.exists?(PERSON_FILE) &&
         File.exists?(INCLUDE_FILE) &&
         File.exists?(DEAL_FILE) &&
-        File.exists?(DEAL_NOTE_FILE)
+        File.exists?(DEAL_NOTE_FILE) &&
+        File.exists?(PROJECT_DOCUMENT_FILE)
 end
