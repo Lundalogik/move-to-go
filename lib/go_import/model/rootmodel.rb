@@ -399,15 +399,21 @@ module GoImport
                     # we dont need to check that the file exists since
                     # we assume that rootmodel.validate has been
                     # called before save_to_zip.
+                    puts "file.path: #{file.path}, relative: #{file.has_relative_path?}"
                     if file.has_relative_path?
                         file.location_in_zip_file = "files/#{file.path}"
                         zip_file.add(file.location_in_zip_file, "#{root_folder}/#{file.path}")
                     else
+                        puts "ABS!"
+                        puts files_folder_at_customer
                         file.location_in_zip_file = "files/__abs/#{SecureRandom.uuid}/#{::File.basename(file.path).to_s}"
                         if files_folder_at_customer.empty?
                             zip_file.add(file.location_in_zip_file, file.path)
                         else
-                            zip_file.add(file.location_in_zip_file, file.path.sub(files_folder_at_customer, root_folder))
+                            puts "file.path.downcase.sub(files_folder_at_customer.downcase, root_folder): "
+                            puts file.path.downcase.sub(files_folder_at_customer.downcase, root_folder)
+                            zip_file.add(file.location_in_zip_file,
+                                         file.path.downcase.sub(files_folder_at_customer.downcase, root_folder))
                         end
                     end
                 end

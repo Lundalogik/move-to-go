@@ -28,6 +28,15 @@ FILE_SHEET = "Dokument"
 # If you want to include any file in the import.
 FILES_FOLDER = "./files"
 
+# If you are importing files with an absolute path (eg
+# m:\documents\readme.doc) then you probably wont have files at that
+# location on the computer where "go-import run" is executed. Set
+# FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
+# the customers site. Ie, in this example m:\documents.
+# Note that you need to escape \ with a \ so in order to write \ use
+# \\ (wow).
+FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
+
 class Converter
     def configure(rootmodel)
         # *** TODO: Add custom field to your rootmodel here. Custom fields
