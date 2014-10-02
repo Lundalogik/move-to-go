@@ -25,7 +25,11 @@ FILE_SHEET = "Dokument"
 # command:
 # go-import run
 
-# If you want to include any file in the import.
+# If you are importing files then you must set the FILES_FOLDER
+# constant. FILES_FOLDER should point to the folder where the files
+# are stored. FILES_FOLDER can be relative to the project directory
+# or absolute. Note that you need to escape \ with a \ so in order to
+# write \ use \\.
 FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
@@ -34,7 +38,7 @@ FILES_FOLDER = "./files"
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
-# \\ (wow).
+# \\.
 FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
 
 class Converter
