@@ -380,6 +380,19 @@ module GoImport
                     root_folder = Dir.pwd
                 end
 
+                # If a file's path is absolute, then we probably dont
+                # have the files in the same location here. For
+                # example, the customer might have stored their files
+                # at f:\lime-easy\documents. We must replace this part
+                # of each file with the root_folder from above.
+                if defined?(FILES_FOLDER_AT_CUSTOMER) && !FILES_FOLDER_AT_CUSTOMER.empty?()
+                    files_folder_at_customer = FILES_FOLDER_AT_CUSTOMER
+                    puts "Files with absolute paths will have the part '#{files_folder_at_customer}' replaced with '#{root_folder}'."
+                else
+                    files_folder_at_customer = ""
+                    puts "Files with absolute paths will be imported from their origial location."
+                end
+
                 # 1) files/ - a folder with all files referenced from
                 # the source.
                 documents.files.each do |file|
@@ -391,7 +404,11 @@ module GoImport
                         zip_file.add(file.location_in_zip_file, "#{root_folder}/#{file.path}")
                     else
                         file.location_in_zip_file = "files/__abs/#{SecureRandom.uuid}/#{::File.basename(file.path).to_s}"
-                        zip_file.add(file.location_in_zip_file, file.path)
+                        if files_folder_at_customer.empty?
+                            zip_file.add(file.location_in_zip_file, file.path)
+                        else
+                            zip_file.add(file.location_in_zip_file, file.path.sub(files_folder_at_customer, root_folder))
+                        end
                     end
                 end
 
