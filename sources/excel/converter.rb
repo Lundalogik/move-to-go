@@ -90,7 +90,6 @@ class Converter
 
     def to_organization(row, rootmodel)
         organization = GoImport::Organization.new()
-        organization.set_tag "Importerad"
 
         # Integrationid is typically the id in the system that we are
         # getting the csv from. Must be set to be able to import the

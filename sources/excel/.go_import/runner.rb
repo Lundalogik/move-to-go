@@ -94,7 +94,9 @@ def convert_source
     if defined?(organization_rows) && !organization_rows.nil?
         puts "Trying to convert organizations..."
         organization_rows.each do |row|
-            rootmodel.add_organization(converter.to_organization(row, rootmodel))
+            organization = converter.to_organization(row, rootmodel)
+            organization.set_tag "Imported"
+            rootmodel.add_organization(organization)
         end
     end
 

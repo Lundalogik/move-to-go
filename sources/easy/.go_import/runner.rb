@@ -105,6 +105,7 @@ end
 
 def init_organization(row, rootmodel)
     organization = GoImport::Organization.new
+    organization.set_tag "Imported"
     # integration_id is typically the company Id in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates

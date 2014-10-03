@@ -37,7 +37,9 @@ def convert_source
     organization_rows.each do |row|
         if not row.nil?
             if not row["NAMN"] == ""
-                rootmodel.add_organization(converter.to_organization(row, rootmodel))
+                organization = converter.to_organization(row, rootmodel)
+                organization.set_tag "Imported"
+                rootmodel.add_organization(organization)
             end
         end
     end
