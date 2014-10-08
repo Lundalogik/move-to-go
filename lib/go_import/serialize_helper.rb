@@ -15,9 +15,18 @@ module GoImport
         def self.serialize_variables_rexml(elem, obj)
             if (obj.respond_to?(:serialize_variables))
                 obj.serialize_variables.each do |serialize_variable|
-                    element_name = serialize_variable[:id].to_s.gsub(/^\@/,'').split('_').map do |m|
-                        m.capitalize
-                    end.join('')
+                    if serialize_variable[:element_name].nil?
+                        # Remove the @ and replace a _ with the next
+                        # letter capitalized. Ie @customer_reference
+                        # should be CustomerReference
+                        element_name = serialize_variable[:id].to_s.gsub(/^\@/,'').split('_').map do |m|
+                            m.capitalize
+                        end.join('')
+                    else
+                        element_name = serialize_variable[:element_name].to_s.split('_').map do |m|
+                            m.capitalize
+                        end.join('')
+                    end
 
                     raw_var = obj.instance_variable_get("@#{serialize_variable[:id].to_s}")
                     if raw_var != nil

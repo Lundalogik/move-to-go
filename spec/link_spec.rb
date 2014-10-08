@@ -67,7 +67,7 @@ describe "Link" do
         link.validate.length.should be > 0
     end
 
-    it "will auto convert org to org.ref during assignment" do
+    it "will set organization ref when organization is assigned" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Beagle Boys!"})
 
@@ -75,10 +75,11 @@ describe "Link" do
         link.organization = org
 
         # then
-        link.organization.is_a?(GoImport::OrganizationReference).should eq true
+        link.organization.is_a?(GoImport::Organization).should eq true
+        link.instance_variable_get(:@organization_reference).is_a?(GoImport::OrganizationReference).should eq true
     end
 
-    it "will auto convert deal to deal.ref during assignment" do
+    it "will set deal ref when deal is assigned" do
         # given
         deal = GoImport::Deal.new({:integration_id => "123" })
         deal.name = "The new deal"
@@ -87,10 +88,11 @@ describe "Link" do
         link.deal = deal
 
         # then
-        link.deal.is_a?(GoImport::DealReference).should eq true
+        link.deal.is_a?(GoImport::Deal).should eq true
+        link.instance_variable_get(:@deal_reference).is_a?(GoImport::DealReference).should eq true
     end
 
-    it "will auto convert coworker to coworker.ref during assignment" do
+    it "will set coworker ref when coworker is assigned" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "123" })
         coworker.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -99,6 +101,7 @@ describe "Link" do
         link.created_by = coworker
 
         # then
-        link.created_by.is_a?(GoImport::CoworkerReference).should eq true
+        link.created_by.is_a?(GoImport::Coworker).should eq true
+        link.instance_variable_get(:@created_by_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
 end

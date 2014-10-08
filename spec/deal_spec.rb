@@ -6,7 +6,7 @@ describe "Deal" do
         GoImport::Deal.new
     }
 
-    it "will auto convert org to org.ref during assignment" do
+    it "will set customer ref when customer is assigned" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
@@ -14,10 +14,11 @@ describe "Deal" do
         deal.customer = org
 
         # then
-        deal.customer.is_a?(GoImport::OrganizationReference).should eq true
+        deal.customer.is_a?(GoImport::Organization).should eq true
+        deal.instance_variable_get(:@customer_reference).is_a?(GoImport::OrganizationReference).should eq true
     end
 
-    it "will auto convert coworker to coworker.ref during assignment" do
+    it "will set coworker ref when coworker is assigned" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
 
@@ -25,10 +26,11 @@ describe "Deal" do
         deal.responsible_coworker = coworker
 
         # then
-        deal.responsible_coworker.is_a?(GoImport::CoworkerReference).should eq true
+        deal.responsible_coworker.is_a?(GoImport::Coworker).should eq true
+        deal.instance_variable_get(:@responsible_coworker_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
 
-    it "will auto convert person to person.ref during assignment" do
+    it "will set person ref when person is assigned" do
         # given
         person = GoImport::Person.new({:integration_id => "123"})
 
@@ -36,7 +38,8 @@ describe "Deal" do
         deal.customer_contact = person
 
         # then
-        deal.customer_contact.is_a?(GoImport::PersonReference).should eq true
+        deal.customer_contact.is_a?(GoImport::Person).should eq true
+        deal.instance_variable_get(:@customer_contact_reference).is_a?(GoImport::PersonReference).should eq true
     end
 
     it "will fail on validation if name is empty" do
@@ -92,6 +95,28 @@ describe "Deal" do
         deal.value.should eq "357000"
     end
 
+    it "should set empty string to 0 value" do
+        # given
+        deal.name = "The deal with no value"
+
+        # when
+        deal.value = ""
+
+        # then
+        deal.value.should eq "0"
+    end
+
+    it "should set value to 0 if assigned a string with spaces" do
+        # given
+        deal.name = "The deal with no value"
+
+        # when
+        deal.value = "  "
+
+        # then
+        deal.value.should eq "0"
+    end
+
     it "should raise invalidvalueerror if value is not a number" do
         # given
         deal.name = "The deal with an invalid value"
@@ -132,7 +157,7 @@ describe "Deal" do
         deal.value = nil
 
         # then
-        deal.value.should eq 0
+        deal.value.should eq "0"
     end
 
     it "should set status_reference from status_setting" do

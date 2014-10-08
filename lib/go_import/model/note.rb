@@ -29,10 +29,10 @@ module GoImport
             } +
                 [
                  { :id => :date, :type => :date },
-                 { :id => :created_by, :type => :coworker_reference },
-                 { :id => :organization, :type => :organization_reference },
-                 { :id => :deal, :type => :deal_reference },
-                 { :id => :person, :type => :person_reference }
+                 { :id => :created_by_reference, :type => :coworker_reference, :element_name => :created_by },
+                 { :id => :organization_reference, :type => :organization_reference, :element_name => :organization },
+                 { :id => :deal_reference, :type => :deal_reference, :element_name => :deal },
+                 { :id => :person_reference, :type => :person_reference, :element_name => :person }
                 ]
         end
 
@@ -50,19 +50,35 @@ module GoImport
         end
 
         def organization=(org)
-            @organization = OrganizationReference.from_organization(org)
+            @organization_reference = OrganizationReference.from_organization(org)
+
+            if org.is_a?(Organization)
+                @organization = org
+            end
         end
 
         def created_by=(coworker)
-            @created_by = CoworkerReference.from_coworker(coworker)
+            @created_by_reference = CoworkerReference.from_coworker(coworker)
+
+            if coworker.is_a?(Coworker)
+                @created_by = coworker
+            end
         end
 
         def person=(person)
-            @person = PersonReference.from_person(person)
+            @person_reference = PersonReference.from_person(person)
+
+            if person.is_a?(Person)
+                @person = person
+            end
         end
 
         def deal=(deal)
-            @deal = DealReference.from_deal(deal)
+            @deal_reference = DealReference.from_deal(deal)
+
+            if deal.is_a?(Deal)
+                @deal = deal
+            end
         end
 
         def classification=(classification)

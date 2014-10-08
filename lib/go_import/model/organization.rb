@@ -130,7 +130,11 @@ module GoImport
         end
 
         def responsible_coworker=(coworker)
-            @responsible_coworker = CoworkerReference.from_coworker(coworker)
+            @responsible_coworker_reference = CoworkerReference.from_coworker(coworker)
+
+            if coworker.is_a?(Coworker)
+                @responsible_coworker = coworker
+            end
         end
 
         # Sets the organization's relation to the specified value. The
@@ -177,7 +181,7 @@ module GoImport
              { :id => :employees, :type => :persons },
              { :id => :custom_values, :type => :custom_values },
              { :id => :tags, :type => :tags },
-             { :id => :responsible_coworker, :type => :coworker_reference},
+             { :id => :responsible_coworker_reference, :type => :coworker_reference, :element_name => :responsible_coworker},
              { :id => :relation, :type => :string },
              { :id => :relation_last_modified, :type => :string }
             ]

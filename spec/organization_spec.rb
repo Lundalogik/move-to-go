@@ -33,7 +33,7 @@ describe "Organization" do
         organization.validate.length.should be > 0
     end
 
-    it "will auto convert coworker to coworker.ref during assignment" do
+    it "will set coworker ref when coworker is assigned" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
 
@@ -41,7 +41,8 @@ describe "Organization" do
         organization.responsible_coworker = coworker
 
         # then
-        organization.responsible_coworker.is_a?(GoImport::CoworkerReference).should eq true
+        organization.responsible_coworker.is_a?(GoImport::Coworker).should eq true
+        organization.instance_variable_get(:@responsible_coworker_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
 
     it "will have a no relation as default" do

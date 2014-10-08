@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    go_import (3.0.5)
+    go_import (3.0.7)
       bundler
       global_phone
       iso_country_codes

@@ -101,7 +101,7 @@ describe "File" do
         file.name.should eq ''
     end
 
-    it "will auto convert org to org.ref during assignment" do
+    it "will set organization ref when organization is assinged" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Beagle Boys!"})
 
@@ -109,10 +109,11 @@ describe "File" do
         file.organization = org
 
         # then
-        file.organization.is_a?(GoImport::OrganizationReference).should eq true
+        file.organization.is_a?(GoImport::Organization).should eq true
+        file.instance_variable_get(:@organization_reference).is_a?(GoImport::OrganizationReference).should eq true
     end
 
-    it "will auto convert deal to deal.ref during assignment" do
+    it "will set deal ref when deal is assinged" do
         # given
         deal = GoImport::Deal.new({:integration_id => "123" })
         deal.name = "The new deal"
@@ -121,10 +122,11 @@ describe "File" do
         file.deal = deal
 
         # then
-        file.deal.is_a?(GoImport::DealReference).should eq true
+        file.deal.is_a?(GoImport::Deal).should eq true
+        file.instance_variable_get(:@deal_reference).is_a?(GoImport::DealReference).should eq true
     end
 
-    it "will auto convert coworker to coworker.ref during assignment" do
+    it "will set coworker ref when coworker is assinged" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "123" })
         coworker.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -133,8 +135,7 @@ describe "File" do
         file.created_by = coworker
 
         # then
-        file.created_by.is_a?(GoImport::CoworkerReference).should eq true
+        file.created_by.is_a?(GoImport::Coworker).should eq true
+        file.instance_variable_get(:@created_by_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
-
-
 end

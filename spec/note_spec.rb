@@ -13,8 +13,8 @@ describe "Note" do
     it "is valid when it has text, created_by and organization" do
         # given
         note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
-        note.created_by = GoImport::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
-        note.organization = GoImport::OrganizationReference.new({ :integration_id => "456", :heading => "Lundalogik" })
+        note.created_by = GoImport::Coworker.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.organization = GoImport::Organization.new({ :integration_id => "456", :heading => "Lundalogik" })
 
         # when, then
         note.validate.should eq ""
@@ -23,7 +23,7 @@ describe "Note" do
     it "is valid when it has text, created_by and person" do
         # given
         note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
-        note.created_by = GoImport::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.created_by = GoImport::Coworker.new( { :integration_id => "123", :heading => "kalle anka" } )
         note.person = GoImport::Person.new({ :integration_id => "456", :heading => "Billy Bob" })
 
         # when, then
@@ -33,7 +33,7 @@ describe "Note" do
     it "is valid when it has text, created_by and deal" do
         # given
         note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
-        note.created_by = GoImport::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.created_by = GoImport::Coworker.new( { :integration_id => "123", :heading => "kalle anka" } )
         note.deal = GoImport::Deal.new({ :integration_id => "456", :heading => "The new deal" })
 
         # when, then
@@ -43,13 +43,13 @@ describe "Note" do
     it "is invalid if no note has no attached objects" do
         # given
         note.text = "They are very interested in the new deal (the one where you get a free bike as a gift)"
-        note.created_by = GoImport::CoworkerReference.new( { :integration_id => "123", :heading => "kalle anka" } )
+        note.created_by = GoImport::Coworker.new( { :integration_id => "123", :heading => "kalle anka" } )
 
         # when, then
         note.validate.length.should be > 0
     end
 
-    it "will auto convert org to org.ref during assignment" do
+    it "will set organization ref when organization is assinged" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Beagle Boys!"})
 
@@ -57,10 +57,11 @@ describe "Note" do
         note.organization = org
 
         # then
-        note.organization.is_a?(GoImport::OrganizationReference).should eq true
+        note.organization.is_a?(GoImport::Organization).should eq true
+        note.instance_variable_get(:@organization_reference).is_a?(GoImport::OrganizationReference).should eq true
     end
 
-    it "will auto convert person to person.ref during assignment" do
+    it "will set person ref when person is assinged" do
         # given
         person = GoImport::Person.new({:integration_id => "123" })
         person.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -69,10 +70,11 @@ describe "Note" do
         note.person = person
 
         # then
-        note.person.is_a?(GoImport::PersonReference).should eq true
+        note.person.is_a?(GoImport::Person).should eq true
+        note.instance_variable_get(:@person_reference).is_a?(GoImport::PersonReference).should eq true
     end
 
-    it "will auto convert coworker to coworker.ref during assignment" do
+    it "will set coworker ref when coworker is assinged" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "123" })
         coworker.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -81,10 +83,11 @@ describe "Note" do
         note.created_by = coworker
 
         # then
-        note.created_by.is_a?(GoImport::CoworkerReference).should eq true
+        note.created_by.is_a?(GoImport::Coworker).should eq true
+        note.instance_variable_get(:@created_by_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
 
-    it "will auto convert deal to deal.ref during assignment" do
+    it "will set deal ref when deal is assinged" do
         # given
         deal = GoImport::Deal.new({:integration_id => "123" })
         deal.name = "The new deal"
@@ -93,7 +96,8 @@ describe "Note" do
         note.deal = deal
 
         # then
-        note.deal.is_a?(GoImport::DealReference).should eq true
+        note.deal.is_a?(GoImport::Deal).should eq true
+        note.instance_variable_get(:@deal_reference).is_a?(GoImport::DealReference).should eq true
     end
 
     it "should have Comment as default classification" do

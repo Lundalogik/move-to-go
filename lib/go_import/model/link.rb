@@ -26,22 +26,34 @@ module GoImport
                 }
             } +
                 [
-                 { :id => :created_by, :type => :coworker_reference },
-                 { :id => :organization, :type => :organization_reference },
-                 { :id => :deal, :type => :deal_reference }
+                 { :id => :created_by_reference, :type => :coworker_reference, :element_name => :created_by },
+                 { :id => :organization_reference, :type => :organization_reference, :element_name => :organization },
+                 { :id => :deal_reference, :type => :deal_reference, :element_name => :deal }
                 ]
         end
 
         def organization=(org)
-            @organization = OrganizationReference.from_organization(org)
+            @organization_reference = OrganizationReference.from_organization(org)
+
+            if org.is_a?(Organization)
+                @organization = org
+            end
         end
 
         def deal=(deal)
-            @deal = DealReference.from_deal(deal)
+            @deal_reference = DealReference.from_deal(deal)
+
+            if deal.is_a?(Deal)
+                @deal = deal
+            end
         end
 
         def created_by=(coworker)
-            @created_by = CoworkerReference.from_coworker(coworker)
+            @created_by_reference = CoworkerReference.from_coworker(coworker)
+
+            if coworker.is_a?(Coworker)
+                @created_by = coworker
+            end
         end
 
         def validate
@@ -51,15 +63,15 @@ module GoImport
                 error = "Url is required for link\n"
             end
 
-            if @created_by.nil?
+            if @created_by_reference.nil?
                 error = "#{error}Created_by is required for link\n"
             end
 
-            if @organization.nil? && @deal.nil?
+            if @organization_reference.nil? && @deal_reference.nil?
                 error = "#{error}A link must have either an organization or a deal\n"
             end
 
-            if !@organization.nil? && !@deal.nil?
+            if !@organization_reference.nil? && !@deal_reference.nil?
                 error = "#{error}A link can't be attached to both an organization and a deal"
             end
 

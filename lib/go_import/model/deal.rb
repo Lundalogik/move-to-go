@@ -56,9 +56,9 @@ module GoImport
                 }
             } +
                 [
-                 { :id => :customer, :type => :organization_reference },
-                 { :id => :responsible_coworker, :type => :coworker_reference },
-                 { :id => :customer_contact, :type => :person_reference },
+                 { :id => :customer_reference, :type => :organization_reference, :element_name => :customer },
+                 { :id => :responsible_coworker_reference, :type => :coworker_reference, :element_name => :responsible_coworker },
+                 { :id => :customer_contact_reference, :type => :person_reference, :element_name => :customer_contact},
                  { :id => :custom_values, :type => :custom_values },
                  { :id => :tags, :type => :tags },
                  { :id => :status, :type => :deal_status }
@@ -131,20 +131,39 @@ module GoImport
         end
 
         def customer=(customer)
-            @customer = OrganizationReference.from_organization(customer)
+            @customer_reference = OrganizationReference.from_organization(customer)
+
+            if customer.is_a?(Organization)
+                @customer = customer
+            end
+        end
+
+        # Gets the customer to which this deal belongs
+        def customer()
+            return @customer
         end
 
         def responsible_coworker=(coworker)
-            @responsible_coworker = CoworkerReference.from_coworker(coworker)
+            @responsible_coworker_reference = CoworkerReference.from_coworker(coworker)
+
+            if coworker.is_a?(Coworker)
+                @responsible_coworker = coworker
+            end
         end
 
         def customer_contact=(person)
-            @customer_contact = PersonReference.from_person(person)
+            @customer_contact_reference = PersonReference.from_person(person)
+
+            if person.is_a?(Person)
+                @customer_contact = person
+            end
         end
 
         def value=(value)
             if value.nil?
-                @value = 0
+                @value = "0"
+            elsif value.empty?
+                @value = "0"
             else
                 # we have had some issues with LIME Easy imports where
                 # the value was in the format "357 000". We need to
@@ -155,6 +174,8 @@ module GoImport
                     @value = fixed_value
                 elsif is_float?(fixed_value)
                     @value = fixed_value
+                elsif fixed_value.length == 0
+                    @value = "0"
                 else
                     raise InvalidValueError, value
                 end
