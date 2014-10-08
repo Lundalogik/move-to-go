@@ -87,7 +87,7 @@ def convert_source
         end
 
         process_rows PROJECT_DOCUMENT_FILE do |row|
-            rootmodel.add_file(from_project_document_to_organization_document(row, rootmodel))
+            rootmodel.add_file(from_project_document_to_organization_document(row, includes, rootmodel))
         end
     end
     return rootmodel
