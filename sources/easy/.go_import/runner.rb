@@ -190,6 +190,8 @@ def from_project_document_to_organization_document(row, includes, rootmodel)
 
     organization_id = includes[row['idProject']]
     file.organization = rootmodel.find_organization_by_integration_id(organization_id)
+
+    return file
 end
 
 def init_deal(row, rootmodel, includes)
