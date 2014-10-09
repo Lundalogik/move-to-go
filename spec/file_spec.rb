@@ -27,6 +27,18 @@ describe "File" do
         file.validate.should eq ""
     end
 
+    # it "fe" do
+    #     # given
+    #     FILES_FOLDER = "./files"
+    #     FILES_FOLDER_AT_CUSTOMER = ""
+    #     file.name = "Offert"
+    #     file.path = "spec/sample_data/offert.docx"
+
+    #     # when, then
+
+    # end
+
+
     it "is not valid when it has path and deal" do
         # must have a created_by
         # given

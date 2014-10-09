@@ -56,6 +56,11 @@ class GoImportCommandLine < Thor
             puts "WARNING: FILES_FOLDER should be set unless you are only importing files with absolute paths."
         end
 
+        if model.documents.files.length > 0 && (!defined?(FILES_FOLDER_AT_CUSTOMER) || FILES_FOLDER_AT_CUSTOMER.empty?())
+            puts "WARNING: It looks like you are importing files but FILES_FOLDER_AT_CUSTOMER has not been set in your converter.rb"
+            puts "WARNING: This means that files with an absolute path will be imported with their original path. Set this constant if you want to get files from the FILES_FOLDER directory."
+        end
+
         is_ok, error_msg = can_be_serialized?(model)
         if is_ok
             go_data_zip = options.output.nil? == true ? "go.zip" : options.output

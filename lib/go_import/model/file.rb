@@ -102,43 +102,88 @@ module GoImport
             end
         end
 
-        def validate
-            error = String.new
-
+        # This is the path to where the file should be accessed
+        # from within the project.
+        def path_for_project
             if @path.nil? || @path.empty?
-                error = "Path is required for file.\n"
-            else
-                if has_relative_path?()
-                    if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
-                        root_folder = FILES_FOLDER
-                    else
-                        root_folder = Dir.pwd
-                    end
+                return ""
+            end
 
-                    if !::File.exists?("#{root_folder}/#{@path}")
-                        error = "#{error}Can't find file '#{root_folder}/#{@path}'.\n"
-                    end
+            # Get the folder where files should be accessed from
+            # during the import. If not defined in converter.rb use
+            # the current directory
+            if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
+                root_folder = FILES_FOLDER
+            else
+                root_folder = Dir.pwd
+            end
+
+            if has_relative_path?()
+                # since this file is stored with a relative file name
+                # we should get it from the root folder
+                path_for_project = ::File.expand_path(@path, root_folder)
+            else
+                # the file is stored with an absolute path, if the
+                # file cant be access using that path we must change
+                # it to a path that is accessible from this computer.
+                # The FILES_FOLDER_AT_CUSTOMER constant states what
+                # part of the path that should be replaced with the
+                # root folder.
+
+                # We assume that the original system used ONE location
+                # for all its files. If not, we should change
+                # FILES_FOLDER_AT_CUSTOMER to a list of folders.
+                if defined?(FILES_FOLDER_AT_CUSTOMER) && !FILES_FOLDER_AT_CUSTOMER.empty?()
+                    files_folder_at_customer = FILES_FOLDER_AT_CUSTOMER
                 else
-                    if !::File.exists?(@path)
-                        error = "#{error}Can't find file '#{@path}'.\n"
-                    end
+                    files_folder_at_customer = ""
+                end
+
+                if files_folder_at_customer.empty?
+                    path_for_project = @path
+                else
+                    path_for_project = ::File.expand_path(@path.downcase.sub(files_folder_at_customer.downcase, root_folder))
                 end
             end
+
+            return path_for_project
+        end
+
+        def add_to_zip_file(zip_file)
+            if has_relative_path?
+                @location_in_zip_file = "files/#{@path}"
+            else
+                @location_in_zip_file = "files/__abs/#{SecureRandom.uuid}/#{::File.basename(@path).to_s}"
+            end
+
+            zip_file.add(@location_in_zip_file, path_for_project)
+        end
+
+        def validate
+            error = String.new
 
             if @name.nil? || @name.empty?
                 error = "#{error}A file must have a name.\n"
             end
 
+            if @path.nil? || @path.empty?
+                error = "Path is required for file.\n"
+            else
+                if !::File.exists?(path_for_project())
+                    error = "#{error}Can't find file with name '#{@name}' and original path '#{@path}' at '#{path_for_project()}'."
+                end
+            end
+
             if @created_by_reference.nil?
-                error = "#{error}Created_by is required for file.\n"
+                error = "#{error}Created_by is required for file (#{@name}).\n"
             end
 
             if @organization_reference.nil? && @deal_reference.nil?
-                error = "#{error}A file must have either an organization or a deal.\n"
+                error = "#{error}The file (#{@name}) must have either an organization or a deal.\n"
             end
 
             if !@organization_reference.nil? && !@deal_reference.nil?
-                error = "#{error}A file can't be attached to both an organization and a deal."
+                error = "#{error}The file (#{@name}) can't be attached to both an organization and a deal."
             end
 
             return error
