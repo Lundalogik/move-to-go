@@ -174,7 +174,12 @@ def to_organization_document(row, rootmodel)
     file.name = row['Comment']
 
     file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
-    file.organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
+
+    org = rootmodel.find_organization_by_integration_id(row['idCompany'])
+    if org.nil?
+        return nil
+    end
+    file.organization = org
 
     return file
 end
@@ -189,7 +194,12 @@ def from_project_document_to_organization_document(row, includes, rootmodel)
     file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
 
     organization_id = includes[row['idProject']]
-    file.organization = rootmodel.find_organization_by_integration_id(organization_id)
+    org = rootmodel.find_organization_by_integration_id(organization_id)
+    if org.nil?
+        return nil
+    end
+
+    file.organization = org
 
     return file
 end
