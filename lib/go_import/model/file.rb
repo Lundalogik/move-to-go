@@ -15,9 +15,9 @@ module GoImport
 
         attr_reader :name
 
-        # zip_path is used internally when the file is stored in the
-        # zip file that is sent to LIME Go. You should not modify this
-        # property
+        # location_in_zip_file is used internally when the file is
+        # stored in the zip file that is sent to LIME Go. You should
+        # not modify this property
         attr_accessor :location_in_zip_file
 
         def initialize(opt = nil)
