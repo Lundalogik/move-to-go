@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    go_import (3.0.7)
+    go_import (3.0.10)
       bundler
       global_phone
       iso_country_codes
@@ -15,7 +15,7 @@ GEM
   specs:
     diff-lcs (1.2.5)
     global_phone (1.0.1)
-    iso_country_codes (0.4.4)
+    iso_country_codes (0.5.0)
     mini_portile (0.6.0)
     nokogiri (1.6.3.1-x86-mingw32)
       mini_portile (= 0.6.0)

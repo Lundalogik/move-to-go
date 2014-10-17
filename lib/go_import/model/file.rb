@@ -150,11 +150,7 @@ module GoImport
         end
 
         def add_to_zip_file(zip_file)
-            if has_relative_path?
-                @location_in_zip_file = "files/#{@path}"
-            else
-                @location_in_zip_file = "files/__abs/#{SecureRandom.uuid}/#{::File.basename(@path).to_s}"
-            end
+            @location_in_zip_file = "files/#{SecureRandom.uuid}#{::File.extname(@path).to_s}"
 
             zip_file.add(@location_in_zip_file, path_for_project)
         end
