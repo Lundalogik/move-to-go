@@ -27,16 +27,16 @@ describe "File" do
         file.validate.should eq ""
     end
 
-    # it "fe" do
-    #     # given
-    #     FILES_FOLDER = "./files"
-    #     FILES_FOLDER_AT_CUSTOMER = ""
-    #     file.name = "Offert"
-    #     file.path = "spec/sample_data/offert.docx"
+    it "is valid when it has name, invalid path, created_by and deal but ignores the path" do
+        # given
+        file.name = "Offert"
+        file.path = "c:\\mydocs\\offert.docx"
+        file.created_by = GoImport::CoworkerReference.new( { :integration_id => "123" } )
+        file.deal = GoImport::DealReference.new( { :integration_id => "456" } )
 
-    #     # when, then
-
-    # end
+        # when, then
+        file.validate(true).should eq ""
+    end
 
 
     it "is not valid when it has path and deal" do

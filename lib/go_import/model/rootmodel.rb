@@ -304,7 +304,7 @@ module GoImport
             return error.strip
         end
 
-        def validate()
+        def validate(ignore_missing_files = false)
             error = String.new
 
             @organizations.each do |o|
@@ -339,7 +339,7 @@ module GoImport
             end
 
             @documents.files.each do |file|
-                validation_message = file.validate
+                validation_message = file.validate(ignore_missing_files)
                 if !validation_message.empty?
                     error = "#{error}\n#{validation_message}"
                 end

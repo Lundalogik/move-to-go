@@ -155,8 +155,9 @@ module GoImport
             zip_file.add(@location_in_zip_file, path_for_project)
         end
 
-        def validate
+        def validate(ignore_missing_files = false)
             error = String.new
+            warning = String.new
 
             if @name.nil? || @name.empty?
                 error = "#{error}A file must have a name.\n"
@@ -165,7 +166,7 @@ module GoImport
             if @path.nil? || @path.empty?
                 error = "Path is required for file.\n"
             else
-                if !::File.exists?(path_for_project())
+                if !ignore_missing_files && !::File.exists?(path_for_project())
                     error = "#{error}Can't find file with name '#{@name}' and original path '#{@path}' at '#{path_for_project()}'."
                 end
             end
