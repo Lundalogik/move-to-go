@@ -46,7 +46,16 @@ class GoImportCommandLine < Thor
            :desc => "Output will be created even if the import contains missing files",
            :type => :boolean,
            :required => false)
+    option(:log_to_file,
+           :desc => "Console output will be redirected to file",
+           :type => :string,
+           :required => false)
     def run_import()
+        if !options.log_to_file.nil?
+            $stdout = File.new(options.log_to_file == "log_to_file" ? "go-import.log" : options.log_to_file, 'w')
+            $stdout.sync = true
+        end
+
         if !is_valid_goimport_project?
             return
         end
@@ -91,11 +100,16 @@ class GoImportCommandLine < Thor
             puts "Trying to log files that can't be found..."
             file_log_header = "name;integration_id;path;organization.integrationid;organization.name;deal.integrationid;deal.name"
             file_log = ""
+            files_to_remove = []
             model.documents.files.each do |file|
                 if !::File.exists?(file.path_for_project)
                     file_log = "#{file_log}#{file.name};#{file.integration_id};#{file.path};#{file.organization.nil? ? '' : file.organization.integration_id};#{file.organization.nil? ? '' : file.organization.name};#{file.deal.nil? ? '' : file.deal.integration_id};#{file.deal.nil? ? '' : file.deal.name}\n"
-                    model.documents.files.delete file
+                    files_to_remove.push file
                 end
+            end
+
+            files_to_remove.each do |file|
+                model.documents.files.delete file
             end
 
             if file_log.length > 0

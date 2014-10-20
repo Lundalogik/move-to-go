@@ -80,16 +80,17 @@ def convert_source
         rootmodel.add_note(to_deal_note(row, rootmodel))
     end
 
-    # company documents
+    # documents
     if defined?(IMPORT_DOCUMENTS) && !IMPORT_DOCUMENTS.nil? && IMPORT_DOCUMENTS
         process_rows ORGANIZATION_DOCUMENT_FILE do |row|
             rootmodel.add_file(to_organization_document(row, rootmodel))
         end
 
         process_rows PROJECT_DOCUMENT_FILE do |row|
-            rootmodel.add_file(from_project_document_to_organization_document(row, includes, rootmodel))
+            rootmodel.add_file(to_deal_document(row, includes, rootmodel))
         end
     end
+
     return rootmodel
 end
 
@@ -187,7 +188,7 @@ def to_organization_document(row, rootmodel)
     return file
 end
 
-def from_project_document_to_organization_document(row, includes, rootmodel)
+def to_deal_document(row, includes, rootmodel)
     file = GoImport::File.new()
 
     file.integration_id = "d-#{row['idDocument']}"
@@ -199,13 +200,13 @@ def from_project_document_to_organization_document(row, includes, rootmodel)
         file.created_by = rootmodel.import_coworker
     end
 
-    organization_id = includes[row['idProject']]
-    org = rootmodel.find_organization_by_integration_id(organization_id)
-    if org.nil?
+    deal_id = includes[row['idProject']]
+    deal = rootmodel.find_deal_by_integration_id(deal_id)
+    if deal.nil?
         return nil
     end
 
-    file.organization = org
+    file.deal = deal
 
     return file
 end
