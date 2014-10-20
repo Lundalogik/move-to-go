@@ -56,7 +56,6 @@ class Converter
         organization = GoImport::Organization.new()
 
         #Add tags:
-        organization.set_tag "Importerad"
         organization.set_tag "Kund"
 
         organization.name = row['NAMN']
