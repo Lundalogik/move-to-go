@@ -38,7 +38,7 @@ def convert_source
         if not row.nil?
             if not row["NAMN"] == ""
                 organization = converter.to_organization(row, rootmodel)
-                organization.set_tag "Imported"
+                organization.set_tag "Import"
                 rootmodel.add_organization(organization)
             end
         end

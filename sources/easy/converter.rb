@@ -130,10 +130,10 @@ class Converter
 
         #####################################################################
         ## Tags.
-        # Tags are set and defined at the same place
-        # Setting a tag: Imported is useful for the user
+        # Set tags for the organization. All organizations will get
+        # the tag "import" automagically
 
-        # organization.set_tag("Imported")
+        # organization.set_tag("Guldkund")
 
         #####################################################################
         ## Option fields.
@@ -192,10 +192,8 @@ class Converter
 
         #####################################################################
         ## Tags.
-        # Tags are set and defined at the same place
-        # Setting a tag: Imported is useful for the user
-
-        # person.set_tag("Imported")
+        # Set tags for the person
+        # person.set_tag("VIP")
 
         #####################################################################
         ## Checkbox fields.
@@ -263,10 +261,9 @@ class Converter
 
         #####################################################################
         ## Tags.
-        # Tags are set and defined at the same place
-        # Setting a tag: Imported is useful for the user
+        # Set tags for the deal
 
-        # deal.set_tag("Imported")
+        # deal.set_tag("Product name")
 
         return deal
     end

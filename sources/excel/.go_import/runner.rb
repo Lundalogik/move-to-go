@@ -95,7 +95,7 @@ def convert_source
         puts "Trying to convert organizations..."
         organization_rows.each do |row|
             organization = converter.to_organization(row, rootmodel)
-            organization.set_tag "Imported"
+            organization.set_tag "Import"
             rootmodel.add_organization(organization)
         end
     end

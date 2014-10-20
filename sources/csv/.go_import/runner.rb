@@ -36,7 +36,7 @@ def convert_source
     if defined?(ORGANIZATION_FILE) && !ORGANIZATION_FILE.nil? && !ORGANIZATION_FILE.empty?
         process_rows ORGANIZATION_FILE do |row|
             organization = converter.to_organization(row, rootmodel)
-            organization.set_tag "Imported"
+            organization.set_tag "Import"
             rootmodel.add_organization(organization)
         end
     end

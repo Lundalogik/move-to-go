@@ -94,9 +94,9 @@ class Converter
         coworker = rootmodel.find_coworker_by_integration_id row['responsible_id']
         organization.responsible_coworker = coworker.to_reference
 
-        # Tags are set and defined at the same place
-        # Setting a tag: Imported is useful for the user
-        organization.set_tag("Imported")
+        # Set tags for the organization. All organizations will get
+        # the tag "import" automagically
+        organization.set_tag("Guldkund")
 
         # When imported from web based ERP or similair that
         # client will continue to use it can be useful to be
