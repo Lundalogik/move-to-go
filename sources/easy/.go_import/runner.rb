@@ -87,7 +87,7 @@ def convert_source
         end
 
         process_rows PROJECT_DOCUMENT_FILE do |row|
-            rootmodel.add_file(to_deal_document(row, includes, rootmodel))
+            rootmodel.add_file(to_deal_document(row, rootmodel))
         end
     end
 
@@ -188,7 +188,7 @@ def to_organization_document(row, rootmodel)
     return file
 end
 
-def to_deal_document(row, includes, rootmodel)
+def to_deal_document(row, rootmodel)
     file = GoImport::File.new()
 
     file.integration_id = "d-#{row['idDocument']}"
@@ -200,8 +200,7 @@ def to_deal_document(row, includes, rootmodel)
         file.created_by = rootmodel.import_coworker
     end
 
-    deal_id = includes[row['idProject']]
-    deal = rootmodel.find_deal_by_integration_id(deal_id)
+    deal = rootmodel.find_deal_by_integration_id(row['idProject'])
     if deal.nil?
         return nil
     end
