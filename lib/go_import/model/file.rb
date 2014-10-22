@@ -75,7 +75,7 @@ module GoImport
         end
 
         def has_relative_path?()
-            return Pathname.new(@path).relative?
+            return !@path.match(/[a-zA-Z]{1}\:[\\\/]/)&&Pathname.new(@path).relative?
         end
 
         def organization=(org)
