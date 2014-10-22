@@ -71,7 +71,7 @@ describe "File" do
 
     it "knows when a path is not relative" do
         # given
-        file.path = "c:\files\myfile.doc"
+        file.path = "c:\\files\\myfile.doc"
 
         # when, then
         file.has_relative_path?().should eq false
