@@ -1,4 +1,4 @@
-# go_import [![Build Status](https://travis-ci.org/Lundalogik/go_import.png?branch=master)](https://travis-ci.org/Lundalogik/go_import)
+# go_import
 
 ## What is go_import?
 go_import is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
