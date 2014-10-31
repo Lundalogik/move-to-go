@@ -6,6 +6,12 @@ describe "Person" do
         GoImport::Person.new
     }
 
+    it "should have import tag as default" do
+        # given, when, then
+        person.tags.count.should eq 1
+        person.tags[0].value.should eq 'Import'
+    end
+
     it "can set a customfield" do
         person.set_custom_field({:integration_id=>'the key',
             :value=> 'the value'})
@@ -55,11 +61,14 @@ describe "Person" do
     end
 
     it "will only set tag once" do
-        person.set_tag('tag1')
-        person.set_tag('tag1')
+        # we already have the default 'import' tag.
         person.tags.length.should eq 1
-        tag = person.tags[0]
-        tag.value.should eq 'tag1'
+
+        person.set_tag('tag1')
+        person.set_tag('tag1')
+
+        person.tags.length.should eq 2
+        person.tags[1].value.should eq 'tag1'
     end
 
     it "should have a firstname if no lastname" do

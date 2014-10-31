@@ -61,6 +61,7 @@ module GoImport
             end
 
             @relation = Relation::NoRelation if @relation.nil?
+            set_tag 'Import'
         end
 
         def to_reference()

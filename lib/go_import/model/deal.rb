@@ -76,6 +76,8 @@ module GoImport
                     instance_variable_set("@" + myattr[:id].to_s, val) if val != nil
                 end
             end
+
+            set_tag 'Import'
         end
 
         def to_s

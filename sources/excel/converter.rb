@@ -49,7 +49,7 @@ class Converter
         # used as default.
 
         # rootmodel.settings.with_organization do |organization|
-        #     organization.set_custom_field( { :integrationid => 'source', :title => 'Källa', :type => :Link } )
+        #     organization.set_custom_field( { :integration_id => 'source', :title => 'Källa', :type => :Link } )
         # end
     end
 
@@ -105,6 +105,9 @@ class Converter
         # Set organization properties from the row.
 
         organization.name = row['Namn']
+
+        # Set responsible such as
+        # organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(row['Medarbetare'])
 
         # Custom fields should be set like this.
         # organization.set_custom_value("source", "internet")

@@ -6,9 +6,17 @@ describe "Organization" do
         GoImport::Organization.new
     }
 
+    it "should have import tag as default" do
+        # given, when, then
+        organization.tags.count.should eq 1
+        organization.tags[0].value.should eq 'Import'
+    end
+
     it "must have a name" do
+        # given, when
         organization.name = "Lundalogik"
 
+        # then
         organization.validate.should eq ""
     end
 

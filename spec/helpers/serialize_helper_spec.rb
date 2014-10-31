@@ -54,7 +54,6 @@ describe GoImport::SerializeHelper do
             serialized.should_not match(/<Email>/)
             serialized.should_not match(/<Position>/)
             serialized.should_not match(/<AlternativeEmail>/)
-            serialized.should_not match(/<Tags>/)
             serialized.should_not match(/<CustomValues>/)
         end
         it "should be utf-8" do

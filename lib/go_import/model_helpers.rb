@@ -42,6 +42,8 @@ module GoImport
     end
 
     module ModelHasTags
+        attr_reader :tags
+
         # @example
         #     obj.set_tag("partner")
         def set_tag(str)

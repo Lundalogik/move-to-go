@@ -6,6 +6,12 @@ describe "Deal" do
         GoImport::Deal.new
     }
 
+    it "should have import tag as default" do
+        # given, when, then
+        deal.tags.count.should eq 1
+        deal.tags[0].value.should eq 'Import'
+    end
+
     it "will set customer ref when customer is assigned" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
