@@ -36,6 +36,27 @@ module GoImport
             end
         end
 
+        def about_source(source_name)
+            if !source_exists?(source_name)
+                puts "The source '#{source_name}' doesnt exist."
+                return false
+            end
+            
+            print_about_file_for_source(source_name)
+        end
+
+        private
+        def print_about_file_for_source(name)
+            about_path = ::File.expand_path("#{name}/.go_import/readme.txt", @path)
+
+            if ::File.exists?(about_path)
+                about_contents = ::File.open(about_path, "rb").read
+                puts about_contents
+            else
+                puts "No about text specifed for source '#{name}'."
+            end
+        end
+        
         private
         def source_exists?(name)
             source = list.find { |s| s.downcase == name.downcase }

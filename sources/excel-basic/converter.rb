@@ -37,7 +37,7 @@ class Converter
 
     def import_person_to_organization(row, rootmodel)
         person = to_person(row, rootmodel)
-        organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/ForetagsID'])
+        organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/FöretagsID'])
 
         if !organization.nil?
             organization.add_employee(person)
@@ -66,7 +66,7 @@ class Converter
         # Integrationid is typically the id in the system that we are
         # getting the csv from. Must be set to be able to import the
         # same file more than once without creating duplicates
-        organization.integration_id = row['Kundnummer/ForetagsID']
+        organization.integration_id = row['Kundnummer/FöretagsID']
 
         # Sets the organization's relation. Relation must be a value
         # from GoImport::Relation.
@@ -88,9 +88,9 @@ class Converter
 
         # Visitingaddress
         organization.with_visit_address do |addr|
-             addr.street = row['Besoksadress']
-             addr.zip_code = row['Besokspostnummer']
-             addr.city = row['Besoksort']
+             addr.street = row['Besöksadress']
+             addr.zip_code = row['Besökspostnummer']
+             addr.city = row['Besöksort']
         end
 
         # Set responsible such as
@@ -158,7 +158,7 @@ class Converter
         #
         # Set note properties from the row.
 
-        note.organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/ForetagsID'])
+        note.organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/FöretagsID'])
         note.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av medarbetare'])
         note.text = row['Textanteckningar/Historik']
         note.date = row['Skapad den']

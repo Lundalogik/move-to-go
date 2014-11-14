@@ -24,6 +24,14 @@ class GoImportCommandLine < Thor
         end
 
         puts "\nCreate a new project with 'go-import new' with one of these sources."
+        puts "Use 'go-import about <SOURCE>' for more information about a specific source."
+    end
+
+    desc "about <SOURCE>", "Prints information about the specifed source"
+    def about(source)
+        sources = GoImport::Sources.new(source_path)
+
+        sources.about_source(source)
     end
 
     desc "new <PROJECT> <SOURCE>", "Creates a new migration project with a specifed name and source"
