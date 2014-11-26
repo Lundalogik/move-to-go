@@ -77,7 +77,7 @@ def convert_source
     # deal notes
     process_rows DEAL_NOTE_FILE do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_deal_note(row, rootmodel))
+        rootmodel.add_note(to_deal_note(converter, row, rootmodel))
     end
 
     # documents
@@ -253,7 +253,7 @@ end
 
 # Turns a row from the Easy exported Project-History.txt file into
 # a go_import model that is used to generate xml
-def to_deal_note(row, rootmodel)
+def to_deal_note(converter, row, rootmodel)
     # TODO: This could be improved to read a person from an
     # organization connected to this deal if any, but since it is
     # a many to many connection between organizations and deals
