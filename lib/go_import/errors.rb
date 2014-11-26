@@ -18,5 +18,8 @@ module GoImport
     end
 
     class InvalidNoteClassificationError < StandardError
+        def initalize(classification)
+            super("#{classification} is not a valid note classification")
+        end
     end
 end

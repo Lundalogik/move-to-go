@@ -56,7 +56,7 @@ def convert_source
     # organization notes
     process_rows ORGANIZATION_NOTE_FILE do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_organization_note(row, rootmodel))
+        rootmodel.add_note(to_organization_note(converter, row, rootmodel))
     end
 
     # Organization - Deal connection
@@ -148,7 +148,7 @@ end
 
 # Turns a row from the Easy exported Company-History.txt file into
 # a go_import model that is used to generate xml.
-def to_organization_note(row, rootmodel)
+def to_organization_note(converter, row, rootmodel)
     organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
     coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
 
@@ -158,8 +158,26 @@ def to_organization_note(row, rootmodel)
         note.created_by = coworker
         note.person = organization.find_employee_by_integration_id(row['idPerson'])
         note.date = row['Date']
-        note.text = "#{row['Category']}: #{row['History']}"
+        
+        if converter.respond_to?(:get_note_classification_for_activity_on_company)
+            # we will get an InvalidNoteClassificationError if we are
+            # setting and invalid classification. So no need to verify
+            # return value from converter.
+            classification =
+                converter.get_note_classification_for_activity_on_company(row['Category'])
 
+            if classification.nil?
+                classification = GoImport::NoteClassification::Comment
+            end
+            
+            note.classification = classification
+
+            note.text = row['History']
+        else
+            note.classification = GoImport::NoteClassification::Comment
+            note.text = "#{row['Category']}: #{row['History']}"            
+        end
+		
         return note.text.empty? ? nil : note
     end
 
@@ -250,6 +268,26 @@ def to_deal_note(row, rootmodel)
         note.date = row['Date']
         # Raw history looks like this <category>: <person>: <text>
         note.text = row['RawHistory']
+
+        if converter.respond_to?(:get_note_classification_for_activity_on_project)
+            # we will get an InvalidNoteClassificationError if we are
+            # setting and invalid classification. So no need to verify
+            # return value from converter.
+
+            classification =
+                converter.get_note_classification_for_activity_on_project(row['Category'])
+
+            if classification.nil?
+                classification = GoImport::NoteClassification::Comment
+            end
+            
+            note.classification = classification
+            note.text = row['RawHistory'].to_s.sub("#{row['Category']}:", "")
+        else
+            note.classification = GoImport::NoteClassification::Comment
+            note.text = row['RawHistory']
+        end
+        
 
         return note.text.empty? ? nil : note
     end

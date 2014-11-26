@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# encoding: iso-8859-1
 require 'go_import'
 
 # Customize this file to suit your input files.
@@ -220,6 +220,7 @@ class Converter
         ## LIME Go custom fields.
         # This is how you populate a LIME Go custom field that was created in
         # the configure method.
+
         # person.set_custom_value("shoe_size", row['shoe size'])
     end
 
@@ -268,6 +269,50 @@ class Converter
         return deal
     end
 
+    def get_note_classification_for_activity_on_company(activity)
+        # When notes are added to LIME Go this method is called for
+        # every note that is connected to a company in LIME Easy. The
+        # note's activity from LIME Easy is supplied as an argument
+        # and this method should return a classification for the note
+        # in LIME Go. The return value must be a value from the
+        # GoImport::NoteClassification enum. If no classification is
+        # return the note will get the default classification 'Comment'
+
+        # case activity
+        # when 'SalesCall' 
+		# 	classification = GoImport::NoteClassification::SalesCall
+		# when 'Customer Visit'
+	    # classification = GoImport::NoteClassification::ClientVisit
+		# when 'No answer'
+		# 	classification = GoImport::NoteClassification::TriedToReach
+        # else
+        #     classification = GoImport::NoteClassification::Comment
+        # end
+		
+		# return classification
+    end
+
+    def get_note_classification_for_activity_on_project(activity)
+        # When notes are added to LIME Go this method is called for
+        # every note that is connected to a project in LIME Easy. The
+        # note's activity from LIME Easy is supplied as an argument
+        # and this method should return a classification for the note
+        # in LIME Go. The return value must be a value from the
+        # GoImport::NoteClassification enum. If no classification is
+        # return the note will get the default classification 'Comment'
+        
+        # case activity
+        # when 'Installation' 
+		# 	classification = GoImport::NoteClassification::ClientVisit
+		# when 'No answer'
+		# 	classification = GoImport::NoteClassification::TriedToReach
+        # else
+        #     classification = GoImport::NoteClassification::Comment
+        # end
+		
+		# return classification
+    end
+    
     def configure(rootmodel)
         #####################################################################
         ## LIME Go custom fields.

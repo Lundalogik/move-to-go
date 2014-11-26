@@ -96,10 +96,25 @@ describe "RootModel" do
         rootmodel.organizations.length.should eq 1
     end
 
+    it "will add two organizations without integration id" do
+        # given
+        org1 = GoImport::Organization.new
+        org1.name = "Beagle Boys"
+        org2 = GoImport::Organization.new
+        org2.name = "The Corporation"
+
+        # when
+        rootmodel.add_organization(org1)
+        rootmodel.add_organization(org2)
+
+        # then
+        rootmodel.organizations.length.should eq 2
+    end
+
     it "can add a deal from hash" do
         rootmodel.add_deal({
-                                       :integration_id => "123key",
-                                       :name => "Big deal"
+                :integration_id => "123key",
+                :name => "Big deal"
         })
         rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
         rootmodel.deals.length.should eq 1

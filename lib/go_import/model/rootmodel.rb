@@ -117,7 +117,8 @@ module GoImport
 
             organization = Organization.new(organization) if !organization.is_a?(Organization)
 
-            if find_organization_by_integration_id(organization.integration_id) != nil
+            if (!organization.integration_id.nil? && organization.integration_id.length > 0) &&
+                find_organization_by_integration_id(organization.integration_id) != nil
                 raise AlreadyAddedError, "Already added an organization with integration_id #{organization.integration_id}"
             end
 

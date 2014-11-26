@@ -87,7 +87,7 @@ module GoImport
                     classification == NoteClassification::ClientVisit
                 @classification = classification
             else
-                raise InvalidNoteClassificationError
+                raise InvalidNoteClassificationError, classification
             end
 
         end
