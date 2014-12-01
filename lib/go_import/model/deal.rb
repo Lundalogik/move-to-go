@@ -128,7 +128,7 @@ module GoImport
         # (String) or id (Integer) here.
         def status=(status)
             @status = DealStatus.new if @status.nil?
-
+            
             @status.status_reference = DealStatusReference.from_deal_status(status)
         end
 

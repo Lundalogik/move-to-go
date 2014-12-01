@@ -96,6 +96,7 @@ end
 
 def to_coworker(row)
     coworker = GoImport::Coworker.new
+    
     # integration_id is typically the userId in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates
@@ -177,7 +178,7 @@ def to_organization_note(converter, row, rootmodel)
             note.classification = GoImport::NoteClassification::Comment
             note.text = "#{row['Category']}: #{row['History']}"            
         end
-		
+
         return note.text.empty? ? nil : note
     end
 
