@@ -1,3 +1,4 @@
+# coding: iso-8859-1
 require 'spec_helper'
 require 'go_import'
 
@@ -28,5 +29,9 @@ describe GoImport::EmailHelper do
 
     it "should not validate an invalid address" do
         GoImport::EmailHelper.is_valid?("hubbabubba").should eq false
+    end
+
+    it "should not validate an address with swedish chars" do
+        GoImport::EmailHelper.is_valid?("info.borås@example.se").should eq false
     end
 end

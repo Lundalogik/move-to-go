@@ -4,7 +4,11 @@ module GoImport
     # The EmailHelper helps you validate email addresses.
     class EmailHelper
         def self.is_valid?(email)
-            return (email =~ EmailAddressValidation::Pattern) ? true : false
+            begin
+                return (email =~ EmailAddressValidation::Pattern) ? true : false
+            rescue
+                return false
+            end
         end
     end
 end
