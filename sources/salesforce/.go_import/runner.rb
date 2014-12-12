@@ -70,7 +70,7 @@ def to_coworker(row)
     if row['IsActive'] == '1' && row['UserType'] == 'Standard'
         coworker = GoImport::Coworker.new
 
-        coworker.id = row['Email']
+        coworker.email = row['Email']
         coworker.integration_id = row['Id']
         coworker.first_name = row['FirstName']
         coworker.last_name = row['LastName']
@@ -99,20 +99,41 @@ def to_organization(row, rootmodel)
         address.street = row['BillingStreet']
         address.zip_code = row['BillingPostalCode']
         address.city = row['BillingCity']
-        address.country_code = row['BillingCountry']
+        address.country_code = get_country_code(row['BillingCountry'])
     end
 
     organization.with_visit_address do |address|
         address.street = row['ShippingStreet']
         address.zip_code = row['ShippingPostalCode']
         address.city = row['ShippingCity']
-        address.country_code = row['ShippingCountry']
+        address.country_code = get_country_code(row['ShippingCountry'])
     end
 
     organization.responsible_coworker =
         rootmodel.find_coworker_by_integration_id(row['OwnerId'])
 
     return organization
+end
+
+def get_country_code(country)
+    country_code = ''
+
+    case country.downcase
+    when 'sverige'
+        country_code = 'se'
+    when 'sweden'
+        country_code = 'se'
+    when 'norge'
+        country_code = 'no'
+    when 'norway'
+        country_code = 'no'
+    when 'danmark'
+        country_code = 'dk'
+    when 'denmark'
+        country_code = 'dk'
+    end
+    
+    return country_code
 end
 
 def add_person_to_organization(row, rootmodel)
