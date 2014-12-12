@@ -23,7 +23,7 @@ class GoImportCommandLine < Thor
             puts "\t#{s}"
         end
 
-        puts "\nCreate a new project with 'go-import new' with one of these sources."
+        puts "\nCreate a new project with 'go-import new <PROJECT> <SOURCE>' with one of these sources."
         puts "Use 'go-import about <SOURCE>' for more information about a specific source."
     end
 

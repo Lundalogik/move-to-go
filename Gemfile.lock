@@ -1,12 +1,13 @@
 PATH
   remote: .
   specs:
-    go_import (3.0.18)
+    go_import (3.0.19)
       bundler
       global_phone
       iso_country_codes
       nokogiri
       roo
+      rubyzip
       sixarm_ruby_email_address_validation
       thor
 
@@ -52,4 +53,5 @@ DEPENDENCIES
   go_import!
   rake
   rspec (>= 2.14)
+  rubyzip
   sixarm_ruby_email_address_validation (~> 2.0.0)

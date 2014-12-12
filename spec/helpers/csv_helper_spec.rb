@@ -1,3 +1,4 @@
+# coding: iso-8859-1
 require 'spec_helper'
 require 'go_import'
 
@@ -25,5 +26,20 @@ And a new line"})
 And a new line\"")
         v.should include({"id"=>"1","navn"=>"Bj\u{00F6}rk
 And a new line"})
+    end
+
+    it "should handled values with ," do
+        # given
+        str = "id,name,text
+1,lundalogik,\"hej, hopp\""
+
+        # when
+        v = GoImport::CsvHelper.text_to_hashes(str)
+
+        # then
+        v.should include({
+                             "id" => "1",
+                             "name" => "lundalogik",
+                             "text" => "hej, hopp"})
     end
 end

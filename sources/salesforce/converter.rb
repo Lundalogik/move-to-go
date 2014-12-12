@@ -58,9 +58,9 @@ class Converter
         # When deals are added to LIME Go this method is called for
         # each deal. The deal's stage from Salesforce is supplied as
         # an argument and this method should return a status for the
-        # deal in LIME Go. The returned value is probably an
-        # integration_id of a deal status that has been added in the
-        # configure(rootmodel) method.
+        # deal in LIME Go. The returned value is probably a label of a
+        # deal status that has been added in the configure(rootmodel)
+        # method.
         deal_status = nil
         
         case salesforce_deal_stage

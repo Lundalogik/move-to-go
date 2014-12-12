@@ -17,10 +17,10 @@ def process_rows(filename)
         puts "Error: Cant find the file '#{filename}'."
         raise
     end
-    
+
     f = File.open(filename, 'r')
     data = f.read.encode("UTF-8", "ISO-8859-1")
-    rows = GoImport::CsvHelper::text_to_hashes(data)
+    rows = GoImport::CsvHelper::text_to_hashes(data, ',')
     rows.each do |row|
         yield row
     end
@@ -189,7 +189,7 @@ def to_note(row, rootmodel)
 end
 
 def convert_source
-    puts "Trying to convert Superoffice to LIME Go..."
+    puts "Trying to convert Salesforce to LIME Go..."
 
     converter = Converter.new
 
