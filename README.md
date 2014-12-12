@@ -27,6 +27,7 @@ go-import list-sources
 - Import from LIME Easy
 - Import from a Excel-file
 - Import from VISMA SPCS
+- Import from Salesforce
 - Import from a custom source
 
 To create a new project with
