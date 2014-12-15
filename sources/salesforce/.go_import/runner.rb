@@ -119,7 +119,7 @@ def account_to_organization(row, rootmodel)
     return organization
 end
 
-def lead_to_organization(row, rootmodel)
+def lead_to_organization(row, rootmodel, converter)
     if row['IsDeleted'] != '0'
         return nil
     end
@@ -129,7 +129,36 @@ def lead_to_organization(row, rootmodel)
     end
 
     organization = GoImport::Organization.new
-    organization.relation = GoImport::Relation::WorkingOnIt
+
+    if converter.respond_to?(:get_relation_for_lead)
+        relation = converter.get_relation_for_lead        
+        
+        if !relation.nil?
+            organization.relation = relation
+        else
+            organization.relation = GoImport::Relation::WorkingOnIt
+        end
+    end
+    
+    if converter.respond_to?(:get_tags_for_lead)
+        tags = converter.get_tags_for_lead(row['Status'])
+        
+        if !tags.nil?
+            if tags.is_a?(String)
+                organization.set_tag tags
+            elsif tags.is_a?(Array)
+                tags.each do |tag|
+                    organization.set_tag tag
+                end
+            else
+                organization.set_tag 'lead'
+                organization.set_tag row['Status']
+            end
+        else
+            organization.set_tag 'lead'
+            organization.set_tag row['Status']
+        end
+    end
     
     organization.responsible_coworker =
         rootmodel.find_coworker_by_integration_id(row['OwnerId'])
@@ -294,7 +323,7 @@ def convert_source
             rootmodel.add_organization(account_to_organization(row, rootmodel))
         end
         process_rows(ORGANIZATION_LEAD_FILE) do |row|
-            rootmodel.add_organization(lead_to_organization(row, rootmodel))
+            rootmodel.add_organization(lead_to_organization(row, rootmodel, converter))
         end
 
         puts "Trying to import persons..."

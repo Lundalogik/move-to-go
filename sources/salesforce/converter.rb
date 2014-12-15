@@ -72,4 +72,29 @@ class Converter
 
         return deal_status
     end
+
+    def get_relation_for_lead()
+        # Returns the relation that converted leads should have. By
+        # default leads will get the relation WorkingOnIt.
+        
+        return GoImport::Relation::WorkingOnIt
+    end
+
+    def get_tags_for_lead(lead_status)
+        # Returns the tag or tags that converted leads should
+        # have. Return either a string or an array of
+        # strings. lead_status is the status value from Salesforce.
+
+        # return 'lead'
+
+        # If no tag is returned, the default is 'lead' and the status. 
+
+        if lead_status == 'Qualified'
+            return ['lead', 'qualified']
+        else
+            return 'lead'
+        end
+        
+        return nil
+    end
 end
