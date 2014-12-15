@@ -183,6 +183,21 @@ describe "RootModel" do
         rootmodel.deals.length.should eq 1
     end
 
+    it "will add two deal without integration id" do
+        # given
+        deal1 = GoImport::Deal.new
+        deal1.name = "The big deal"
+        deal2 = GoImport::Deal.new
+        deal2.name = "The even bigger deal"
+
+        # when
+        rootmodel.add_deal(deal1)
+        rootmodel.add_deal(deal2)
+
+        # then
+        rootmodel.deals.length.should eq 2
+    end    
+
     it "can add a note from hash" do
         rootmodel.add_note({
                                :integration_id => "123key",

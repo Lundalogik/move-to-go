@@ -158,10 +158,11 @@ module GoImport
 
             deal = Deal.new(deal) if !deal.is_a?(Deal)
 
-            if find_deal_by_integration_id(deal.integration_id) != nil
+            if (!deal.integration_id.nil? && deal.integration_id.length > 0) &&
+               find_deal_by_integration_id(deal.integration_id) != nil
                 raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
             end
-
+            
             if deal.responsible_coworker.nil?
                 deal.responsible_coworker = @import_coworker
             end
