@@ -7,7 +7,8 @@ require_relative("../converter")
 # EXPORT_FOLDER and other constants should be defined ../converter.rb
 
 USER_FILE = "User.csv"
-ORGANIZATION_FILE = "Account.csv"
+ORGANIZATION_ACCOUNT_FILE = "Account.csv"
+ORGANIZATION_LEAD_FILE = "Lead.csv"
 PERSON_FILE = "Contact.csv"
 DEAL_FILE = "Opportunity.csv"
 NOTE_FILE = "Note.csv"
@@ -81,13 +82,14 @@ def to_coworker(row)
     return coworker
 end
 
-def to_organization(row, rootmodel)
+def account_to_organization(row, rootmodel)
     if row['IsDeleted'] != '0'
         return nil
     end
 
     organization = GoImport::Organization.new
 
+    organization.relation = GoImport::Relation::IsACustomer
     organization.integration_id = row['Id']
     organization.name = row['Name']
     organization.set_tag(row['Type'])
@@ -109,8 +111,48 @@ def to_organization(row, rootmodel)
         address.country_code = get_country_code(row['ShippingCountry'])
     end
 
+    organization.set_tag row['Industry']
+    
     organization.responsible_coworker =
         rootmodel.find_coworker_by_integration_id(row['OwnerId'])
+
+    return organization
+end
+
+def lead_to_organization(row, rootmodel)
+    if row['IsDeleted'] != '0'
+        return nil
+    end
+
+    if row['IsConverted'] == '1'
+        return nil
+    end
+
+    organization = GoImport::Organization.new
+    organization.relation = GoImport::Relation::WorkingOnIt
+    
+    organization.responsible_coworker =
+        rootmodel.find_coworker_by_integration_id(row['OwnerId'])
+    
+    organization.name = row['Company']
+    organization.with_postal_address do |address|
+        address.street = row['Street']
+        address.zip_code = row['PostalCode']
+        address.city = row['City']
+        address.country_code = get_country_code(row['Country'])
+    end
+    organization.web_site = row['WebSite']
+
+    organization.set_tag row['Industry']
+
+    person = GoImport::Person.new
+    organization.add_employee(person)
+    person.first_name = row['FirstName']
+    person.last_name = row['LastName']
+    person.position = row['Title']
+    person.direct_phone_number = row['Phone']
+    person.mobile_phone_number = row['MobilePhone']
+    person.email = row['Email']
 
     return organization
 end
@@ -137,24 +179,25 @@ def get_country_code(country)
 end
 
 def add_person_to_organization(row, rootmodel)
-    if row['IsDeleted'] == 0
-        org = rootmodel.find_organization_by_integration_id(row['AccountId'])
+    if row['IsDeleted'] != '0'
+        return
+    end
+
+    org = rootmodel.find_organization_by_integration_id(row['AccountId'])
+    if !org.nil?
+        person = GoImport::Person.new
+        org.add_employee(person)
         
-        if !org.nil?
-            person = GoImport::Person.new
-            add_employee(person)
-
-            person.integration_id = row['Id']
-            person.first_name = row['FirstName']
-            person.last_name = row['LastName']
-
-            person.direct_phone_number = row['Phone']
-            person.fax_phone_number = row['Fax']
-            person.mobile_phone_number = row['MobilePhone']
-            person.home_phone_number = row['HomePhone']
-            person.position = row['Title']
-            person.email = row['Email']
-        end
+        person.integration_id = row['Id']
+        person.first_name = row['FirstName']
+        person.last_name = row['LastName']
+        
+        person.direct_phone_number = row['Phone']
+        person.fax_phone_number = row['Fax']
+        person.mobile_phone_number = row['MobilePhone']
+        person.home_phone_number = row['HomePhone']
+        person.position = row['Title']
+        person.email = row['Email']
     end
 end
 
@@ -241,17 +284,17 @@ def convert_source
             end
         end
 
-        #puts 'sleep a while'
-        #sleep 5
-        
         puts "Trying to import users..."
         process_rows(USER_FILE) do |row|
             rootmodel.add_coworker(to_coworker(row))
         end
 
         puts "Trying to import organizations..."
-        process_rows(ORGANIZATION_FILE) do |row|
-            rootmodel.add_organization(to_organization(row, rootmodel))
+        process_rows(ORGANIZATION_ACCOUNT_FILE) do |row|
+            rootmodel.add_organization(account_to_organization(row, rootmodel))
+        end
+        process_rows(ORGANIZATION_LEAD_FILE) do |row|
+            rootmodel.add_organization(lead_to_organization(row, rootmodel))
         end
 
         puts "Trying to import persons..."
