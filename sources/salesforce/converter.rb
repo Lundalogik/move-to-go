@@ -37,21 +37,18 @@ FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
 class Converter
     # Configure your root model, add custom fields and deal statuses.
     def configure(rootmodel)
-        # add custom field to your model here. Custom fields can be
-        # added to organization, deal and person. Valid types are
-        # :String and :Link. If no type is specified :String is used
-        # as default.
+        # add custom field and deal statuses to your model
+        # here. Custom fields can be added to organization, deal and
+        # person. Valid types are :String and :Link. If no type is
+        # specified :String is used as default.
+
+        # You dont have to add the Stages for Opportunities here since
+        # they are automagically added.
+
+        
 #        rootmodel.settings.with_organization do |organization|
 #            organization.set_custom_field( { :integrationid => 'external_url', :title => 'Link to external system', :type => :Link } )
 #        end
-
-        rootmodel.settings.with_deal do |deal|
-            deal.add_status({:label => "1. Kvalificering", :integration_id => "qualification"})
-            deal.add_status({:label => "Vunnen", :integration_id => "won",
-                                :assessment => GoImport::DealState::PositiveEndState })
-            deal.add_status({:label => "Lost", :integration_id => "Lost",
-                                :assessment => GoImport::DealState::NegativeEndState })
-        end
     end
 
     def get_deal_status_from_salesforce_stage(salesforce_deal_stage)
@@ -60,17 +57,19 @@ class Converter
         # an argument and this method should return a status for the
         # deal in LIME Go. The returned value is probably a label of a
         # deal status that has been added in the configure(rootmodel)
-        # method.
-        deal_status = nil
-        
-        case salesforce_deal_stage
-        when 'Prospecting'
-            deal_status = '1. Kvalificering'
-        when 'Closed Won'
-            deal_status = 'Vunnen'
-        end
+        # method. If nil is returned, the default status will be the
+        # same as in Salesforce (ie salesforce_deal_stage)
 
-        return deal_status
+        # deal_status = nil
+        
+        # case salesforce_deal_stage
+        # when 'Prospecting'
+        #     deal_status = '1. Kvalificering'
+        # when 'Closed Won'
+        #     deal_status = 'Vunnen'
+        # end
+
+        # return deal_status
     end
 
     def get_relation_for_lead()
@@ -85,16 +84,14 @@ class Converter
         # have. Return either a string or an array of
         # strings. lead_status is the status value from Salesforce.
 
-        # return 'lead'
-
         # If no tag is returned, the default is 'lead' and the status. 
 
-        if lead_status == 'Qualified'
-            return ['lead', 'qualified']
-        else
-            return 'lead'
-        end
+        # if lead_status == 'Qualified'
+        #     return ['lead', 'qualified']
+        # else
+        #     return 'lead'
+        # end
         
-        return nil
+        # return nil
     end
 end

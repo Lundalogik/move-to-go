@@ -139,25 +139,26 @@ def lead_to_organization(row, rootmodel, converter)
             organization.relation = GoImport::Relation::WorkingOnIt
         end
     end
-    
+
+    use_default_lead_tag = true
     if converter.respond_to?(:get_tags_for_lead)
         tags = converter.get_tags_for_lead(row['Status'])
         
         if !tags.nil?
             if tags.is_a?(String)
                 organization.set_tag tags
+                use_default_lead_tag = false
             elsif tags.is_a?(Array)
                 tags.each do |tag|
                     organization.set_tag tag
                 end
-            else
-                organization.set_tag 'lead'
-                organization.set_tag row['Status']
+                use_default_lead_tag = false
             end
-        else
-            organization.set_tag 'lead'
-            organization.set_tag row['Status']
         end
+    end
+    if use_default_lead_tag == true
+        organization.set_tag 'lead'
+        organization.set_tag row['Status']        
     end
     
     organization.responsible_coworker =
@@ -254,7 +255,11 @@ def to_deal(row, rootmodel, converter)
 
         if !status.nil?
             deal.status = status
+        else
+            deal.status = row['StageName']
         end
+    else
+        deal.status = row['StageName']
     end
     
     return deal
@@ -281,6 +286,32 @@ def to_note(row, rootmodel)
     return note
 end
 
+def get_deal_statuses_from_opportunites()
+    puts "Trying to get deal statuses..."
+    statuses = []
+
+    process_rows(DEAL_FILE) do |row|
+        status = {
+            :label => row['StageName'],
+            :integration_id => row['StageName'],
+        }
+
+        if row['IsClosed'] == '1'
+            if row['IsWon'] == '1'
+                status[:assessment] = GoImport::DealState::PositiveEndState
+            else
+                status[:assessment] = GoImport::DealState::NegativeEndState
+            end
+        end
+
+        if !statuses.any? {|s| s[:label] == status[:label]}
+            statuses.push status
+        end
+    end
+
+    return statuses
+end
+
 def convert_source
     puts "Trying to convert Salesforce to LIME Go..."
 
@@ -294,7 +325,9 @@ def convert_source
     end
 
     rootmodel = GoImport::RootModel.new
-    converter.configure(rootmodel)
+    if converter.respond_to?(:configure)
+        converter.configure(rootmodel)
+    end    
     
     # We know have the Salesforce export zip file in
     # export_zip_files[0]. We should unzip the file to a temp folder
@@ -311,8 +344,19 @@ def convert_source
                     entry.extract
                 end
             end
+        end        
+
+        deal_statuses = get_deal_statuses_from_opportunites()
+        rootmodel.settings.with_deal do |deal|
+            deal_statuses.each do |status|
+                deal.add_status({ :label => status[:label],
+                                  :integration_id => status[:integration_id],
+                                  :assessment => status[:assessment]
+                                })
+            end
         end
 
+        
         puts "Trying to import users..."
         process_rows(USER_FILE) do |row|
             rootmodel.add_coworker(to_coworker(row))
