@@ -125,7 +125,7 @@ module GoImport
         # statuses during import (you will probably add the
         # DealStatusSettings to the settings model). If the statuses
         # already exists in the application use the status label
-        # (String) or id (Integer) here.
+        # (String) or integration id (Integer) here.
         def status=(status)
             @status = DealStatus.new if @status.nil?
             

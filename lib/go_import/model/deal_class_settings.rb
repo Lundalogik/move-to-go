@@ -5,6 +5,10 @@ module GoImport
     class DealClassSettings < ClassSettings
         attr_reader :statuses
 
+        attr_reader :default_status
+
+        
+
         def initialize(opt = nil)
             @statuses = []
             if opt != nil
@@ -16,7 +20,9 @@ module GoImport
         end
 
         def serialize_variables
-            super() + [{:id => :statuses, :type => :statuses }]
+            super() + [{:id => :statuses, :type => :statuses },
+                       {:id => :default_status, :type => :deal_status_reference}
+                      ] 
         end
 
         def add_status(obj)
@@ -46,6 +52,22 @@ module GoImport
             @statuses.push status
 
             return status
+        end
+
+        # Sets the default status for new deals. When a deal is
+        # created in LIME Go it will get this status. Valid values are
+        # an integration_id or label. The status must exist or be
+        # created with this import.
+        def default_status=(status)
+            if status.nil?
+                return
+            end
+
+            if status.is_a?(DealStatusReference)
+                @default_status = status
+            else
+                @default_status = DealStatusReference.from_deal_status(status)
+            end
         end
 
         def find_status_by_label(label)
