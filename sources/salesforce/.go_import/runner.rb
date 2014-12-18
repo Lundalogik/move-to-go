@@ -286,16 +286,18 @@ def to_note(row, rootmodel)
     return note
 end
 
-def get_deal_statuses_from_opportunites()
-    puts "Trying to get deal statuses..."
-    statuses = []
+def add_opportunity_stages_as_deal_status_to_model(rootmodel)
+    puts "Trying to create deal statuses..."
 
+    default_status = ''
+    statuses = []
     process_rows(DEAL_FILE) do |row|
         status = {
             :label => row['StageName'],
             :integration_id => row['StageName'],
+            :sort_order => row['StageSortOrder']
         }
-
+        
         if row['IsClosed'] == '1'
             if row['IsWon'] == '1'
                 status[:assessment] = GoImport::DealState::PositiveEndState
@@ -306,10 +308,24 @@ def get_deal_statuses_from_opportunites()
 
         if !statuses.any? {|s| s[:label] == status[:label]}
             statuses.push status
+            
+            if row['StageSortOrder'] == '1'
+                default_status = status[:label]
+            end                
         end
     end
 
-    return statuses
+    statuses.sort! { |s1, s2| s1[:sort_order] <=> s2[:sort_order] }
+    rootmodel.settings.with_deal do |deal|
+        statuses.each do |status|
+            deal.add_status({ :label => status[:label],
+                              :integration_id => status[:integration_id],
+                              :assessment => status[:assessment]
+                            })
+        end
+
+        deal.default_status = default_status
+    end
 end
 
 def convert_source
@@ -345,17 +361,8 @@ def convert_source
                 end
             end
         end        
-
-        deal_statuses = get_deal_statuses_from_opportunites()
-        rootmodel.settings.with_deal do |deal|
-            deal_statuses.each do |status|
-                deal.add_status({ :label => status[:label],
-                                  :integration_id => status[:integration_id],
-                                  :assessment => status[:assessment]
-                                })
-            end
-        end
-
+        
+        add_opportunity_stages_as_deal_status_to_model(rootmodel)
         
         puts "Trying to import users..."
         process_rows(USER_FILE) do |row|
