@@ -47,6 +47,18 @@ module GoImport
         # @example
         #     obj.set_tag("partner")
         def set_tag(str)
+            if str.nil?
+                return
+            end
+
+            if !str.is_a?(String)
+                return
+            end
+
+            if str.length == 0
+                return
+            end
+            
             @tags = [] if @tags == nil
             if ! @tags.any? {|tag| tag.value == str }
                 @tags.push(Tag.new(str))

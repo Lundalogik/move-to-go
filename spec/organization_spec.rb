@@ -12,6 +12,42 @@ describe "Organization" do
         organization.tags[0].value.should eq 'Import'
     end
 
+    it "should not accept empty tags" do
+        # given
+        organization.tags.count.should eq 1
+
+        # when
+        organization.set_tag ""
+
+        # then
+        organization.tags.count.should eq 1
+    end
+
+    it "should not accept nil tags" do
+        # given
+        organization.tags.count.should eq 1
+
+        # when
+        organization.set_tag ""
+
+        # then
+        organization.tags.count.should eq 1
+    end
+
+    it "should not accept objects as tags" do
+        # given
+        organization.tags.count.should eq 1
+
+        # when
+        not_a_tag = {}
+        not_a_tag[:text] = 'this is not a tag'
+        organization.set_tag not_a_tag
+
+        # then
+        organization.tags.count.should eq 1
+    end
+    
+    
     it "must have a name" do
         # given, when
         organization.name = "Lundalogik"
