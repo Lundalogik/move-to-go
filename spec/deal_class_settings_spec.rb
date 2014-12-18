@@ -106,10 +106,10 @@ describe "DealClassSettings" do
         deal_class_settings.add_status({:label => "2. Skickat offert", :integration_id => "tender sent"})
 
         # when
-        deal_class_settings.default_status_reference = '1. Kvalificering'
+        deal_class_settings.default_status = '1. Kvalificering'
 
         # then
-        deal_class_settings.default_status_reference.is_a?(GoImport::DealStatusReference)
+        deal_class_settings.default_status.is_a?(GoImport::DealStatusReference)
     end
 end
 
