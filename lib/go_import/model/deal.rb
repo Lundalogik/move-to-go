@@ -161,6 +161,10 @@ module GoImport
             end
         end
 
+        # Sets the deal's value. Both . and , are treated as thousand
+        # separators and thus cents and other fractions will be
+        # ignored. This makes it easier for us to convert a string
+        # into an integer value.
         def value=(value)
             if value.nil?
                 @value = "0"
@@ -172,9 +176,14 @@ module GoImport
                 # remove those spaces.
                 fixed_value = value.gsub(" ", "")
 
+                # we assume that both , and . are thousand separators
+                # and remove them from the value string. We dont care
+                # about decimal separators since the value is a deal's
+                # value which is much larger than cents and ores.
+                fixed_value = fixed_value.gsub(",", "")
+                fixed_value = fixed_value.gsub(".", "")
+
                 if is_integer?(fixed_value)
-                    @value = fixed_value
-                elsif is_float?(fixed_value)
                     @value = fixed_value
                 elsif fixed_value.length == 0
                     @value = "0"
@@ -186,10 +195,6 @@ module GoImport
 
         def is_integer?(value)
             true if Integer(value) rescue false
-        end
-
-        def is_float?(value)
-            true if Float(value) rescue false
         end
     end
 end

@@ -144,15 +144,26 @@ describe "Deal" do
         deal.value.should eq "100"
     end
 
-    it "should set value if value is a float" do
+    it "should treat . as thousand separator and remove it from the value" do
         # given
-        deal.name = "The new deal"
+        deal.name = "Deal with . as thousand separator"
 
         # when
         deal.value = "100.10"
 
         # then
-        deal.value.should eq "100.10"
+        deal.value.should eq "10010"
+    end
+
+    it "should tread , as thousand separator and remove it from the value" do
+        # given
+        deal.name = "Deal with , as thousand separator"
+
+        # when
+        deal.value = "100,10"
+
+        # then
+        deal.value = "10010"
     end
 
     it "should set value to 0 if value is nil" do
