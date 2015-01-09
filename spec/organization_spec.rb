@@ -150,11 +150,36 @@ describe "Organization" do
     it "should only set relation last modified to valid date" do
         # given
         organization.relation = GoImport::Relation::IsACustomer
-
+        
         # when, then
         expect {
             organization.relation_last_modified = "hubbabubba"
         }.to raise_error(GoImport::InvalidValueError)
+    end
+    
+    it "can have custom value" do
+        # given, when
+        organization.set_custom_value "field_integration_id", "the is a value"
+
+        # then
+        organization.custom_values.length.should eq 1
+    end
+
+    it "can have a custom numeric value" do
+        # given, when
+        organization.set_custom_value "price", 100
+
+        # then
+        organization.custom_values.length.should eq 1
+        organization.custom_values[0].value.should eq "100"
+    end
+
+    it "a custom value can not be empty" do
+        # given, when
+        organization.set_custom_value "field_integration_id", ""
+
+        # then
+        organization.custom_values.length.should eq 0
     end
 end
 

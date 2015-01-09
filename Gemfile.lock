@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    go_import (3.0.23)
+    go_import (3.0.24)
       bundler
       global_phone
       iso_country_codes
@@ -17,7 +17,7 @@ GEM
     diff-lcs (1.2.5)
     global_phone (1.0.1)
     iso_country_codes (0.6.1)
-    mini_portile (0.6.1)
+    mini_portile (0.6.2)
     nokogiri (1.6.5-x86-mingw32)
       mini_portile (~> 0.6.0)
     rake (10.3.2)
@@ -37,7 +37,7 @@ GEM
     rspec-mocks (3.1.0)
       rspec-support (~> 3.1.0)
     rspec-support (3.1.0)
-    ruby-ole (1.2.11.7)
+    ruby-ole (1.2.11.8)
     rubyzip (1.1.6)
     sixarm_ruby_email_address_validation (2.0.0)
     spreadsheet (1.0.0)
@@ -53,5 +53,5 @@ DEPENDENCIES
   go_import!
   rake
   rspec (>= 2.14)
-  rubyzip
+  rubyzip (= 1.1.6)
   sixarm_ruby_email_address_validation (~> 2.0.0)

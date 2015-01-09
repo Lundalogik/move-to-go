@@ -70,7 +70,7 @@ describe GoImport::SerializeHelper do
             p.with_source do |source|
                 source.par_se('122345')
             end
-            #p.source_ref = {:name=>'Go',:id=>"PASE122345"}
+            #p.source_ref = {:name => 'Go',:id => "PASE122345"}
             p.with_postal_address do |addr|
                 addr.city = "Ankeborg"
             end
@@ -78,9 +78,12 @@ describe GoImport::SerializeHelper do
             p.set_tag("tag:anka")
             p.set_tag("tag:Bj\u{00F6}rk")
             p.set_tag("tag:<Bj\u{00F6}rk>")
-            p.set_custom_field({:integration_id=>"2", :value=>"cf value"})
-            p.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
-            p.set_custom_field({:integration_id=>"4", :value=>"cf <Bj\u{00F6}rk>"})
+            # p.set_custom_field({:integration_id => "2", :value => "cf value"})
+            # p.set_custom_field({:integration_id => "3", :value => "cf Bj\u{00F6}rk"})
+            # p.set_custom_field({:integration_id => "4", :value => "cf <Bj\u{00F6}rk>"})
+            p.set_custom_value("2", "cf value")
+            p.set_custom_value("3", "cf Bj\u{00F6}rk")
+            p.set_custom_value("4", "cf <Bj\u{00F6}rk>")
             GoImport::SerializeHelper::serialize(p,-1)
         }
         it "should contain first and last name" do
@@ -120,29 +123,30 @@ describe GoImport::SerializeHelper do
     end
     describe "Serialize organization" do
         let(:serialized) {
-            o = GoImport::Organization.new
-            o.name = "Ankeborgs bibliotek"
-            o.with_source do |source|
+            organization = GoImport::Organization.new
+            organization.name = "Ankeborgs bibliotek"
+            organization.with_source do |source|
                 source.par_se('122345')
             end
-            #o.source_ref = {:name=>'Go',:id=>"PASE122345"}
-            o.set_tag("tag:bibliotek")
-            o.set_tag("tag:Bj\u{00F6}rk")
-            o.set_custom_field({:integration_id=>"2", :value=>"cf value"})
-            o.set_custom_field({:integration_id=>"3", :value=>"cf Bj\u{00F6}rk"})
-            o.with_postal_address do |addr|
+            #organization.source_ref = {:name => 'Go',:id => "PASE122345"}
+            organization.set_tag("tag:bibliotek")
+            organization.set_tag("tag:Bj\u{00F6}rk")
+            organization.set_custom_value("2", "cf value")
+            organization.set_custom_value("3", "cf Bj\u{00F6}rk")
+            organization.with_postal_address do |addr|
                 addr.city = "Ankeborg"
             end
-            o.with_visit_address do |addr|
+            organization.with_visit_address do |addr|
                 addr.city = "Gaaseborg"
             end
-            o.add_employee({
+            organization.add_employee({
                 :integration_id => "1",
                 :first_name => "Kalle",
                 :last_name => "Anka"
             })
-            GoImport::SerializeHelper::serialize(o,-1)
+            GoImport::SerializeHelper::serialize(organization, -1)
         }
+
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
         end
@@ -177,11 +181,11 @@ describe GoImport::SerializeHelper do
 
     describe "Serialize goimport" do
         let(:serialized) {
-            i = GoImport::RootModel.new
-            o = GoImport::Organization.new
-            o.name = "Ankeborgs bibliotek"
-            i.organizations.push(o)
-            GoImport::SerializeHelper::serialize(i,-1)
+            rootmodel = GoImport::RootModel.new
+            organization = GoImport::Organization.new
+            organization.name = "Ankeborgs bibliotek"
+            rootmodel.add_organization organization
+            GoImport::SerializeHelper::serialize(rootmodel, -1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
@@ -197,30 +201,30 @@ describe GoImport::SerializeHelper do
         describe "for person" do
             let(:import_rows) { GoImport::Person.new.get_import_rows }
             it "should contain integration id" do
-                import_rows.should include({:id=>'integration_id', :name=>'Integration id', :type=>:string})
-                import_rows.should include({:id=>'id', :name=>'Go id', :type=>:string})
+                import_rows.should include({:id => 'integration_id', :name => 'Integration id', :type => :string})
+                import_rows.should include({:id => 'id', :name => 'Go id', :type => :string})
             end
             it "should contain address" do
-                expected = {:id=>'postal_address', :name=>'Postal address', :type=>:address,
-                    :model=>[
-                    {:id=>'street',:name=>'Street', :type=>:string},
-                    {:id=>'zip_code',:name=>'Zip code', :type=>:string},
-                    {:id=>'city',:name=>'City', :type=>:string},
-                    {:id=>'country_code',:name=>'Country code', :type=>:string},
-                    {:id=>'location',:name=>'Location', :type=>:string},
-                    {:id=>'country_name',:name=>'Country name', :type=>:string},
+                expected = {:id => 'postal_address', :name => 'Postal address', :type => :address,
+                    :model => [
+                    {:id => 'street',:name => 'Street', :type => :string},
+                    {:id => 'zip_code',:name => 'Zip code', :type => :string},
+                    {:id => 'city',:name => 'City', :type => :string},
+                    {:id => 'country_code',:name => 'Country code', :type => :string},
+                    {:id => 'location',:name => 'Location', :type => :string},
+                    {:id => 'country_name',:name => 'Country name', :type => :string},
                 ]}
                 import_rows.should include(expected)
             end
             it "should contain organization" do
                 import_rows.should include({
-                    :id=>'organization',
-                    :name=>'Organization',
-                    :type=>:organization_reference,
-                    :model=>[
-                        {:id=>'id', :name=>'Go id', :type=>:string},
-                        {:id=>'integration_id', :name=>'Integration id', :type=>:string},
-                        {:id=>'heading', :name=>'Heading', :type=>:string}
+                    :id => 'organization',
+                    :name => 'Organization',
+                    :type => :organization_reference,
+                    :model => [
+                        {:id => 'id', :name => 'Go id', :type => :string},
+                        {:id => 'integration_id', :name => 'Integration id', :type => :string},
+                        {:id => 'heading', :name => 'Heading', :type => :string}
                         ]
                     })
             end
@@ -228,18 +232,18 @@ describe GoImport::SerializeHelper do
         describe "for organization" do
             let(:import_rows) { GoImport::Organization.new.get_import_rows }
             it "should contain integration id" do
-                import_rows.should include({:id=>'integration_id', :name=>'Integration id', :type=>:string})
-                import_rows.should include({:id=>'id', :name=>'Go id', :type=>:string})
+                import_rows.should include({:id => 'integration_id', :name => 'Integration id', :type => :string})
+                import_rows.should include({:id => 'id', :name => 'Go id', :type => :string})
             end
             it "should contain address" do
-                expected = {:id=>'postal_address', :name=>'Postal address', :type=>:address,
-                    :model=>[
-                        {:id=>'street',:name=>'Street', :type=>:string},
-                        {:id=>'zip_code',:name=>'Zip code', :type=>:string},
-                        {:id=>'city',:name=>'City', :type=>:string},
-                        {:id=>'country_code',:name=>'Country code', :type=>:string},
-                        {:id=>'location',:name=>'Location', :type=>:string},
-                        {:id=>'country_name',:name=>'Country name', :type=>:string},
+                expected = {:id => 'postal_address', :name => 'Postal address', :type => :address,
+                    :model => [
+                        {:id => 'street',:name => 'Street', :type => :string},
+                        {:id => 'zip_code',:name => 'Zip code', :type => :string},
+                        {:id => 'city',:name => 'City', :type => :string},
+                        {:id => 'country_code',:name => 'Country code', :type => :string},
+                        {:id => 'location',:name => 'Location', :type => :string},
+                        {:id => 'country_name',:name => 'Country name', :type => :string},
                     ]}
                 import_rows.should include(expected)
             end

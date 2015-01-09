@@ -79,7 +79,7 @@ class Converter
         organization.relation = GoImport::Relation::IsACustomer
 
         #Fill data to custom fields
-        organization.set_custom_field({:integration_id => "ackoms", :value => row["ACKOMS"]})
+        organization.set_custom_value("ackoms", row["ACKOMS"])
 
         return organization
     end

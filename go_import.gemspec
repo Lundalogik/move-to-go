@@ -2,13 +2,13 @@
 
 Gem::Specification.new do |s|
     s.name        = 'go_import'
-    s.version     = '3.0.23'
+    s.version     = '3.0.24'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game']
     s.email       = 'support@lundalogik.se'
-    s.summary     = 'Library to generate Lime Go xml import format'
+    s.summary     = 'Tool to generate Lime Go zip import files'
     s.description = <<-EOF
-  go-import is an import tool for LIME Go. It can take virtually any input source and create pretty looking xml-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data.
+  go-import is an import tool for LIME Go. It can take virtually any input source and create zip-files that LIME Go likes. go-import has some predefined sources that makes will help you migrate your data.
 EOF
 
     s.add_dependency 'iso_country_codes'

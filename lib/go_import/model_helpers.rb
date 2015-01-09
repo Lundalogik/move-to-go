@@ -2,23 +2,28 @@ module GoImport
     module ModelHasCustomFields
         # @example
         #     value = row['business_value_partner_info']
-        #     obj.set_custom_value("partner_info", value)
+        #     obj.set_custom_value("external_url", "https://www.somecompany.com")        
         def set_custom_value(integration_id, value)
-            return set_custom_field({integration_id: integration_id, value: value})
-        end
-        # @example
-        #     value = row['business_value_partner_info']
-        #     obj.set_custom_field({:integration_id=>"partner_info", :value=>value})
-        def set_custom_field(obj)
             @custom_values = [] if @custom_values == nil
-            value = obj[:value]
-            field = CustomFieldReference.new(obj)
+
+            if value.nil?
+                return
+            end
+
+            valueAsString = value.to_s
+            if valueAsString.length == 0
+                return
+            end
+            
+            field = CustomFieldReference.new({:integration_id => integration_id})
             custom_value = CustomValue.new
-            custom_value.value = value
+            custom_value.value = valueAsString
             custom_value.field = field
+
             index = @custom_values.find_index do |custom_value|
                 custom_value.field.same_as?(field)
             end
+
             if index
                 @custom_values.delete_at index
             end
