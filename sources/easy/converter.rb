@@ -222,6 +222,8 @@ class Converter
         # the configure method.
 
         # person.set_custom_value("shoe_size", row['shoe size'])
+
+        return person
     end
 
     # Reads a row from the Easy exported Project.txt
@@ -280,16 +282,16 @@ class Converter
 
         # case activity
         # when 'SalesCall' 
-		# 	classification = GoImport::NoteClassification::SalesCall
-		# when 'Customer Visit'
-	    # classification = GoImport::NoteClassification::ClientVisit
-		# when 'No answer'
-		# 	classification = GoImport::NoteClassification::TriedToReach
+        #   classification = GoImport::NoteClassification::SalesCall
+        # when 'Customer Visit'
+        # classification = GoImport::NoteClassification::ClientVisit
+        # when 'No answer'
+        #   classification = GoImport::NoteClassification::TriedToReach
         # else
         #     classification = GoImport::NoteClassification::Comment
         # end
-		
-		# return classification
+        
+        # return classification
     end
 
     def get_note_classification_for_activity_on_project(activity)
@@ -303,14 +305,14 @@ class Converter
         
         # case activity
         # when 'Installation' 
-		# 	classification = GoImport::NoteClassification::ClientVisit
-		# when 'No answer'
-		# 	classification = GoImport::NoteClassification::TriedToReach
+        #   classification = GoImport::NoteClassification::ClientVisit
+        # when 'No answer'
+        #   classification = GoImport::NoteClassification::TriedToReach
         # else
         #     classification = GoImport::NoteClassification::Comment
         # end
-		
-		# return classification
+        
+        # return classification
     end
     
     def configure(rootmodel)

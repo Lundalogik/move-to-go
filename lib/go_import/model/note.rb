@@ -1,8 +1,9 @@
 module GoImport
     class Note
         include SerializeHelper
-        attr_accessor :id, :text, :integration_id, :date
+        attr_accessor :id, :integration_id, :date
 
+        attr_reader :text
         attr_reader :organization, :created_by, :person, :deal
 
         # The note's classification. It should be a value from
@@ -90,6 +91,29 @@ module GoImport
                 raise InvalidNoteClassificationError, classification
             end
 
+        end
+
+        def text=(text)
+            @text = text
+
+            if @text.nil?
+                return
+            end
+
+            if @text.length == 0
+                return
+            end
+
+            @text.strip!
+            
+            # remove form feeds
+            @text.gsub!("\f", "")
+
+            # remove vertical spaces
+            @text.gsub!("\v", "")
+
+            # remove backspace
+            @text.gsub!("\b", "")
         end
 
         def validate

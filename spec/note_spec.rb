@@ -49,7 +49,7 @@ describe "Note" do
         note.validate.length.should be > 0
     end
 
-    it "will set organization ref when organization is assinged" do
+    it "will set organization ref when organization is assigned" do
         # given
         org = GoImport::Organization.new({:integration_id => "123", :name => "Beagle Boys!"})
 
@@ -61,7 +61,7 @@ describe "Note" do
         note.instance_variable_get(:@organization_reference).is_a?(GoImport::OrganizationReference).should eq true
     end
 
-    it "will set person ref when person is assinged" do
+    it "will set person ref when person is assigned" do
         # given
         person = GoImport::Person.new({:integration_id => "123" })
         person.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -74,7 +74,7 @@ describe "Note" do
         note.instance_variable_get(:@person_reference).is_a?(GoImport::PersonReference).should eq true
     end
 
-    it "will set coworker ref when coworker is assinged" do
+    it "will set coworker ref when coworker is assigned" do
         # given
         coworker = GoImport::Coworker.new({:integration_id => "123" })
         coworker.parse_name_to_firstname_lastname_se "Billy Bob"
@@ -87,7 +87,7 @@ describe "Note" do
         note.instance_variable_get(:@created_by_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
 
-    it "will set deal ref when deal is assinged" do
+    it "will set deal ref when deal is assigned" do
         # given
         deal = GoImport::Deal.new({:integration_id => "123" })
         deal.name = "The new deal"
@@ -111,4 +111,40 @@ describe "Note" do
             note.classification = "hubbabubba"
         }.to raise_error(GoImport::InvalidNoteClassificationError)
     end
+
+    it "should remove form feed from text" do
+        # given
+        textWithFormFeed = "Text with form feed"
+        textWithoutFormFeed = "Text with form feed"
+
+        # when
+        note.text = textWithFormFeed
+
+        # then
+        note.text.should eq textWithoutFormFeed
+    end
+
+    it "should remove vertical tab from text" do
+        # given
+        textWithVerticalTab = "Text with \vvertical tab"
+        textWithoutVerticalTab = "Text with vertical tab"
+
+        # when
+        note.text = textWithVerticalTab
+
+        # then
+        note.text.should eq textWithoutVerticalTab
+    end
+
+    it "should remove backspace from text" do
+        # given
+        textWithBackSpace = "Text with \bbackspace"
+        textWithoutBackSpace = "Text with backspace"
+
+        # when
+        note.text = textWithBackSpace
+
+        # then
+        note.text.should eq textWithoutBackSpace
+    end    
 end
