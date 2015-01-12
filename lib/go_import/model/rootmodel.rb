@@ -409,7 +409,6 @@ module GoImport
                 go_data_file = Tempfile.new('go')
                 serialize_to_file(go_data_file)
                 zip_file.add('go.xml', go_data_file)
-                go_data_file.unlink
             end
         end
 
