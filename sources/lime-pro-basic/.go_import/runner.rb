@@ -1,29 +1,55 @@
 # encoding: UTF-8
 
 require 'go_import'
+require 'tiny_tds'
+
 require_relative("../converter")
 
-EXPORT_FOLDER = 'export'
-COWORKER_FILE = "#{EXPORT_FOLDER}/User.txt"
-ORGANIZATION_FILE = "#{EXPORT_FOLDER}/Company.txt"
-ORGANIZATION_NOTE_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
-ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
-PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
-INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
-DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
-DEAL_NOTE_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
-PROJECT_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Project-Document.txt"
+
+COWORKER_QUERY = "SELECT * FROM coworker"
+
 
 def convert_source
-    puts "Trying to convert LIME Easy source to LIME Go..."
+    puts "Trying to convert LIME Pro source to LIME Go..."
+    begin
+      print 'Password:'
+      # We hide the entered characters before to ask for the password
+      system 'stty -echo'
+      sql_server_password = $stdin.gets.chomp
+      system 'stty echo'
+      puts ""
+    rescue NoMethodError, Interrupt
+      # When the process is exited, we display the characters again
+      # And we exit
+      system 'stty echo'
+      exit
+    end
+
+    begin
+        client = TinyTds::Client.new( username: SQL_SERVER_USER,
+                              password: sql_server_password,
+                              dataserver: SQL_SERVER_URI,
+                              database: SQL_SERVER_DATABASE)
+    rescue Exception => e
+        puts "ERROR: Failed to connect to SQL-server"
+        puts e.message
+        exit
+    end
+
+    proClasses = []
+
+    get_metadata(client).each do |proClass|
+        proClasses.push proClass
+    end
 
 
-    validate_constants()
 
     converter = Converter.new
     rootmodel = GoImport::RootModel.new
 
     converter.configure rootmodel
+    """
+
 
     includes = Hash.new
 
@@ -86,6 +112,8 @@ def convert_source
             rootmodel.add_file(to_deal_document(row, rootmodel))
         end
     end
+
+    """
 
     return rootmodel
 end
@@ -293,29 +321,6 @@ def to_deal_note(converter, row, rootmodel)
 end
 
 
-def validate_constants()
-    if !defined?(ORGANIZATION_RESPONSIBLE_FIELD)
-        puts "WARNING: You have not defined a resposible coworker field for organization.
-        If you don't have such a field, you can just ignore this warning.
-        Otherwise you should define 'ORGANIZATION_RESPONSIBLE_FIELD' in converter.rb
-        with the value of the field name in Easy (e.g 'Ansvarig')."
-    end
-
-    if !defined?(DEAL_RESPONSIBLE_FIELD)
-        puts "WARNING: You have not defined a resposible coworker field for deal.
-        If you don't have such a field, you can just ignore this warning.
-        Otherwise you should define 'DEAL_RESPONSIBLE_FIELD' in converter.rb
-        with the value of the field name in Easy (e.g 'Ansvarig')."
-    end
-
-    if !defined?(IMPORT_DOCUMENTS) || IMPORT_DOCUMENTS.nil? || !IMPORT_DOCUMENTS
-        puts "WARNING: You are about to run the import without documents.
-        If that is your intention then you can ignore this warning.
-        Otherwise you should define 'IMPORT_DOCUMENTS' in converter.rb
-        with the value 'true'."
-    end
-end
-
 
 def process_rows(file_name)
     data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1").strip().gsub('"', '')
@@ -328,4 +333,111 @@ def process_rows(file_name)
     end
 end
 
+def get_metadata(pro_connection)
+    
+    avaiblableProClasses = []
+    tablesQuery = pro_connection.execute("SELECT * FROM [table]")
+    tablesQuery.each do |table|
+        avaiblableProClasses.push table
+    end
+    tmpProClasses = []
+    avaiblableProClasses.each do |proClass|
+        tmpProClasses.push LIMEProClass.new(proClass["name"], proClass["idtable"], pro_connection)
+    end
+    return tmpProClasses
+    
+end
+
+def build_sql_query()
+
+end
+
+
+class LIMEProClass
+
+    def initialize(name, id, db_con)
+        @name = name
+        @id = id
+        @db_con = db_con
+        @descriptive = get_desc()
+        @fields = get_fields()
+    end
+
+    def name
+        @name
+    end
+
+    def id
+        @id
+    end
+
+    def descriptive
+        @descriptive
+    end
+
+
+    private
+    def get_desc()
+        descriptive = @db_con.execute("SELECT dbo.lfn_getdescriptive(#{@id})")
+        descriptive.each(:as => :array) do |desc|
+            return desc
+        end
+    end
+
+    def get_fields()
+        relationFields = []
+        relatedTablesQuery = @db_con.execute(
+            """
+            SELECT * from relationfieldview
+            WHERE relationside = 1 AND idtable = #{@id}
+            """
+        )
+        relatedTablesQuery.each do |relationField|
+            relationFields.push(relationField)
+        end
+
+        avaialableFieldsQuery = @db_con.execute(
+            """
+            SELECT field.idtable, field.name, field.idfield,  fieldtype.name as 'fieldtypename'
+            FROM field
+            INNER JOIN 
+            fieldtype ON
+            field.fieldtype = fieldtype.idfieldtype
+            WHERE field.idtable = #{@id}
+            """
+        )
+        tmpFields = []
+        avaialableFieldsQuery.each do |field|
+
+           tmpFields.push LIMEProField.new( 
+                                            field["name"], 
+                                            field["fieldtype"], 
+                                            field["idfield"], 
+                                            relationFields.select {|relField| relField["idfield"] == field["idfield"] }
+                                          )
+        end
+        return tmpFields
+    end
+
+end
+
+class LIMEProField
+
+    def initialize(name, fieldtype, id, relation)
+        @name = name
+        @fieldType = fieldtype
+        @id = id
+        if relation
+            @relatedTable = getRelatedTable()
+        end
+    end
+
+    def getRelatedTable()
+        
+    end
+
+
+end
+
+# select * from relationfieldview
 
