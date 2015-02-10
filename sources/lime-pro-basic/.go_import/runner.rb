@@ -428,12 +428,8 @@ class LIMEProField
         @fieldType = fieldtype
         @id = id
         if relation
-            @relatedTable = getRelatedTable()
+            @relatedTable = relation['']
         end
-    end
-
-    def getRelatedTable()
-        
     end
 
 
