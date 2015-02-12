@@ -2,11 +2,7 @@
 
 require 'go_import'
 require 'tiny_tds'
-
 require_relative("../converter")
-
-
-COWORKER_QUERY = "SELECT * FROM coworker"
 
 
 def convert_source
@@ -26,7 +22,7 @@ def convert_source
     end
 
     begin
-        client = TinyTds::Client.new( username: SQL_SERVER_USER,
+        db_con = TinyTds::Client.new( username: SQL_SERVER_USER,
                               password: sql_server_password,
                               dataserver: SQL_SERVER_URI,
                               database: SQL_SERVER_DATABASE)
@@ -36,45 +32,41 @@ def convert_source
         exit
     end
 
-    proClasses = []
-
-    get_metadata(client).each do |proClass|
-        proClasses.push proClass
-    end
-
-
-
+    con = LIMEProConnection.new db_con
     converter = Converter.new
     rootmodel = GoImport::RootModel.new
 
     converter.configure rootmodel
-    """
 
-
-    includes = Hash.new
 
     # coworkers
     # start with these since they are referenced
     # from everywhere....
-    process_rows COWORKER_FILE do |row|
-        rootmodel.add_coworker(to_coworker(row))
+    con.fetch_data "coworker" do |row|
+        coworker = init_coworker(row)
+        rootmodel.add_coworker(
+                converter.to_coworker(coworker, row)
+            )
     end
 
+
     # organizations
-    process_rows ORGANIZATION_FILE do |row|
+    con.fetch_data "company" do |row|
         organization = init_organization(row, rootmodel)
         rootmodel.add_organization(
             converter.to_organization(organization, row))
     end
 
+   
     # persons
     # depends on organizations
-    process_rows PERSON_FILE do |row|
+    con.fetch_data "person" do |row|
         # init method also adds the person to the employer
         person = init_person(row, rootmodel)
         converter.to_person(person, row)
     end
 
+    """
     # organization notes
     process_rows ORGANIZATION_NOTE_FILE do |row|
         # adds itself if applicable
@@ -118,14 +110,12 @@ def convert_source
     return rootmodel
 end
 
-def to_coworker(row)
+def init_coworker(row)
     coworker = GoImport::Coworker.new
-    
-    # integration_id is typically the userId in Easy
+    # integration_id is typically the idcoworker in Pro
     # Must be set to be able to import the same file more
     # than once without creating duplicates
-    coworker.integration_id = row['idUser']
-    coworker.parse_name_to_firstname_lastname_se(row['Name'])
+    coworker.integration_id = row['idcoworker'].to_s
     return coworker
 end
 
@@ -134,11 +124,8 @@ def init_organization(row, rootmodel)
     # integration_id is typically the company Id in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates
-    organization.integration_id = row['idCompany']
+    organization.integration_id = row['idcompany'].to_s
 
-    # Easy standard fields
-    organization.name = row['Company name']
-    organization.central_phone_number = row['Telephone']
 
     if defined?(ORGANIZATION_RESPONSIBLE_FIELD) && !ORGANIZATION_RESPONSIBLE_FIELD.nil? && !ORGANIZATION_RESPONSIBLE_FIELD.empty?
         # Responsible coworker for the organization.
@@ -320,120 +307,178 @@ def to_deal_note(converter, row, rootmodel)
     return nil
 end
 
+class LIMEProConnection
 
-
-def process_rows(file_name)
-    data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1").strip().gsub('"', '')
-    data = '"' + data.gsub("\t", "\"\t\"") + '"'
-    data = data.gsub("\n", "\"\n\"")
-
-    rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
-        rows.each do |row|
-        yield row
-    end
-end
-
-def get_metadata(pro_connection)
-    
-    avaiblableProClasses = []
-    tablesQuery = pro_connection.execute("SELECT * FROM [table]")
-    tablesQuery.each do |table|
-        avaiblableProClasses.push table
-    end
-    tmpProClasses = []
-    avaiblableProClasses.each do |proClass|
-        tmpProClasses.push LIMEProClass.new(proClass["name"], proClass["idtable"], pro_connection)
-    end
-    return tmpProClasses
-    
-end
-
-def build_sql_query()
-
-end
-
-
-class LIMEProClass
-
-    def initialize(name, id, db_con)
-        @name = name
-        @id = id
+    def initialize(db_con)
         @db_con = db_con
-        @descriptive = get_desc()
-        @fields = get_fields()
+        @tablestructure = get_table_structure().map{|proClass| proClass}
     end
 
-    def name
-        @name
-    end
+    def fetch_data(table_name)
+        table = @tablestructure.find{|tbl| tbl.name == table_name}
+        sql = build_sql_query(table)
+        dataQuery = @db_con.execute sql
 
-    def id
-        @id
+        dataQuery.each do |row|
+            yield row
+        end
     end
-
-    def descriptive
-        @descriptive
-    end
-
 
     private
-    def get_desc()
-        descriptive = @db_con.execute("SELECT dbo.lfn_getdescriptive(#{@id})")
-        descriptive.each(:as => :array) do |desc|
-            return desc
-        end
+    def db_con
+        @db_con
     end
 
-    def get_fields()
-        relationFields = []
-        relatedTablesQuery = @db_con.execute(
-            """
-            SELECT * from relationfieldview
-            WHERE relationside = 1 AND idtable = #{@id}
-            """
-        )
-        relatedTablesQuery.each do |relationField|
-            relationFields.push(relationField)
+    private
+    def tablestructure
+        @tablestructure
+    end
+
+    private
+    def get_table_structure()
+    
+        tablesQuery = @db_con.execute("SELECT * FROM [table]")
+        avaiblableProClasses = tablesQuery.map{|table| table}
+
+        return avaiblableProClasses.map {|proClass| LIMEProClass.new(proClass["name"], proClass["idtable"], @db_con)}
+   
+    end
+
+    private
+    def build_sql_query(table)
+
+        sqlForFields = table.fields.map{|field|
+            case field.fieldType
+            when "relation"
+                desc = @tablestructure.find{|tbl| tbl.name == field.relatedTable}.descriptive
+                next field.name + ",(SELECT #{desc} from [#{field.relatedTable}] WHERE #{table.name}.#{field.name} = #{field.relatedTable}.id#{field.relatedTable}) as descriptive_#{field.name}"
+            when "set", "option"
+                next "(SELECT '#{DATABASE_LANGUAGE}' FROM string WHERE idstring = #{field.name}) as #{field.name}"
+            else
+                next field.name
+            end
+        }.join(",")
+
+        sql = "SELECT #{sqlForFields} FROM [#{table.name}]"
+        puts sql
+        return sql
+    end
+
+    private
+    class LIMEProClass
+
+        def initialize(name, id, db_con)
+            @name = name
+            @id = id
+            @db_con = db_con
+            @fields = get_fields()
+            @descriptive = get_desc().first
         end
 
-        avaialableFieldsQuery = @db_con.execute(
-            """
-            SELECT field.idtable, field.name, field.idfield,  fieldtype.name as 'fieldtypename'
-            FROM field
-            INNER JOIN 
-            fieldtype ON
-            field.fieldtype = fieldtype.idfieldtype
-            WHERE field.idtable = #{@id}
-            """
-        )
-        tmpFields = []
-        avaialableFieldsQuery.each do |field|
-
-           tmpFields.push LIMEProField.new( 
-                                            field["name"], 
-                                            field["fieldtype"], 
-                                            field["idfield"], 
-                                            relationFields.select {|relField| relField["idfield"] == field["idfield"] }
-                                          )
+        def name
+            @name
         end
-        return tmpFields
+
+        def id
+            @id
+        end
+
+        def descriptive
+            @descriptive
+        end
+
+        def fields
+            @fields
+        end
+
+        private
+        def get_desc()
+            descriptive = @db_con.execute("SELECT dbo.lfn_getdescriptive(#{@id})")
+            descriptive.each(:as => :array) {|desc| return desc}
+           
+        end
+
+        private
+        def get_fields()
+            metadataForRelationFieldsQuery = @db_con.execute(
+                """
+                SELECT * from relationfieldview
+                WHERE relationsingle = 1 AND idtable = #{@id}
+                """
+            )
+            metadataForRelationFields = metadataForRelationFieldsQuery.map {|relationField| relationField }
+           
+            avaialableFieldsQuery = @db_con.execute(
+                """
+                SELECT field.idtable, field.name, field.idfield, fieldtype.name as 'fieldtypename'
+                FROM field
+                INNER JOIN 
+                fieldtype ON
+                field.fieldtype = fieldtype.idfieldtype
+                WHERE field.idtable = #{@id}
+                """
+            )
+
+            fields = avaialableFieldsQuery.map{ |field|
+                if field["fieldtypename"] != "relation"
+                     LIMEProField.new(field["name"], field["fieldtypename"])
+                else
+                    relationFieldMetadata = metadataForRelationFields.find {|relField| relField["idfield"] == field["idfield"]} 
+                    if relationFieldMetadata
+                      LIMEProRelationField.new(field["name"], field["fieldtypename"], relationFieldMetadata)
+                    end
+                end
+            }.compact
+
+            # Add hardcoded fields
+            fields.push LIMEProField.new "id#{@name}", "int"
+            fields.push LIMEProField.new "status", "int"
+            fields.push LIMEProField.new "createdtime", "datetime"
+            fields.push LIMEProField.new "createduser", "int"
+            fields.push LIMEProField.new "updateduser", "int"
+            fields.push LIMEProField.new "timestamp", "datetime"
+
+            return fields
+        
+        end
+
+    end
+
+    private
+    class LIMEProField
+
+        def initialize(name, fieldtype)
+            @name = name
+            @fieldType = fieldtype
+
+        end
+
+        def name
+            @name
+        end
+
+        def fieldType
+            @fieldType
+        end
+
+
+    end
+
+    class LIMEProRelationField < LIMEProField
+
+        def initialize(name, fieldtype, relationFieldMetadata)
+            super(name,fieldtype)
+            @relatedTable = relationFieldMetadata["relatedtable"]
+        end
+
+        def relatedTable
+            @relatedTable
+        end
+
     end
 
 end
 
-class LIMEProField
-
-    def initialize(name, fieldtype, id, relation)
-        @name = name
-        @fieldType = fieldtype
-        @id = id
-        if relation
-            @relatedTable = relation['']
-        end
-    end
 
 
-end
-
-# select * from relationfieldview
 

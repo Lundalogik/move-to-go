@@ -43,6 +43,8 @@ SQL_SERVER_URI = 'lusrvsql4\sales'
 SQL_SERVER_USER = 'lundalogik\fpe'
 SQL_SERVER_DATABASE = 'limedemo_v2'
 
+ORGANIZATION_RESPONSIBLE_FIELD = "coworker"
+DATABASE_LANGUAGE ="sv" 
 
 class Converter
     # Reads a row from the Easy exported Company.txt
@@ -55,11 +57,17 @@ class Converter
     # Sometimes it's enough to uncomment some code and
     # change the row name but in most cases you need to
     # do some thinking of your own.
+    def to_coworker(coworker, row)
+
+        #coworker.name = row["name"]
+        return coworker
+    end
+
     def to_organization(organization, row)
         # Here are some standard fields that are present
         # on a LIME Go organization and are usually represented
         # as superfields in Easy.
-
+        organization.name = row['name']
         # organization.email = row['e-mail']
         # organization.organization_number = row['orgnr']
         # organization.web_site = row['website']
