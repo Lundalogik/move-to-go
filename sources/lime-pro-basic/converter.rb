@@ -9,45 +9,59 @@ require 'go_import'
 # go_import contains all objects in LIME Go such as organization,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
+#
+# *** NOTE: Integration-ID and LIME-links are automatically created for each
+# object
 
 # *** TODO:
 #
-# You must customize this template so it works with your LIME Easy
+# You must customize this template so it works with your LIME Pro
 # database. Modify each to_* method and set properties on the LIME Go
 # objects.
 #
-# Follow these steps:
-#
-# 1) Export all data from KONTAKT.mdb to a folder named Export located
-# in the folder created by go_import new. Export data using the
-# magical tool called PowerSellMigrationExport.exe that can be found
-# in K:\Lundalogik\LIME Easy\Tillbehör\Migrationsexport.
-#
-# 2) Modify this file (the to_* methods) according to your customer's
-# KONTAKT.mdb and wishes.
-#
-# 3) Run go-import run
-#
-# 4) Upload go.zip to LIME Go. First test your import on staging and
-# when your customer has approved the import, run it on production.
-#
-# You will get a WARNING from 'go-import run' about FILES_FOLDER has
-# not been set. You can ignore the warning since documents are
-# exported with an absolute path from LIME Easy.
 
 ############################################################################
 ## Constants
 # Edit these constants to fit your needs
 
-SQL_SERVER_URI = 'lusrvsql4\sales' 
-SQL_SERVER_USER = 'lundalogik\fpe'
-SQL_SERVER_DATABASE = 'limedemo_v2'
+# Connection to the SQL-server
+# You can use either an AD-account or SQL-user credentials to authenticate.
+# You will be prompted for the password when you run the import
+SQL_SERVER_URI = 'lusrvsql5\konsult' 
+SQL_SERVER_USER = 'domain\user'
+SQL_SERVER_DATABASE = 'lime_basic'
 
-ORGANIZATION_RESPONSIBLE_FIELD = "coworker"
-DATABASE_LANGUAGE ="sv" 
+# LIME Server 
+LIME_SERVER_NAME = 'luserver1012'
+LIME_DATABASE_NAME = 'LIMEBasic'
+LIME_LANGUAGE = 'sv' # Used for the values in set and option fields
+
+# Companies
+# Set the name of the relation field to the responsible coworker
+ORGANIZATION_RESPONSIBLE_FIELD = 'coworker'
+
+# Deals
+# Set if deals should be imported and name of relationfields.
+# Defaults should work well
+IMPORT_DEALS = true
+DEAL_RESPONSIBLE_FIELD = 'coworker'
+DEAL_COMPANY_FIELD = 'company'
+
+# Notes
+# Set if notes should be imported and name of relationfields.
+# Defaults should work well
+IMPORT_NOTES = true
+NOTE_COWORKER_FIELD = 'coworker'
+NOTE_COMPANY_FIELD = 'company'
+NOTE_PERSON_FIELD = 'person'
+NOTE_DEAL_FIELD = 'business'
+
+############################################################################
 
 class Converter
-    # Reads a row from the Easy exported Company.txt
+
+
+    # Reads a row from the coworker table 
     # and ads custom fields to the go_import organization.
 
     # NOTE!!! You should customize this method to include
@@ -58,19 +72,31 @@ class Converter
     # change the row name but in most cases you need to
     # do some thinking of your own.
     def to_coworker(coworker, row)
-
-        #coworker.name = row["name"]
-        return coworker
+        # coworker.first_name = row["firstname"]
+        # coworker.last_name = row["lastname"]
+        # coworker.direct_phone_number = row["phone"]
+        # coworker.mobile_phone_number = row["cellphone"]
+        # coworker.email = row["email"]
+        # return coworker
     end
 
+    # Reads a row from the Company table 
+    # and ads custom fields to the go_import organization.
+
+    # NOTE!!! You should customize this method to include
+    # and transform the fields you want to import to LIME Go.
+    # The method includes examples of different types of
+    # fields and how you should handle them.
+    # Sometimes it's enough to uncomment some code and
+    # change the row name but in most cases you need to
+    # do some thinking of your own.
     def to_organization(organization, row)
         # Here are some standard fields that are present
         # on a LIME Go organization and are usually represented
-        # as superfields in Easy.
-        organization.name = row['name']
-        # organization.email = row['e-mail']
-        # organization.organization_number = row['orgnr']
-        # organization.web_site = row['website']
+        # as custom fields in Pro.
+        # organization.name = row['name']
+        # organization.organization_number = row['registrationno']
+
 
         ####################################################################
         ## Bisnode ID fields
@@ -79,7 +105,7 @@ class Converter
         # fields like address or website since they are reterived from
         # PAR.
 
-        # bisnode_id = row['Bisnode-id']
+        # bisnode_id = row['parid']
 
         # if bisnode_id && !bisnode_id.empty?
         #     organization.with_source do |source|
@@ -92,30 +118,31 @@ class Converter
         # on that company card.
 
         # if bisnode_id && bisnode_id.empty?
-        #     organization.web_site = row['website']
+        #      organization.web_site = row['website']
+        #      organization.central_phone_number = row['phone']
+        
+
+        #     ####################################################################
+        #     # Address fields.
+        #     # Addresses consists of several parts in LIME Go. Lots of other
+        #     # systems have the address all in one line, to be able to
+        #     # match when importing it is way better to split the addresses
+
+        #     organization.with_postal_address do |address|
+        #         address.street = row['potstaladdress1']
+        #         address.zip_code = row['postalzipcode']
+        #         address.city = row['postalcity']
+        #         address.location = row['country']
+        #     end
+
+        #     # Same as visting address
+
+        #     organization.with_visit_address do |addr|
+        #         addr.street = row['visitingaddress1']
+        #         addr.zip_code = row['visitingzipcode']
+        #         addr.city = row['visitingcity']
+        #     end
         # end
-
-        ####################################################################
-        # Address fields.
-        # Addresses consists of several parts in LIME Go. Lots of other
-        # systems have the address all in one line, to be able to
-        # match when importing it is way better to split the addresses
-
-        # organization.with_postal_address do |address|
-        #     address.street = row['street']
-        #     address.zip_code = row['zip']
-        #     address.city = row['city']
-        #     address.location = row['location']
-        # end
-
-        # Same as visting address
-
-        # organization.with_visit_address do |addr|
-        #     addr.street = row['visit street']
-        #     addr.zip_code = row['visit zip']
-        #     addr.city = row['visit city']
-        # end
-
         #####################################################################
         ## Tags.
         # Set tags for the organization. All organizations will get
@@ -128,38 +155,52 @@ class Converter
         # Option fields are normally translated into tags
         # The option field customer category for instance,
         # has the options "A-customer", "B-customer", and "C-customer"
+        
+        # case row['businessarea']
+        # when 'Marketing', 'Sales'
+        #     organization.set_tag(row['businessarea'])
+        # end
 
-        # organization.set_tag(row['customer category'])
+        #####################################################################
+        ## Set fields.
+        # Set fields are normally translated into tags
+        # An field is a ";"- separated list. We must first split them into
+        # an array.
+
+        # values = row["mailings"].split(";")
+        # values.each do |value|
+        #     if value = "Newsletter"
+        #         organization.set_tag(value)
+        #     end
+        # end
 
         #####################################################################
         ## LIME Go Relation.
         # let's say that there is a option field in Easy called 'Customer relation'
         # with the options '1.Customer', '2.Prospect' '3.Partner' and '4.Lost customer'
 
-        # if row['Customer relation'] == '1.Customer'
+        # case row['relation'] 
+        # when '1.Customer'
         # We have made a deal with this organization.
-        #     organization.relation = GoImport::Relation::IsACustomer
-        # elsif row['Customer relation'] == '3.Partner'
-        # We have made a deal with this organization.
-        #     organization.relation = GoImport::Relation::IsACustomer
-        # elsif row['Customer relation'] == '2.Prospect'
+        #    organization.relation = GoImport::Relation::IsACustomer
+        # when '2.Prospect'
         # Something is happening with this organization, we might have
         # booked a meeting with them or created a deal, etc.
-        #     organization.relation = GoImport::Relation::WorkingOnIt
-        # elsif row['Customer relation'] == '4.Lost customer'
+        #    organization.relation = GoImport::Relation::WorkingOnIt
+        # when '4.Lost customer'
         # We had something going with this organization but we
         # couldn't close the deal and we don't think they will be a
         # customer to us in the foreseeable future.
-        #     organization.relation = GoImport::Relation::BeenInTouch
+        #    organization.relation = GoImport::Relation::BeenInTouch
         # else
-        #     organization.relation = GoImport::Relation::NoRelation
+        #    organization.relation = GoImport::Relation::NoRelation
         # end
 
-        return organization
+        # return organization
     end
 
-    # Reads a row from the Easy exported Company-Person.txt
-    # and ads custom fields to the go_import organization.
+    # Reads a row from the Person table 
+    # and ads custom fields to the go_import person.
 
     # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
@@ -171,11 +212,13 @@ class Converter
     def to_person(person, row)
         ## Here are some standard fields that are present
         # on a LIME Go person and are usually represented
-        # as superfields in Easy.
+        # as custom fields in Pro.
+        # person.first_name = row["firstname"]
+        # person.last_name = row["lastname"]
 
-        # person.direct_phone_number = row['Direktnummer']
-        # person.mobile_phone_number = row['Mobil']
-        # person.email = row['e-mail']
+        # person.direct_phone_number = row['phone']
+        # person.mobile_phone_number = row['cellphone']
+        # person.email = row['email']
         # person.position = row['position']
 
         #####################################################################
@@ -188,14 +231,14 @@ class Converter
         # Checkbox fields are normally translated into tags
         # Xmas card field is a checkbox in Easy
 
-        # if row['Xmas card'] == "1"
+        # if row['Xmascard'] == "1"
         #     person.set_tag("Xmas card")
         # end
 
         #####################################################################
         ## Multioption fields or "Set"- fields.
         # Set fields are normally translated into multiple tags in LIME Go
-        # interests is an example of a set field in LIME Easy.
+        # interests is an example of a set field in LIME Pro.
 
         # if row['intrests']
         #     intrests = row['intrests'].split(';')
@@ -211,11 +254,11 @@ class Converter
 
         # person.set_custom_value("shoe_size", row['shoe size'])
 
-        return person
+        # return person
     end
 
-    # Reads a row from the Easy exported Project.txt
-    # and ads custom fields to the go_import organization.
+    # Reads a row from the Business table 
+    # and ads custom fields to the go_import deal.
 
     # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
@@ -225,14 +268,16 @@ class Converter
     # change the row name but in most cases you need to
     # do some thinking of your own.
     def to_deal(deal, row)
+        
+        # deal.name = row['name'] 
         ## Here are some standard fields that are present
         # on a LIME Go deal and are usually represented
-        # as superfields in Easy.
+        # as custom fields in Pro.
 
-        # deal.order_date = row['order date']
+        # deal.order_date = row['orderdate']
 
         # Deal.value should be integer
-        # The currency used in Easy should match the one used in Go
+        # The currency used in Pro should match the one used in Go
 
         # deal.value = row['value']
 
@@ -241,67 +286,57 @@ class Converter
 
         # deal.probability = row['probability'].gsub(/[^\d]/,"").to_i unless row['probability'].nil?
 
-        # Sets the deal's status to the value of the Easy field. This
+        # Sets the deal's status to the value of the Pro field. This
         # assumes that the status is already created in LIME Go. To
         # create statuses during import add them to the settings
         # during configure.
 
-        # if !row['Status'].nil? && !row['Status'].empty?
-        #     deal.status = row['Status']
+        # if !row['businessstatus'].nil? && !row['businessstatus'].empty?
+        #     deal.status = row['status']
         # end
 
         #####################################################################
         ## Tags.
         # Set tags for the deal
 
-        # deal.set_tag("Product name")
+        # deal.set_tag("productname")
 
-        return deal
+        # return deal
+        
     end
 
-    def get_note_classification_for_activity_on_company(activity)
-        # When notes are added to LIME Go this method is called for
-        # every note that is connected to a company in LIME Easy. The
-        # note's activity from LIME Easy is supplied as an argument
-        # and this method should return a classification for the note
-        # in LIME Go. The return value must be a value from the
-        # GoImport::NoteClassification enum. If no classification is
-        # return the note will get the default classification 'Comment'
+    # Reads a row from the History table 
+    # and ads custom fields to the go_import note.
 
-        # case activity
-        # when 'SalesCall' 
-        #   classification = GoImport::NoteClassification::SalesCall
+    # NOTE!!! You should customize this method to include
+    # and transform the fields you want to import to LIME Go.
+    # The method includes examples of different types of
+    # fields and how you should handle them.
+    # Sometimes it's enough to uncomment some code and
+    # change the row name but in most cases you need to
+    # do some thinking of your own.
+    def to_note(note, row)
+
+        # note.text = row['text']
+
+        # Set the note classification. The value must be a value from the
+        # GoImport::NoteClassification enum. If no classification is
+        # set the note will get the default classification 'Comment'
+        
+        # case row['type']
+        # when 'Sales call' 
+        #   note.classification = GoImport::NoteClassification::SalesCall
         # when 'Customer Visit'
-        # classification = GoImport::NoteClassification::ClientVisit
+        # note.classification = GoImport::NoteClassification::ClientVisit
         # when 'No answer'
-        #   classification = GoImport::NoteClassification::TriedToReach
+        #   note.classification = GoImport::NoteClassification::TriedToReach
         # else
-        #     classification = GoImport::NoteClassification::Comment
+        #   note.classification = GoImport::NoteClassification::Comment
         # end
         
-        # return classification
+        # return note
     end
 
-    def get_note_classification_for_activity_on_project(activity)
-        # When notes are added to LIME Go this method is called for
-        # every note that is connected to a project in LIME Easy. The
-        # note's activity from LIME Easy is supplied as an argument
-        # and this method should return a classification for the note
-        # in LIME Go. The return value must be a value from the
-        # GoImport::NoteClassification enum. If no classification is
-        # return the note will get the default classification 'Comment'
-        
-        # case activity
-        # when 'Installation' 
-        #   classification = GoImport::NoteClassification::ClientVisit
-        # when 'No answer'
-        #   classification = GoImport::NoteClassification::TriedToReach
-        # else
-        #     classification = GoImport::NoteClassification::Comment
-        # end
-        
-        # return classification
-    end
     
     def configure(rootmodel)
         #####################################################################
