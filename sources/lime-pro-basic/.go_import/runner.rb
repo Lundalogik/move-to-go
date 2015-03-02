@@ -38,6 +38,19 @@ def convert_source
 
     converter.configure rootmodel
 
+    #Add custom fields for LIME-links
+    rootmodel.settings.with_person  do |person|
+        person.set_custom_field( { :integration_id => 'limelink', :title => 'Länk till LIME Pro', :type => :Link} )
+    end
+
+    rootmodel.settings.with_organization  do |org|
+        org.set_custom_field( { :integration_id => 'limelink', :title => 'Länk till LIME Pro', :type => :Link} )
+    end
+
+    rootmodel.settings.with_deal  do |deal|
+        deal.set_custom_field( { :integration_id => 'limelink', :title => 'Länk till LIME Pro', :type => :Link} )
+    end
+
 
     # coworkers
     # start with these since they are referenced
@@ -66,34 +79,25 @@ def convert_source
         converter.to_person(person, row)
     end
 
+
+        # deals
+        # deals can reference coworkers (responsible), organizations
+        # and persons (contact)
+    if IMPORT_DEALS
+        con.fetch_data 'business' do |row|
+            deal = init_deal(row, rootmodel)
+            rootmodel.add_deal(converter.to_deal(deal, row))
+        end
+    end
+
+    if IMPORT_NOTES
+        con.fetch_data 'history' do |row|
+            note = init_note(row, rootmodel)
+            rootmodel.add_deal(converter.to_note(note, row))
+        end
+    end
+
     """
-    # organization notes
-    process_rows ORGANIZATION_NOTE_FILE do |row|
-        # adds itself if applicable
-        rootmodel.add_note(to_organization_note(converter, row, rootmodel))
-    end
-
-    # Organization - Deal connection
-    # Reads the includes.txt and creats a hash
-    # that connect organizations to deals
-    process_rows INCLUDE_FILE do |row|
-        includes[row['idProject']] = row['idCompany']
-    end
-
-    # deals
-    # deals can reference coworkers (responsible), organizations
-    # and persons (contact)
-    process_rows DEAL_FILE do |row|
-        deal = init_deal(row, rootmodel, includes)
-        rootmodel.add_deal(converter.to_deal(deal, row))
-    end
-
-    # deal notes
-    process_rows DEAL_NOTE_FILE do |row|
-        # adds itself if applicable
-        rootmodel.add_note(to_deal_note(converter, row, rootmodel))
-    end
-
     # documents
     if defined?(IMPORT_DOCUMENTS) && !IMPORT_DOCUMENTS.nil? && IMPORT_DOCUMENTS
         process_rows ORGANIZATION_DOCUMENT_FILE do |row|
@@ -125,12 +129,13 @@ def init_organization(row, rootmodel)
     # Must be set to be able to import the same file more
     # than once without creating duplicates
     organization.integration_id = row['idcompany'].to_s
-
+    organization.set_custom_value("limelink", build_lime_link("company", row['idcompany']))
+    
 
     if defined?(ORGANIZATION_RESPONSIBLE_FIELD) && !ORGANIZATION_RESPONSIBLE_FIELD.nil? && !ORGANIZATION_RESPONSIBLE_FIELD.empty?
         # Responsible coworker for the organization.
         # For instance responsible sales rep.
-        coworker_id = row["idUser-#{ORGANIZATION_RESPONSIBLE_FIELD}"]
+        coworker_id = row[ORGANIZATION_RESPONSIBLE_FIELD].to_s
         organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
     end
 
@@ -145,167 +150,56 @@ def init_person(row, rootmodel)
     # unique within the scope of the company, so we combine the
     # referenceId and the companyId to make a globally unique
     # integration_id
-    person.integration_id = row['idPerson']
-    person.first_name = row['First name']
-    person.last_name = row['Last name']
-
+    person.integration_id = row['idperson'].to_s
+    person.set_custom_value("limelink", build_lime_link("person", row['idperson']))
     # set employer connection
-    employer = rootmodel.find_organization_by_integration_id(row['idCompany'])
-    if employer
-        employer.add_employee person
-    end
+    employer = rootmodel.find_organization_by_integration_id(row['company'].to_s)
+    employer.add_employee(person) if employer
 
     return person
 end
 
-# Turns a row from the Easy exported Company-History.txt file into
-# a go_import model that is used to generate xml.
-def to_organization_note(converter, row, rootmodel)
-    organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
-    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
-
-    if organization && coworker
-        note = GoImport::Note.new()
-        note.organization = organization
-        note.created_by = coworker
-        note.person = organization.find_employee_by_integration_id(row['idPerson'])
-        note.date = row['Date']
-        
-        if converter.respond_to?(:get_note_classification_for_activity_on_company)
-            # we will get an InvalidNoteClassificationError if we are
-            # setting and invalid classification. So no need to verify
-            # return value from converter.
-            classification =
-                converter.get_note_classification_for_activity_on_company(row['Category'])
-
-            if classification.nil?
-                classification = GoImport::NoteClassification::Comment
-            end
-            
-            note.classification = classification
-
-            note.text = row['History']
-        else
-            note.classification = GoImport::NoteClassification::Comment
-            note.text = "#{row['Category']}: #{row['History']}"            
-        end
-
-        return note.text.empty? ? nil : note
-    end
-
-    return nil
-end
-
-def to_organization_document(row, rootmodel)
-    file = GoImport::File.new()
-
-    file.integration_id = "o-#{row['idDocument']}"
-    file.path = row['Path']
-    file.name = row['Comment']
-
-    file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
-    if file.created_by.nil?
-        file.created_by = rootmodel.import_coworker
-    end
-
-    org = rootmodel.find_organization_by_integration_id(row['idCompany'])
-    if org.nil?
-        return nil
-    end
-    file.organization = org
-
-    return file
-end
-
-def to_deal_document(row, rootmodel)
-    file = GoImport::File.new()
-
-    file.integration_id = "d-#{row['idDocument']}"
-    file.path = row['Path']
-    file.name = row['Comment']
-
-    file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
-    if file.created_by.nil?
-        file.created_by = rootmodel.import_coworker
-    end
-
-    deal = rootmodel.find_deal_by_integration_id(row['idProject'])
-    if deal.nil?
-        return nil
-    end
-
-    file.deal = deal
-
-    return file
-end
-
-def init_deal(row, rootmodel, includes)
+def init_deal(row, rootmodel)
     deal = GoImport::Deal.new
 
-    deal.integration_id = row['idProject']
-    deal.name = row['Name']
-    deal.description = row['Description']
+    deal.integration_id = row['idbusiness'].to_s
+    deal.set_custom_value("limelink", build_lime_link("person", row['idbusiness']))
 
-    if defined?(DEAL_RESPONSIBLE_FIELD) && !DEAL_RESPONSIBLE_FIELD.nil? && !DEAL_RESPONSIBLE_FIELD.empty?
-        coworker_id = row["isUser-#{DEAL_RESPONSIBLE_FIELD}"]
-        deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
-    end
+    coworker = rootmodel.find_coworker_by_integration_id(row[DEAL_RESPONSIBLE_FIELD])
+    deal.responsible_coworker = coworker if coworker  
 
-    # Make the deal - organization connection
-    if includes
-        organization_id = includes[row['idProject']]
-        organization = rootmodel.find_organization_by_integration_id(organization_id)
-        if organization
-            deal.customer = organization
-        end
-    end
+    organization = rootmodel.find_organization_by_integration_id(row[DEAL_COMPANY_FIELD])
+    deal.customer = organization if organization
 
     return deal
 end
 
-# Turns a row from the Easy exported Project-History.txt file into
-# a go_import model that is used to generate xml
-def to_deal_note(converter, row, rootmodel)
-    # TODO: This could be improved to read a person from an
-    # organization connected to this deal if any, but since it is
-    # a many to many connection between organizations and deals
-    # it's not a straight forward task
-    deal = rootmodel.find_deal_by_integration_id(row['idProject'])
-    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
+def init_note(row, rootmodel)
+    note = GoImport::Note.new
 
-    if deal && coworker
-        note = GoImport::Note.new()
-        note.deal = deal
-        note.created_by = coworker
-        note.date = row['Date']
-        # Raw history looks like this <category>: <person>: <text>
-        note.text = row['RawHistory']
+    note.integration_id = row['idhistory'].to_s
 
-        if converter.respond_to?(:get_note_classification_for_activity_on_project)
-            # we will get an InvalidNoteClassificationError if we are
-            # setting and invalid classification. So no need to verify
-            # return value from converter.
+    coworker = rootmodel.find_coworker_by_integration_id(row[NOTE_COWORKER_FIELD])
+    note.created_by = coworker if coworker
+ 
+    organization = rootmodel.find_organization_by_integration_id(row[NOTE_COMPANY_FIELD])
+    note.organization = organization if organization
+   
 
-            classification =
-                converter.get_note_classification_for_activity_on_project(row['Category'])
+    person = rootmodel.find_person_by_integration_id(row[NOTE_PERSON_FIELD])
+    note.person = person if person
+   
 
-            if classification.nil?
-                classification = GoImport::NoteClassification::Comment
-            end
-            
-            note.classification = classification
-            note.text = row['RawHistory'].to_s.sub("#{row['Category']}:", "")
-        else
-            note.classification = GoImport::NoteClassification::Comment
-            note.text = row['RawHistory']
-        end
-        
+    deal = rootmodel.find_deal_by_integration_id(row[NOTE_DEAL_FIELD])
+    note.deal = deal if deal
 
-        return note.text.empty? ? nil : note
-    end
-
-    return nil
+    return note
 end
+
+
+############################################################################
+## Helper functions and classes
+############################################################################
 
 class LIMEProConnection
 
@@ -317,6 +211,7 @@ class LIMEProConnection
     def fetch_data(table_name)
         table = @tablestructure.find{|tbl| tbl.name == table_name}
         sql = build_sql_query(table)
+        puts sql
         dataQuery = @db_con.execute sql
 
         dataQuery.each do |row|
@@ -351,16 +246,17 @@ class LIMEProConnection
             case field.fieldType
             when "relation"
                 desc = @tablestructure.find{|tbl| tbl.name == field.relatedTable}.descriptive
-                next field.name + ",(SELECT #{desc} from [#{field.relatedTable}] WHERE #{table.name}.#{field.name} = #{field.relatedTable}.id#{field.relatedTable}) as descriptive_#{field.name}"
-            when "set", "option"
-                next "(SELECT '#{DATABASE_LANGUAGE}' FROM string WHERE idstring = #{field.name}) as #{field.name}"
+                next "[#{table.name}].[#{field.name}],(SELECT #{desc} from [#{field.relatedTable}] WHERE [#{table.name}].[#{field.name}] = [#{field.relatedTable}].[id#{field.relatedTable}]) as #{field.name}_descriptive"
+            when "set"
+                next "dbo.lfn_getfieldsettext2([#{field.name}],';','#{LIME_LANGUAGE}')"
+            when "option"
+                next "(SELECT #{LIME_LANGUAGE} FROM string WHERE idstring = #{field.name}) as #{field.name}"
             else
-                next field.name
+                next "[#{table.name}].[#{field.name}]"
             end
         }.join(",")
 
         sql = "SELECT #{sqlForFields} FROM [#{table.name}]"
-        puts sql
         return sql
     end
 
@@ -403,7 +299,7 @@ class LIMEProConnection
             metadataForRelationFieldsQuery = @db_con.execute(
                 """
                 SELECT * from relationfieldview
-                WHERE relationsingle = 1 AND idtable = #{@id}
+                WHERE relationsingle = 1 AND relationintable = 1 AND idtable = #{@id}
                 """
             )
             metadataForRelationFields = metadataForRelationFieldsQuery.map {|relationField| relationField }
@@ -479,6 +375,9 @@ class LIMEProConnection
 
 end
 
+def build_lime_link(limeClassName, id)
+    return "limecrm:#{limeClassName}.#{LIME_DATABASE_NAME}.#{LIME_SERVER_NAME}?idrecord=#{id}"
+end
 
 
 
