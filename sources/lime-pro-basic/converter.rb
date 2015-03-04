@@ -97,6 +97,7 @@ class Converter
         # organization.name = row['name']
         # organization.organization_number = row['registrationno']
 
+        
 
         ####################################################################
         ## Bisnode ID fields
@@ -196,7 +197,7 @@ class Converter
         #    organization.relation = GoImport::Relation::NoRelation
         # end
 
-        # return organization
+        return organization
     end
 
     # Reads a row from the Person table 
@@ -254,7 +255,7 @@ class Converter
 
         # person.set_custom_value("shoe_size", row['shoe size'])
 
-        # return person
+        return person
     end
 
     # Reads a row from the Business table 
@@ -301,8 +302,7 @@ class Converter
 
         # deal.set_tag("productname")
 
-        # return deal
-        
+        return deal
     end
 
     # Reads a row from the History table 
@@ -334,7 +334,7 @@ class Converter
         #   note.classification = GoImport::NoteClassification::Comment
         # end
         
-        # return note
+        return note
     end
 
     
