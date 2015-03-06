@@ -91,8 +91,9 @@ module GoImport
             return reference
         end
 
-        def validate
+        def validate(labels = nil)
             error = String.new
+            warnings = String.new
 
             if @name.nil? || @name.empty?
                 error = "A name is required for deal.\n}"
@@ -106,11 +107,15 @@ module GoImport
                 error = "#{error}\n#{@status.status_reference.validate}"
             end
 
+            if !@status.nil? && !@status.status_reference.nil? && (labels.nil? || (!labels.nil? && !labels.include?(@status.status_reference.label)))
+                warnings = "Deal status '#{@status.status_reference.label}' missing, add to settings"
+            end
+
             if error.length > 0
                 error = "#{error}\n#{serialize()}"
             end
 
-            return error
+            return [error, warnings]
         end
 
 
