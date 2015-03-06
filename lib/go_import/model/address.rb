@@ -33,7 +33,11 @@ module GoImport
             when 'Sverige'
                 'SE'
             else
-                 IsoCountryCodes.search_by_name(name).first.alpha2
+                begin
+                    IsoCountryCodes.search_by_name(name).first.alpha2
+                rescue
+                    nil
+                end
             end
         end
         # parses a line like "226 48 LUND" into its corresponding
@@ -55,7 +59,5 @@ module GoImport
             end
             return nil
         end
-
-
     end
 end

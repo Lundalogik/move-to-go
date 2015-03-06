@@ -208,6 +208,10 @@ module GoImport
                 raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
             end
 
+            if note.created_by.nil?
+                note.created_by = @import_coworker
+            end
+            
             @notes.push(note)
 
             return note

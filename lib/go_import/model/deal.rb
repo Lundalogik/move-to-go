@@ -168,13 +168,13 @@ module GoImport
         def value=(value)
             if value.nil?
                 @value = "0"
-            elsif value.empty?
+            elsif value.respond_to?(:empty?) && value.empty?
                 @value = "0"
             else
                 # we have had some issues with LIME Easy imports where
                 # the value was in the format "357 000". We need to
                 # remove those spaces.
-                fixed_value = value.gsub(" ", "")
+                fixed_value = value.to_s.gsub(" ", "")
 
                 # we assume that both , and . are thousand separators
                 # and remove them from the value string. We dont care
