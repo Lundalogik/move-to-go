@@ -50,8 +50,8 @@ class GoImportCommandLine < Thor
            :desc => "Name of the file where the converted source will be saved. This file should be sent to LIME Go. If the file already exist it will be replaced.",
            :type => :string,
            :required => false)
-    option(:ignore_missing_files,
-           :desc => "Output will be created even if the import contains missing files",
+    option(:ignore_invalid_files,
+           :desc => "Output will be created even if the import contains missing or invalid files",
            :type => :boolean,
            :required => false)
     option(:log_to_file,
@@ -82,36 +82,43 @@ class GoImportCommandLine < Thor
             puts "WARNING: This means that files with an absolute path will be imported with their original path. Set this constant if you want to get files from the FILES_FOLDER directory."
         end
 
-        is_ok, error_msg = can_be_serialized?(model, options.ignore_missing_files)
+        is_ok, error_msg, warnings_msg = can_be_serialized?(model, options.ignore_invalid_files)
         if is_ok
-            if options.ignore_missing_files && model.documents.files.length > 0
-                log_and_remove_missing_files model
+            if options.ignore_invalid_files && model.documents.files.length > 0
+                log_and_remove_invalid_files model
             end
 
             go_data_zip = options.output.nil? == true ? "go.zip" : options.output
             model.save_to_zip(go_data_zip)
             puts "Source has been been converted into '#{go_data_zip}'."
+            if !warnings_msg.empty? 
+                puts "WARNINGS: "
+                puts warnings_msg
+            end
         else
             puts "ERROR: Source could not be converted due to:"
             puts error_msg
 
-            if !options.ignore_missing_files &&
-                    model.documents.files.any? {|file| !::File.exists?(file.path_for_project)}
-                puts "go-import detected missing files (see above), you can ignore these with the option --ignore-missing-files."
+            if !options.ignore_invalid_files &&
+                    model.documents.files.any? {|file| file.validate.empty?}
+                puts "go-import detected invalid files (see above), you can ignore these with the option --ignore-invalid-files."
             end
         end
     end
 
     private
-    def log_and_remove_missing_files(model)
+    def log_and_remove_invalid_files(model)
         if model.documents.files.length > 0
             puts "Trying to log files that can't be found..."
-            file_log_header = "name;integration_id;path;organization.integrationid;organization.name;deal.integrationid;deal.name"
+            file_log_header = "name;integration_id;path;organization.integrationid;organization.name;deal.integrationid;deal.name;file.size"
             file_log = ""
             files_to_remove = []
             model.documents.files.each do |file|
                 if !::File.exists?(file.path_for_project)
-                    file_log = "#{file_log}#{file.name};#{file.integration_id};#{file.path};#{file.organization.nil? ? '' : file.organization.integration_id};#{file.organization.nil? ? '' : file.organization.name};#{file.deal.nil? ? '' : file.deal.integration_id};#{file.deal.nil? ? '' : file.deal.name}\n"
+                    file_log = "#{file_log}#{file.name};#{file.integration_id};#{file.path};#{file.organization.nil? ? '' : file.organization.integration_id};#{file.organization.nil? ? '' : file.organization.name};#{file.deal.nil? ? '' : file.deal.integration_id};#{file.deal.nil? ? '' : file.deal.name};0\n"
+                    files_to_remove.push file
+                elsif ::File.size(file.path_for_project) > GoImport::File::MAX_FILE_SIZE
+                    file_log = "#{file_log}#{file.name};#{file.integration_id};#{file.path};#{file.organization.nil? ? '' : file.organization.integration_id};#{file.organization.nil? ? '' : file.organization.name};#{file.deal.nil? ? '' : file.deal.integration_id};#{file.deal.nil? ? '' : file.deal.name};#{::File.size(file.path_for_project)}\n"
                     files_to_remove.push file
                 end
             end
@@ -121,12 +128,12 @@ class GoImportCommandLine < Thor
             end
 
             if file_log.length > 0
-                log_filename = 'go-import-missing-files.csv'
+                log_filename = 'go-import-invalid-files.csv'
                 ::File.open(log_filename, 'w') { |f|
                     f.puts file_log_header
                     f.puts file_log
                 }
-                puts "WARNING: go-import has ignored files. Filenames of all ignored files has been written to '#{log_filename}'."
+                puts "WARNING: go-import has invalid files. Filenames of all ignored files has been written to '#{log_filename}'."
             else
                 puts "All files are OK."
             end
@@ -134,18 +141,18 @@ class GoImportCommandLine < Thor
     end
 
     private
-    def can_be_serialized?(rootmodel, ignore_missing_files)
+    def can_be_serialized?(rootmodel, ignore_invalid_files)
         is_ok = false
         error = rootmodel.sanity_check
         if error.empty?
-            error = rootmodel.validate(ignore_missing_files)
+            error, warnings = rootmodel.validate(ignore_invalid_files)
 
             if error.empty?
                 is_ok = true
             end
         end
 
-        return [is_ok, error]
+        return [is_ok, error, warnings]
     end
 
     private

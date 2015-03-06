@@ -306,22 +306,26 @@ module GoImport
             return error.strip
         end
 
-        def validate(ignore_missing_files = false)
-            error = String.new
+        def validate(ignore_invalid_files = false)
+            errors = String.new
+            warnings = String.new
 
             @organizations.each do |o|
                 validation_message = o.validate()
 
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
             @deals.each do |deal|
-                validation_message = deal.validate
+                error, warning = deal.validate @settings.deal.statuses.map {|status| status.label}
 
-                if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                if !error.empty?
+                    errors = "#{errors}\n#{error}"
+                end
+                if !warning.empty?
+                    warnings = "#{warnings}\n#{warning}"
                 end
             end
 
@@ -329,25 +333,25 @@ module GoImport
                 validation_message = note.validate
 
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
             @documents.links.each do |link|
                 validation_message = link.validate
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
             @documents.files.each do |file|
-                validation_message = file.validate(ignore_missing_files)
+                validation_message = file.validate(ignore_invalid_files)
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
-            return error.strip
+            return [errors.strip, warnings.strip]
         end
 
         # @!visibility private

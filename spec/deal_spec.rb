@@ -221,4 +221,12 @@ describe "Deal" do
         }.to raise_error(GoImport::InvalidDealStatusError)
     end
 
+    it "will warn on validation if status is unknown" do
+        # given
+        deal.name = "Deal"
+        deal.status = "required status"
+
+        # when, then
+        deal.validate[1].length.should be > 0
+    end
 end
