@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require 'go_import'
+require 'progress'
 require_relative("../converter")
 
 EXPORT_FOLDER = 'export'
@@ -34,12 +35,13 @@ def convert_source
     # coworkers
     # start with these since they are referenced
     # from everywhere....
-    process_rows COWORKER_FILE do |row|
+    
+    process_rows(" - Reading Coworkers '#{COWORKER_FILE}'", COWORKER_FILE) do |row|
         rootmodel.add_coworker(to_coworker(row))
     end
 
     # organizations
-    process_rows ORGANIZATION_FILE do |row|
+    process_rows(" - Reading Organizations '#{ORGANIZATION_FILE}'", ORGANIZATION_FILE) do |row|
         organization = init_organization(row, rootmodel)
         rootmodel.add_organization(
             converter.to_organization(organization, row))
@@ -47,46 +49,46 @@ def convert_source
 
     # persons
     # depends on organizations
-    process_rows PERSON_FILE do |row|
+    process_rows(" - Reading Persons '#{PERSON_FILE}'", PERSON_FILE) do |row|
         # init method also adds the person to the employer
         person = init_person(row, rootmodel)
         converter.to_person(person, row)
     end
 
     # organization notes
-    process_rows ORGANIZATION_NOTE_FILE do |row|
+    process_rows(" - Reading Organization Notes '#{ORGANIZATION_NOTE_FILE}'", ORGANIZATION_NOTE_FILE) do |row|
         # adds itself if applicable
         rootmodel.add_note(to_organization_note(converter, row, rootmodel))
     end
 
     # Organization - Deal connection
     # Reads the includes.txt and creats a hash
-    # that connect organizations to deals
-    process_rows INCLUDE_FILE do |row|
+    # that connect organizations to deals 
+    process_rows(" - Reading Organization Deals '#{INCLUDE_FILE}'", INCLUDE_FILE) do |row|
         includes[row['idProject']] = row['idCompany']
     end
 
     # deals
     # deals can reference coworkers (responsible), organizations
-    # and persons (contact)
-    process_rows DEAL_FILE do |row|
+    # and persons (contact) 
+    process_rows(" - Reading Deals '#{DEAL_FILE}'", DEAL_FILE) do |row|
         deal = init_deal(row, rootmodel, includes)
         rootmodel.add_deal(converter.to_deal(deal, row))
     end
 
     # deal notes
-    process_rows DEAL_NOTE_FILE do |row|
+    process_rows(" - Reading Deal Notess '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
         # adds itself if applicable
         rootmodel.add_note(to_deal_note(converter, row, rootmodel))
     end
 
     # documents
     if defined?(IMPORT_DOCUMENTS) && !IMPORT_DOCUMENTS.nil? && IMPORT_DOCUMENTS
-        process_rows ORGANIZATION_DOCUMENT_FILE do |row|
+        process_rows(" - Reading Organization Documents", ORGANIZATION_DOCUMENT_FILE) do |row|
             rootmodel.add_file(to_organization_document(row, rootmodel))
         end
 
-        process_rows PROJECT_DOCUMENT_FILE do |row|
+        process_rows(" - Reading Project Documents", PROJECT_DOCUMENT_FILE) do |row|
             rootmodel.add_file(to_deal_document(row, rootmodel))
         end
     end
@@ -321,13 +323,13 @@ def validate_constants()
 end
 
 
-def process_rows(file_name)
+def process_rows(description, file_name)
     data = File.open(file_name, 'r').read.encode('UTF-8',"ISO-8859-1").strip().gsub('"', '')
     data = '"' + data.gsub("\t", "\"\t\"") + '"'
     data = data.gsub("\n", "\"\n\"")
 
     rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
-        rows.each do |row|
+        rows.with_progress(description).each do |row|
         yield row
     end
 end
