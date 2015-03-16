@@ -45,6 +45,7 @@ def convert_source
         organization = init_organization(row, rootmodel)
         rootmodel.add_organization(
             converter.to_organization(organization, row))
+        converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
     end
 
     # persons
@@ -329,7 +330,7 @@ def process_rows(description, file_name)
     data = data.gsub("\n", "\"\n\"")
 
     rows = GoImport::CsvHelper::text_to_hashes(data, "\t", "\n", '"')
-        rows.with_progress(description).each do |row|
+    rows.with_progress(description).each do |row|
         yield row
     end
 end
