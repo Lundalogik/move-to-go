@@ -376,5 +376,21 @@ class Converter
         #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
         # end
     end
+
+    # HOOKS
+    #
+    # Sometimes you need to add exra information to the rootmodel, this can be done
+    # with hooks, below is an example of an organization hook that adds a note to
+    # an organization if a field has a specific value
+    #def organization_hook(row, organization, rootmodel)
+    #    if not row['fieldname'].empty?
+    #        note = GoImport::Note.new
+    #        note.text = row['fieldname']
+    #        note.organization = organization
+    #        note.created_by = rootmodel.import_coworker
+    #        rootmodel.add_note(note)
+    #    end
+    #end
+
 end
 

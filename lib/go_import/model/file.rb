@@ -6,7 +6,7 @@ require_relative '../serialize_helper'
 
 module GoImport
     class File
-        MAX_FILE_SIZE = 100000000 # 100 Mb
+        DEFAULT_MAX_FILE_SIZE = 100000000 # 100 Mb
 
         include SerializeHelper
         attr_accessor :id, :integration_id, :description
@@ -62,6 +62,8 @@ module GoImport
             if (@name.nil? || @name.empty?) && (!@path.nil? && !@path.empty?)
                 @name = Pathname.new(path).basename.to_s
             end
+            @location_in_zip_file = "files/#{SecureRandom.uuid}#{::File.extname(@path).to_s}"
+
         end
 
         def name=(name)
@@ -152,12 +154,10 @@ module GoImport
         end
 
         def add_to_zip_file(zip_file)
-            @location_in_zip_file = "files/#{SecureRandom.uuid}#{::File.extname(@path).to_s}"
-
             zip_file.add(@location_in_zip_file, path_for_project)
         end
 
-        def validate(ignore_invalid_files = false)
+        def validate(ignore_invalid_files = false, max_file_size = DEFAULT_MAX_FILE_SIZE)
             error = String.new
             warning = String.new
 
@@ -167,14 +167,13 @@ module GoImport
 
             if @path.nil? || @path.empty?
                 error = "Path is required for file.\n"
-            elsif !ignore_invalid_files 
+            elsif !ignore_invalid_files
                 if !::File.exists?(path_for_project())
                     error = "#{error}Can't find file with name '#{@name}' and original path '#{@path}' at '#{path_for_project()}'."
-                elsif ::File.size(path_for_project()) > MAX_FILE_SIZE
-                    error = "#{error}File '#{@name}' is bigger than #{MAX_FILE_SIZE} bytes."
+                elsif ::File.exists?(path_for_project) && ::File.size(path_for_project()) > max_file_size
+                    error = "#{error}File '#{@name}' is bigger than #{max_file_size} bytes."
                 end
             end
-
 
             if @created_by_reference.nil?
                 error = "#{error}Created_by is required for file (#{@name}).\n"
