@@ -103,7 +103,7 @@ class GoImportCommandLine < Thor
             go_files = options.output_documents.nil? == true ? nil : ::File.basename(options.output_documents,File.extname(options.output_documents))
             model.save_to_zip(go_data_zip, go_files)
             puts "Source has been been converted into '#{go_data_zip}'."
-            puts "  - and files into '#{go_files}.zip'."
+            puts "  - and files into '#{go_files}.zip'." if !go_files.nil?
             if !warnings_msg.empty? 
                 puts "WARNINGS: "
                 puts warnings_msg
