@@ -92,7 +92,7 @@ class GoImportCommandLine < Thor
             puts "WARNING: This means that files with an absolute path will be imported with their original path. Set this constant if you want to get files from the FILES_FOLDER directory."
         end
 
-        is_ok, error_msg, warnings_msg = can_be_serialized?(model, options.ignore_invalid_files, options.max_file_size)
+        is_ok, error_msg, warnings_msg = can_be_serialized?(model, options.ignore_invalid_files, max_file_size)
         if is_ok
 
             if options.ignore_invalid_files && model.documents.files.length > 0

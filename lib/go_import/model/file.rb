@@ -157,13 +157,9 @@ module GoImport
             zip_file.add(@location_in_zip_file, path_for_project)
         end
 
-        def validate(ignore_invalid_files = false, max_file_size = false)
+        def validate(ignore_invalid_files = false, max_file_size = DEFAULT_MAX_FILE_SIZE)
             error = String.new
             warning = String.new
-
-            if max_file_size == false
-                max_file_size = DEFAULT_MAX_FILE_SIZE
-            end
 
             if @name.nil? || @name.empty?
                 error = "#{error}A file must have a name.\n"
@@ -171,14 +167,13 @@ module GoImport
 
             if @path.nil? || @path.empty?
                 error = "Path is required for file.\n"
-            elsif !ignore_invalid_files 
+            elsif !ignore_invalid_files
                 if !::File.exists?(path_for_project())
                     error = "#{error}Can't find file with name '#{@name}' and original path '#{@path}' at '#{path_for_project()}'."
-                elsif ::File.size(path_for_project()) > max_file_size
+                elsif ::File.exists?(path_for_project) && ::File.size(path_for_project()) > max_file_size
                     error = "#{error}File '#{@name}' is bigger than #{max_file_size} bytes."
                 end
             end
-
 
             if @created_by_reference.nil?
                 error = "#{error}Created_by is required for file (#{@name}).\n"
