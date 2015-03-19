@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
     s.name        = 'go_import'
-    s.version     = '3.0.27'
+    s.version     = '3.0.28'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game']
     s.email       = 'support@lundalogik.se'
@@ -18,6 +18,7 @@ EOF
     s.add_dependency 'sixarm_ruby_email_address_validation'
     s.add_dependency 'global_phone'
     s.add_dependency 'rubyzip'
+    s.add_dependency 'progress'
 
     # Actually only used by a test_files
     s.add_dependency 'nokogiri'
