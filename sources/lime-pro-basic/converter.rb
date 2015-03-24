@@ -1,7 +1,7 @@
 # encoding: UTF-8
 require 'go_import'
 
-# Customize this file to suit your input files.
+# Customize this file to suit your LIME Pro database structure.
 #
 # Documentation go_import can be found at
 # http://rubygems.org/gems/go_import
@@ -10,30 +10,35 @@ require 'go_import'
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 #
-# *** NOTE: Integration-ID and LIME-links are automatically created for each
+# *** NOTE:
+#
+# Integration-ID and LIME-links are automatically created for each
 # object
 
 # *** TODO:
 #
 # You must customize this template so it works with your LIME Pro
 # database. Modify each to_* method and set properties on the LIME Go
-# objects.
+# object.
 #
 
 ############################################################################
-## Constants
+# Constants
 # Edit these constants to fit your needs
 
 # Connection to the SQL-server
 # You can use either an AD-account or SQL-user credentials to authenticate.
-# You will be prompted for the password when you run the import
-SQL_SERVER_URI = 'lusrvsql5\konsult' 
-SQL_SERVER_USER = 'domain\user'
-SQL_SERVER_DATABASE = 'lime_basic'
+# You will be prompted for the password when you run the import.
+#
+# Remove SQL_SERVER_USER or leave it empty if you want to connect with
+# the user that is running go-import.
+SQL_SERVER = ''
+SQL_SERVER_DATABASE = ''
+SQL_SERVER_USER = ''
 
 # LIME Server 
-LIME_SERVER_NAME = 'luserver1012'
-LIME_DATABASE_NAME = 'LIMEBasic'
+LIME_SERVER = ''
+LIME_DATABASE = ''
 LIME_LANGUAGE = 'sv' # Used for the values in set and option fields
 
 # Companies
@@ -42,8 +47,8 @@ ORGANIZATION_RESPONSIBLE_FIELD = 'coworker'
 
 # Deals
 # Set if deals should be imported and name of relationfields.
-# Defaults should work well
-IMPORT_DEALS = true
+# Defaults should work well.
+IMPORT_DEALS = false
 DEAL_RESPONSIBLE_FIELD = 'coworker'
 DEAL_COMPANY_FIELD = 'company'
 
@@ -60,43 +65,63 @@ NOTE_DEAL_FIELD = 'business'
 
 class Converter
 
+    # The to_coworker, to_organization, etc methods takes a LIME Go
+    # object (a coworker or organization etc) where some basic
+    # properties already has been set. The methods will also have a
+    # row argument that represents the database row in LIME Pro. Some
+    # methods will also get the rootmodel. You can use the rootmodel
+    # if you need to lookup coworkers or other object.
+    #
+    # The to_ methods should return the object that is provided as argument.
+    #
+    # We have included some sample code that shows how to set
+    # different properties. However, the goal is that you should NOT
+    # have to modify anything to get a basic import of a LIME Pro Core
+    # database.
 
-    # Reads a row from the coworker table 
-    # and ads custom fields to the go_import organization.
 
-    # NOTE!!! You should customize this method to include
-    # and transform the fields you want to import to LIME Go.
-    # The method includes examples of different types of
-    # fields and how you should handle them.
-    # Sometimes it's enough to uncomment some code and
-    # change the row name but in most cases you need to
-    # do some thinking of your own.
+    # The following properties are set on the coworker by default:
+    #
+    # LIME Go field                                LIME Pro field label
+    # coworker.first_name and coworker.last_name   Name
+    # coworker.email                               PrimaryEmail
+    # coworker.direct_phone_number                 BusinessTelephoneNumber
+    # coworker.mobile_phone_number                 MobileTelephoneNumber
     def to_coworker(coworker, row)
+        # If your database dont have fields with the specifed labels,
+        # you must set properties as below.
+
         # coworker.first_name = row["firstname"]
         # coworker.last_name = row["lastname"]
         # coworker.direct_phone_number = row["phone"]
         # coworker.mobile_phone_number = row["cellphone"]
         # coworker.email = row["email"]
-        # return coworker
+
+        return coworker
     end
 
-    # Reads a row from the Company table 
-    # and ads custom fields to the go_import organization.
-
-    # NOTE!!! You should customize this method to include
-    # and transform the fields you want to import to LIME Go.
-    # The method includes examples of different types of
-    # fields and how you should handle them.
-    # Sometimes it's enough to uncomment some code and
-    # change the row name but in most cases you need to
-    # do some thinking of your own.
+    # The following properties are set on the organization by default:
+    #
+    # LIME Go field                                LIME Pro field label
+    # organization.name                            Name
+    # organization.organization_number             CompanyNumber
+    # organization.email                           PrimaryEmailAddress
+    # organization.web_site                        BusinessHomePage
+    # organization.central_phone_number            BusinessTelephoneNumber
+    # organization.postal_address.street           StreetAddress + StreetAddress2
+    # organization.postal_address.zip_code         ZipCode
+    # organization.postal_address.city             City
+    # organization.postal_address.country          Country
+    # organization.visit_address.street            VisitingAddressStreetAddress + VisitingAddressStreetAddress2
+    # organization.visit_address.zip_code          VisitingAddressZipCode
+    # organization.visit_address.city              VisitingAddressCity
+    # organization.visit_address.country           VisitingAddressCountry
     def to_organization(organization, row)
-        # Here are some standard fields that are present
-        # on a LIME Go organization and are usually represented
-        # as custom fields in Pro.
+        # If your database dont have fields with the specifed labels,
+        # you must set properties as below.
+        
         # organization.name = row['name']
         # organization.organization_number = row['registrationno']
-
 
         ####################################################################
         ## Bisnode ID fields
@@ -115,7 +140,7 @@ class Converter
 
         # If a company is missing a bisnode ID then you should do this
         # in order to capture any possible data that is written manually
-        # on that company card.
+        # on that company.
 
         # if bisnode_id && bisnode_id.empty?
         #      organization.web_site = row['website']
@@ -164,7 +189,7 @@ class Converter
         #####################################################################
         ## Set fields.
         # Set fields are normally translated into tags
-        # An field is a ";"- separated list. We must first split them into
+        # A field is a ";"- separated list. We must first split them into
         # an array.
 
         # values = row["mailings"].split(";")
@@ -196,23 +221,22 @@ class Converter
         #    organization.relation = GoImport::Relation::NoRelation
         # end
 
-        # return organization
+        return organization
     end
 
-    # Reads a row from the Person table 
-    # and ads custom fields to the go_import person.
-
-    # NOTE!!! You should customize this method to include
-    # and transform the fields you want to import to LIME Go.
-    # The method includes examples of different types of
-    # fields and how you should handle them.
-    # Sometimes it's enough to uncomment some code and
-    # change the row name but in most cases you need to
-    # do some thinking of your own.
+    # The following properties are set on the person by default:
+    #
+    # LIME Go field                                LIME Pro field label
+    # person.first_name                            Name
+    # person.last_name                             Name
+    # person.direct_phone_number                   BusinessTelephoneNumber
+    # person.mobile_phone_number                   MobileTelephoneNumber
+    # person.position                              JobTitle
+    # person.email                                 PrimaryEmailAddress
     def to_person(person, row)
         ## Here are some standard fields that are present
-        # on a LIME Go person and are usually represented
-        # as custom fields in Pro.
+        # on a LIME Go person that might be represented as custom
+        # fields in Pro.
         # person.first_name = row["firstname"]
         # person.last_name = row["lastname"]
 
@@ -254,19 +278,15 @@ class Converter
 
         # person.set_custom_value("shoe_size", row['shoe size'])
 
-        # return person
+        return person
     end
 
-    # Reads a row from the Business table 
-    # and ads custom fields to the go_import deal.
-
-    # NOTE!!! You should customize this method to include
-    # and transform the fields you want to import to LIME Go.
-    # The method includes examples of different types of
-    # fields and how you should handle them.
-    # Sometimes it's enough to uncomment some code and
-    # change the row name but in most cases you need to
-    # do some thinking of your own.
+    # The following properties are set on the person by default:
+    #
+    # LIME Go field                                LIME Pro field NAME
+    # deal.name                                    name
+    # deal.description                             wonlostreason
+    # deal.value                                   businessvalue
     def to_deal(deal, row)
         
         # deal.name = row['name'] 
@@ -301,8 +321,7 @@ class Converter
 
         # deal.set_tag("productname")
 
-        # return deal
-        
+        return deal
     end
 
     # Reads a row from the History table 
@@ -334,7 +353,7 @@ class Converter
         #   note.classification = GoImport::NoteClassification::Comment
         # end
         
-        # return note
+        return note
     end
 
     
@@ -357,5 +376,21 @@ class Converter
         #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
         # end
     end
+
+    # HOOKS
+    #
+    # Sometimes you need to add exra information to the rootmodel, this can be done
+    # with hooks, below is an example of an organization hook that adds a note to
+    # an organization if a field has a specific value
+    #def organization_hook(row, organization, rootmodel)
+    #    if not row['fieldname'].empty?
+    #        note = GoImport::Note.new
+    #        note.text = row['fieldname']
+    #        note.organization = organization
+    #        note.created_by = rootmodel.import_coworker
+    #        rootmodel.add_note(note)
+    #    end
+    #end
+
 end
 

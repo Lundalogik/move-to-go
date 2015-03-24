@@ -2,6 +2,7 @@
 
 require 'zip'
 require 'securerandom'
+require "progress"
 
 module GoImport
     # The root model for Go import. This class is the container for everything else.
@@ -208,6 +209,10 @@ module GoImport
                 raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
             end
 
+            if note.created_by.nil?
+                note.created_by = @import_coworker
+            end
+            
             @notes.push(note)
 
             return note
@@ -306,22 +311,27 @@ module GoImport
             return error.strip
         end
 
-        def validate(ignore_missing_files = false)
-            error = String.new
+        def validate(ignore_invalid_files = false, max_file_size)
+            errors = String.new
+            warnings = String.new
 
             @organizations.each do |o|
                 validation_message = o.validate()
 
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
+            converter_deal_statuses = @settings.deal.statuses.map {|status| status.label} if @settings.deal != nil
             @deals.each do |deal|
-                validation_message = deal.validate
+                error, warning = deal.validate converter_deal_statuses
 
-                if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                if !error.empty?
+                    errors = "#{errors}\n#{error}"
+                end
+                if !warning.empty?
+                    warnings = "#{warnings}\n#{warning}"
                 end
             end
 
@@ -329,25 +339,25 @@ module GoImport
                 validation_message = note.validate
 
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
             @documents.links.each do |link|
                 validation_message = link.validate
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
             @documents.files.each do |file|
-                validation_message = file.validate(ignore_missing_files)
+                validation_message = file.validate(ignore_invalid_files, max_file_size)
                 if !validation_message.empty?
-                    error = "#{error}\n#{validation_message}"
+                    errors = "#{errors}\n#{validation_message}"
                 end
             end
 
-            return error.strip
+            return [errors.strip, warnings.strip]
         end
 
         # @!visibility private
@@ -359,8 +369,8 @@ module GoImport
 
         # @!visibility private
         # zip-filename is the name of the zip file to create
-        def save_to_zip(zip_filename)
-            puts "Trying to save to '#{zip_filename}'..."
+        def save_to_zip(zip_filename, files_filename)
+            puts "Trying to save to zip..."
             # saves the model to a zipfile that contains xml data and
             # document files.
 
@@ -368,47 +378,70 @@ module GoImport
                 ::File.delete zip_filename
             end
 
-            Zip::File.open(zip_filename, Zip::File::CREATE) do |zip_file|
-                puts "Trying to add files to zip..."
-                # We must add files first to the zip file since we
-                # will set each file's location_in_zip_file when the
-                # zip file is created.
+            go_data_file = Tempfile.new('go')
+            puts "Creating go.xml file with data..."
+            if !files_filename.nil?
+                saved_documents = @documents
+                @documents = Documents.new
+            end
+            serialize_to_file(go_data_file)
+            create_zip(zip_filename, go_data_file, documents.files)
+            
+            if !files_filename.nil?
+                go_files_file = Tempfile.new('go-files')
+                puts "Creating go.xml file with documents information..."
+                @organizations = []
+                @coworkers = []
+                @deals = []
+                @notes = []
+                @documents = saved_documents
+                serialize_to_file(go_files_file)
 
-                if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
-                    puts "Files with relative path are imported from '#{FILES_FOLDER}'."
-                    root_folder = FILES_FOLDER
-                else
-                    puts "Files with relative path are imported from the current folder (#{Dir.pwd})."
-                    root_folder = Dir.pwd
+                files_zip_filename = files_filename+".zip"
+                if ::File.exists?(files_zip_filename)
+                    ::File.delete files_zip_filename
                 end
+                create_zip(files_zip_filename, go_files_file, documents.files)
+            end            
+        end
 
-                # If a file's path is absolute, then we probably dont
-                # have the files in the same location here. For
-                # example, the customer might have stored their files
-                # at f:\lime-easy\documents. We must replace this part
-                # of each file with the root_folder from above.
-                if defined?(FILES_FOLDER_AT_CUSTOMER) && !FILES_FOLDER_AT_CUSTOMER.empty?()
-                    files_folder_at_customer = FILES_FOLDER_AT_CUSTOMER
-                    puts "Files with absolute paths will have the part '#{files_folder_at_customer}' replaced with '#{root_folder}'."
-                else
-                    files_folder_at_customer = ""
-                    puts "Files with absolute paths will be imported from their origial location."
+        def create_zip(filename, xml, files)
+            Zip::File.open(filename, Zip::File::CREATE) do |zip_file|
+                puts "Add go.xml file to zip '#{filename}'..."
+                zip_file.add('go.xml', xml)
+
+                if files.length > 0
+                    if defined?(FILES_FOLDER) && !FILES_FOLDER.empty?()
+                        puts "Files with relative path are imported from '#{FILES_FOLDER}'."
+                        root_folder = FILES_FOLDER
+                    else
+                        puts "Files with relative path are imported from the current folder (#{Dir.pwd})."
+                        root_folder = Dir.pwd
+                    end
+
+                    # If a file's path is absolute, then we probably dont
+                    # have the files in the same location here. For
+                    # example, the customer might have stored their files
+                    # at f:\lime-easy\documents. We must replace this part
+                    # of each file with the root_folder from above.
+                    if defined?(FILES_FOLDER_AT_CUSTOMER) && !FILES_FOLDER_AT_CUSTOMER.empty?()
+                        files_folder_at_customer = FILES_FOLDER_AT_CUSTOMER
+                        puts "Files with absolute paths will have the part '#{files_folder_at_customer}' replaced with '#{root_folder}'."
+                    else
+                        files_folder_at_customer = ""
+                        puts "Files with absolute paths will be imported from their origial location."
+                    end
+
+                    # 1) files/ - a folder with all files referenced from
+                    # the source.
+                    files.with_progress(" - Trying to add files to zip...").each do |file|
+                        # we dont need to check that the file exists since
+                        # we assume that rootmodel.validate has been
+                        # called before save_to_zip.
+                        file.add_to_zip_file(zip_file)
+                    end
                 end
-
-                # 1) files/ - a folder with all files referenced from
-                # the source.
-                documents.files.each do |file|
-                    # we dont need to check that the file exists since
-                    # we assume that rootmodel.validate has been
-                    # called before save_to_zip.
-                    file.add_to_zip_file(zip_file)
-                end
-
-                # 2) go.xml - with all data from source
-                puts "Trying to add organizations, persons, etc to zip..."
-                go_data_file = Tempfile.new('go')
-                serialize_to_file(go_data_file)
-                zip_file.add('go.xml', go_data_file)
+                puts "Compressing zip file ... "
             end
         end
 

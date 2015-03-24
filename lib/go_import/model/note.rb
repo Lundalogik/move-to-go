@@ -90,7 +90,6 @@ module GoImport
             else
                 raise InvalidNoteClassificationError, classification
             end
-
         end
 
         def text=(text)

@@ -1,1 +1,1 @@
-This source converts a LIME Easy database to LIME Go.
+This source converts a LIME Pro "Core" database to LIME Go.

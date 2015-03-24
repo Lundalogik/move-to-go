@@ -150,4 +150,29 @@ describe "File" do
         file.created_by.is_a?(GoImport::Coworker).should eq true
         file.instance_variable_get(:@created_by_reference).is_a?(GoImport::CoworkerReference).should eq true
     end
+
+    describe "is large" do
+        before(:all) do
+            n = 100
+            File.open("spec/sample_data/large.mpeg", 'w') do |f| 
+              contents = "x" * (1024*1024)
+              n.to_i.times { f.write(contents) }
+            end
+        end
+        
+        after(:all) do
+            File.delete "spec/sample_data/large.mpeg"
+        end
+
+        it "is not valid" do
+            # must be less than 100 Mb
+            file.path = "spec/sample_data/large.mpeg"
+            file.created_by = GoImport::CoworkerReference.new( { :integration_id => "123" } )
+            file.organization = GoImport::OrganizationReference.new( { :integration_id => "456" } )
+
+            # when, then
+            file.validate.length.should be > 0
+        end
+    end
+
 end
