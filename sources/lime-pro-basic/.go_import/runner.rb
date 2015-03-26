@@ -396,7 +396,7 @@ class LIMEProConnection
             end
         }.join(",")
 
-        sql = "SELECT #{sqlForFields} FROM [#{table.name}]"
+        sql = "SELECT #{sqlForFields} FROM [#{table.name}] WHERE [#{table.name}].[status] = 0"
         return sql
     end
 
