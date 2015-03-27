@@ -1,4 +1,4 @@
-# encoding: iso-8859-1
+# encoding: UTF-8
 require 'go_import'
 
 # Customize this file to suit your input files.
@@ -21,7 +21,7 @@ require 'go_import'
 # 1) Export all data from KONTAKT.mdb to a folder named Export located
 # in the folder created by go_import new. Export data using the
 # magical tool called PowerSellMigrationExport.exe that can be found
-# in K:\Lundalogik\LIME Easy\Tillbehör\Migrationsexport.
+# in K:\Lundalogik\LIME Easy\TillbehÃ¶r\Migrationsexport.
 #
 # 2) Modify this file (the to_* methods) according to your customer's
 # KONTAKT.mdb and wishes.
