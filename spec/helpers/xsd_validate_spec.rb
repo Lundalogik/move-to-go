@@ -25,6 +25,7 @@ describe GoImport::SerializeHelper do
             organization.set_tag("tag:Bj\u{00F6}rk")
             organization.set_custom_value("2", "cf value")
             organization.set_custom_value("3", "cf Bj\u{00F6}rk")
+            organization.integration_id = "313"
             organization.with_postal_address do |addr|
                 addr.city = "Ankeborg"
             end

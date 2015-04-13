@@ -37,6 +37,10 @@ module GoImport
                             raw_var.each do |raw_var_elem|
                                 SerializeHelper::serialize_rexml(element, raw_var_elem)
                             end
+                        elsif (raw_var.is_a?(Hash))
+                            raw_var.each do |key, raw_var_elem|
+                                SerializeHelper::serialize_rexml(element, raw_var_elem)
+                            end
                         else
                             element.text = raw_var.to_s.encode('UTF-8')
                         end

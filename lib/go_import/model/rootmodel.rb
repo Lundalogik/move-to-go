@@ -34,12 +34,12 @@ module GoImport
 
         def initialize()
             @settings = Settings.new
-            @organizations = []
-            @coworkers = []
+            @organizations = {}
+            @coworkers = {}
             @import_coworker = Coworker.new
             @import_coworker.integration_id = "import"
             @import_coworker.first_name = "Import"
-            @coworkers.push @import_coworker
+            @coworkers[@import_coworker.integration_id] = @import_coworker
             @deals = []
             @notes = []
             @documents = Documents.new
@@ -70,7 +70,7 @@ module GoImport
         #    end
         # @see Coworker
         def add_coworker(coworker)
-            @coworkers = [] if @coworkers == nil
+            @coworkers = {} if @coworkers == nil
 
             if coworker.nil?
                 return nil
@@ -82,7 +82,7 @@ module GoImport
                 raise AlreadyAddedError, "Already added a coworker with integration_id #{coworker.integration_id}"
             end
 
-            @coworkers.push(coworker)
+            @coworkers[coworker.integration_id] = coworker
 
             return coworker
         end
@@ -117,13 +117,17 @@ module GoImport
             end
 
             organization = Organization.new(organization) if !organization.is_a?(Organization)
+            if organization.integration_id.nil?
+                raise IntegrationIDIsRequiredError, "An integration ID is required for an organization"
+            end
+
 
             if (!organization.integration_id.nil? && organization.integration_id.length > 0) &&
                 find_organization_by_integration_id(organization.integration_id) != nil
                 raise AlreadyAddedError, "Already added an organization with integration_id #{organization.integration_id}"
             end
 
-            @organizations.push(organization)
+            @organizations[organization.integration_id] = organization
 
             return organization
         end
@@ -200,7 +204,7 @@ module GoImport
 
             if note.nil?
                 return nil
-             end
+            end
 
             note = Note.new(note) if !note.is_a?(Note)
 
@@ -231,20 +235,25 @@ module GoImport
         end
 
         def find_coworker_by_integration_id(integration_id)
-            return @coworkers.find do |coworker|
-                coworker.integration_id == integration_id
+            if @coworkers.has_key?(integration_id)
+                return @coworkers[integration_id]
+            else
+                return nil
             end
         end
 
         def find_organization_by_integration_id(integration_id)
-            return @organizations.find do |organization|
-                organization.integration_id == integration_id
+            if @organizations.has_key?(integration_id)
+                return @organizations[integration_id]
+            else
+                return nil
             end
+
         end
 
         def find_person_by_integration_id(integration_id)
             return nil if @organizations.nil?
-            @organizations.each do |organization|
+            @organizations.each do |key, organization|
                 person = organization.find_employee_by_integration_id(integration_id)
                 return person if person
             end
@@ -277,17 +286,17 @@ module GoImport
         def sanity_check
             error = String.new
 
-            dups = get_integration_id_duplicates(with_non_empty_integration_id(@coworkers))
-            dups_error_items = (dups.collect{|coworker| coworker.integration_id}).compact
-            if dups.length > 0
-                error = "#{error}\nDuplicate coworker integration_id: #{dups_error_items.join(", ")}."
-            end
+            # dups = get_integration_id_duplicates(with_non_empty_integration_id(@coworkers))
+            # dups_error_items = (dups.collect{|coworker| coworker.integration_id}).compact
+            # if dups.length > 0
+            #     error = "#{error}\nDuplicate coworker integration_id: #{dups_error_items.join(", ")}."
+            # end
 
-            dups = get_integration_id_duplicates(with_non_empty_integration_id(@organizations))
-            dups_error_items = (dups.collect{|org| org.integration_id}).compact
-            if dups.length > 0
-                error = "#{error}\nDuplicate organization integration_id: #{dups_error_items.join(", ")}."
-            end
+            # dups = get_integration_id_duplicates(with_non_empty_integration_id(@organizations))
+            # dups_error_items = (dups.collect{|org| org.integration_id}).compact
+            # if dups.length > 0
+            #     error = "#{error}\nDuplicate organization integration_id: #{dups_error_items.join(", ")}."
+            # end
 
             dups = get_integration_id_duplicates(with_non_empty_integration_id(@deals))
             dups_error_items = (dups.collect{|deal| deal.integration_id}).compact
@@ -295,7 +304,7 @@ module GoImport
                 error = "#{error}\nDuplicate deal integration_id: #{dups_error_items.join(", ")}."
             end
 
-            persons = @organizations.collect{|o| o.employees}.flatten.compact
+            persons = @organizations.collect{|k, o| o.employees}.flatten.compact
             dups = get_integration_id_duplicates(with_non_empty_integration_id(persons))
             dups_error_items = (dups.collect{|person| person.integration_id}).compact
             if dups_error_items.length > 0
@@ -315,7 +324,7 @@ module GoImport
             errors = String.new
             warnings = String.new
 
-            @organizations.each do |o|
+            @organizations.each do |k, o|
                 validation_message = o.validate()
 
                 if !validation_message.empty?

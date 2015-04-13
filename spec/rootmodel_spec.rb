@@ -96,19 +96,17 @@ describe "RootModel" do
         rootmodel.organizations.length.should eq 1
     end
 
-    it "will add two organizations without integration id" do
+    it "will not add a organization without integration id" do
         # given
         org1 = GoImport::Organization.new
         org1.name = "Beagle Boys"
-        org2 = GoImport::Organization.new
-        org2.name = "The Corporation"
 
-        # when
-        rootmodel.add_organization(org1)
-        rootmodel.add_organization(org2)
+        # when, then
+        expect {
+            rootmodel.add_organization(org1)
+        }.to raise_error(GoImport::IntegrationIDIsRequiredError)
 
-        # then
-        rootmodel.organizations.length.should eq 2
+       
     end
 
     it "can add a deal from hash" do
@@ -305,6 +303,7 @@ describe "RootModel" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
         organization.add_employee({
             :integration_id => "123",
             :first_name => "Billy",
@@ -326,6 +325,7 @@ describe "RootModel" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
         organization.add_employee({
             :integration_id => "123",
             :first_name => "Billy",
@@ -348,52 +348,52 @@ describe "RootModel" do
         found_person.last_name.should eq "Bob"
     end
 
-    it "will ignore empty integration ids during sanity check" do
-        org1 = GoImport::Organization.new
-        org1.name = "company 1"
-        rootmodel.organizations.push org1
+    # it "will ignore empty integration ids during sanity check" do
+    #     org1 = GoImport::Organization.new
+    #     org1.name = "company 1"
+    #     rootmodel.organizations.push org1
 
-        org2 = GoImport::Organization.new
-        org2.name = "company 2"
-        rootmodel.organizations.push org2
+    #     org2 = GoImport::Organization.new
+    #     org2.name = "company 2"
+    #     rootmodel.organizations.push org2
 
-        rootmodel.sanity_check.should eq ""
-    end
+    #     rootmodel.sanity_check.should eq ""
+    # end
 
-    it "will report when the same integration id is used during sanity check" do
-        org1 = GoImport::Organization.new
-        org1.integration_id = "1"
-        org1.name = "company 1"
-        rootmodel.organizations.push org1
+    # it "will report when the same integration id is used during sanity check" do
+    #     org1 = GoImport::Organization.new
+    #     org1.integration_id = "1"
+    #     org1.name = "company 1"
+    #     rootmodel.add_organization org1
 
-        org2 = GoImport::Organization.new
-        org2.integration_id = "1"
-        org2.name = "company 2"
-        rootmodel.organizations.push org2
+    #     org2 = GoImport::Organization.new
+    #     org2.integration_id = "1"
+    #     org2.name = "company 2"
+    #     rootmodel.add_organization org2
 
-        rootmodel.sanity_check.should eq "Duplicate organization integration_id: 1."
-    end
+    #     rootmodel.sanity_check.should eq "Duplicate organization integration_id: 1."
+    # end
 
-    it "will report when the same integrationid on person is used during sanity check" do
-        org1 = GoImport::Organization.new
-        org1.integration_id = "1"
-        org1.name = "company 1"
-        person1 = GoImport::Person.new
-        person1.integration_id = '1'
-        org1.add_employee person1
+    # it "will report when the same integrationid on person is used during sanity check" do
+    #     org1 = GoImport::Organization.new
+    #     org1.integration_id = "1"
+    #     org1.name = "company 1"
+    #     person1 = GoImport::Person.new
+    #     person1.integration_id = '1'
+    #     org1.add_employee person1
 
-        rootmodel.organizations.push org1
+    #     rootmodel.add_organization org1
 
-        org2 = GoImport::Organization.new
-        org2.integration_id = "2"
-        org2.name = "company 2"
-        person2 = GoImport::Person.new
-        person2.integration_id = '1'
-        org2.add_employee person2
-        rootmodel.organizations.push org2
+    #     org2 = GoImport::Organization.new
+    #     org2.integration_id = "2"
+    #     org2.name = "company 2"
+    #     person2 = GoImport::Person.new
+    #     person2.integration_id = '1'
+    #     org2.add_employee person2
+    #     rootmodel.add_organization org2
 
-        rootmodel.sanity_check.should eq "Duplicate person integration_id: 1."
-    end
+    #     rootmodel.sanity_check.should eq "Duplicate person integration_id: 1."
+    # end
 
     it "will report when two links has the same integration id during sanity check" do
         # given
