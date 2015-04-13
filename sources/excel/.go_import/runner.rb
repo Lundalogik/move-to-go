@@ -2,6 +2,7 @@
 
 require 'go_import'
 require 'roo'
+require 'progress'
 require_relative("../converter")
 
 def convert_source
@@ -93,7 +94,7 @@ def convert_source
     # coworkers.
     if defined?(organization_rows) && !organization_rows.nil?
         puts "Trying to convert organizations..."
-        organization_rows.each do |row|
+        organization_rows.with_progress().each do |row|
             organization = converter.to_organization(row, rootmodel)
             rootmodel.add_organization(organization)
         end
@@ -102,7 +103,7 @@ def convert_source
     # Add people and link them to their organizations
     if defined?(person_rows) && !person_rows.nil?
         puts "Trying to convert persons..."
-        person_rows.each do |row|
+        person_rows.with_progress().each do |row|
             # People are special since they are not added directly to
             # the root model
             converter.import_person_to_organization(row, rootmodel)
@@ -112,7 +113,7 @@ def convert_source
     # Deals can connected to coworkers, organizations and people.
     if defined?(deal_rows) && !deal_rows.nil?
         puts "Trying to convert deals..."
-        deal_rows.each do |row|
+        deal_rows.with_progress().each do |row|
             rootmodel.add_deal(converter.to_deal(row, rootmodel))
         end
     end
@@ -121,14 +122,14 @@ def convert_source
     # organizations and notes and might refernce a person
     if defined?(note_rows) && !note_rows.nil?
         puts "Trying to convert notes..."
-        note_rows.each do |row|
+        note_rows.with_progress().each do |row|
             rootmodel.add_note(converter.to_note(row, rootmodel))
         end
     end
 
     if defined?(file_rows) && !file_rows.nil?
         puts "Trying to convert files..."
-        file_rows.each do |row|
+        file_rows.with_progress().each do |row|
             rootmodel.add_file(converter.to_file(row, rootmodel))
         end
     end
