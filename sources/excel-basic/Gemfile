@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
 gem 'rspec'
-gem 'roo'
+gem 'roo', '2.0.0beta'
 gem 'thor'
 gem 'go_import'
