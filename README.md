@@ -48,6 +48,32 @@ go-import run
 
 This will create a go.zip file. If the file already exists it will be replaced.
 
+## What happens in LIME Go during import?
+
+Since LIME Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an import not an import in the traditional sense. What you really do when importing organizations is to tell LIME Go that these organizations are my customers.
+
+When organizations (and persons) are imported LIME Go will try to match your organizations with organizations in our database. LIME Go will try to match organizations by organization number, name, address, etc. If the import contains more data about each organization then the probablity that LIME Go will find a match increase.
+
+If an organization is found it will get the relation set in the import (default is Customer), responsible coworker, integration id, tags and custom fields. If a match is found LIME Go will *not* import fields such as address, phone number, website, etc since we belive that our data is more uptodate than your data. Your data is only used for matching in this case.
+
+If a match is not found, LIME Go will create a new organization with all data from the import file. The organization will be tagged with "FailedToMatch". This means that for these organizations address, phone number, etc will be imported.
+
+If more than one organization in the import file refers to the same organization LIME Go the imported organizations will be tagged with "PossibleDuplicate". Fields such as address, phone number, etc will *not* be impoted.
+
+All imported organizations will be tagged "Import".
+
+Coworkers, deals and notes is *always* imported as is. These objects are linked to an organization.
+
+### Integration id
+
+We recommend that you set integration ids for all imported objects. The integration id for example used to connect deals to organizations and coworkers are deals. When importing LIME Go will try to find objects by integration id.
+
+### Running an import more than once.
+
+LIME Go will *not* overwrite data on existing organizations. This means that if you run an import twice with different data LIME Go will not get the data from the last run.
+
+The reasoning behind this that the import is a way to load an initial state into LIME Go. It is not a way to build long running integrations. We are building a REST API for integrations.
+
 ## Help
 
 You can find generated documentation on [rubydoc](http://rubydoc.info/gems/go_import/frames)
