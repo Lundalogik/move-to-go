@@ -2,7 +2,7 @@ module GoImport
     class AlreadyAddedError < StandardError
     end
 
-    class IntegrationIDIsRequiredError < StandardError
+    class IntegrationIdIsRequiredError < StandardError
     end
 
     class InvalidCustomFieldError < StandardError

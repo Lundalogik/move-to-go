@@ -9,12 +9,13 @@ describe GoImport::SerializeHelper do
                 s.set_custom_field({:integration_id => "2", :title => "cf title"})
                 s.set_custom_field({:integration_id => "3", :title => "cf title2"})
             end
-            rootmodel.add_coworker({
-                :integration_id => "123",
-                :first_name => "Kalle",
-                :last_name => "Anka",
-                :email => "kalle.anka@vonanka.com"
-            })
+            coworker = GoImport::Coworker.new({
+                                                  :integration_id => "123",
+                                                  :first_name => "Kalle",
+                                                  :last_name => "Anka",
+                                                  :email => "kalle.anka@vonanka.com"
+                                              })
+            rootmodel.add_coworker(coworker)
             organization = GoImport::Organization.new
             organization.name = "Ankeborgs bibliotek"
             organization.with_source do |source|
