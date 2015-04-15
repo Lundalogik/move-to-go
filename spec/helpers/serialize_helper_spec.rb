@@ -184,6 +184,7 @@ describe GoImport::SerializeHelper do
             rootmodel = GoImport::RootModel.new
             organization = GoImport::Organization.new
             organization.name = "Ankeborgs bibliotek"
+            organization.integration_id = "123"
             rootmodel.add_organization organization
             GoImport::SerializeHelper::serialize(rootmodel, -1)
         }
