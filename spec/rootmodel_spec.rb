@@ -272,6 +272,22 @@ describe "RootModel" do
         note.integration_id.length.should be > 0
     end
 
+    it "will generate unique integration ids for each note" do
+        # given
+        note1 = GoImport::Note.new
+        note1.text = "This is a note"
+
+        note2 = GoImport::Note.new
+        note2.text = "This is a different note"
+
+        # when
+        rootmodel.add_note note1
+        rootmodel.add_note note2
+
+        # then
+        note1.integration_id.should be != note2.integration_id
+    end
+
     it "will not add a nil note" do
         # given, when
         rootmodel.add_note(nil)
