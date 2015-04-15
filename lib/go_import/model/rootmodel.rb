@@ -40,8 +40,6 @@ module GoImport
             @import_coworker.integration_id = "import"
             @import_coworker.first_name = "Import"
             @coworkers[@import_coworker.integration_id] = @import_coworker
-            # @deals = []
-            # @notes = []
             @deals = {}
             @notes = {}
             @documents = Documents.new
@@ -223,7 +221,6 @@ module GoImport
         def find_deals_for_organization(organization)
             deals = []
 
-            #deals = @deals.select do |deal|
             deals = @deals.values.select do |deal|
                 !deal.customer.nil? && deal.customer.integration_id == organization.integration_id
             end
@@ -232,10 +229,6 @@ module GoImport
         end
 
         def find_deal_by_integration_id(integration_id)
-            # return @deals.find do |deal|
-            #     deal.integration_id == integration_id
-            # end
-
             if @deals.has_key?(integration_id)
                 return @deals[integration_id]
             else
@@ -243,7 +236,8 @@ module GoImport
             end
         end
 
-        # Returns a string describing problems with the data. For instance if integration_id for any entity is not unique.
+        # Returns a string describing problems with the data. For
+        # instance if integration_id for any entity is not unique.
         def sanity_check
             error = String.new
 
