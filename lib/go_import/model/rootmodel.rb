@@ -138,8 +138,8 @@ module GoImport
 
         # Adds the specifed note object to the model.
         #
-        # If no integration_id has been specifed go-import will use a
-        # GUID as integration_id.
+        # If no integration_id has been specifed go-import generate
+        # one.
         #
         # @example Add a note from a new note
         #    note = GoImport::Note.new
@@ -156,7 +156,7 @@ module GoImport
             end
 
             if note.integration_id.nil? || note.integration_id.length == 0
-                note.integration_id = SecureRandom.uuid
+                note.integration_id = @notes.length.to_s
             end
             
             if find_note_by_integration_id(note.integration_id) != nil

@@ -66,7 +66,7 @@ Coworkers, deals and notes is *always* imported as is. These objects are linked 
 
 ### Integration id
 
-We recommend that you set integration ids for all imported objects. The integration id for example used to connect deals to organizations and coworkers are deals. When importing LIME Go will try to find objects by integration id.
+Integration Ids are required for coworkers, organizations and deals and must be set before the object is added to the rootmodel. Some sources will automagically (such as LIME Easy) set the integration id while others (Execel) require you to set it.
 
 ### Running an import more than once.
 
