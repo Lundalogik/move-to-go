@@ -292,7 +292,8 @@ module GoImport
             end
 
             converter_deal_statuses = @settings.deal.statuses.map {|status| status.label} if @settings.deal != nil
-            @deals.each do |deal|
+            @deals.each do |key, deal|
+            #@deals.each do |deal|
                 error, warning = deal.validate converter_deal_statuses
 
                 if !error.empty?
@@ -303,7 +304,8 @@ module GoImport
                 end
             end
 
-            @notes.each do |note|
+            #@notes.each do |note|
+            @notes.each do |key, note|
                 validation_message = note.validate
 
                 if !validation_message.empty?
