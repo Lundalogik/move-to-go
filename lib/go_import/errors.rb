@@ -25,4 +25,7 @@ module GoImport
             super("#{classification} is not a valid note classification")
         end
     end
+
+    class ObjectIsImmutableError < StandardError
+    end
 end

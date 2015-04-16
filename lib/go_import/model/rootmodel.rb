@@ -72,6 +72,7 @@ module GoImport
             end
 
             @coworkers[coworker.integration_id] = coworker
+            coworker.set_is_immutable
 
             return coworker
         end
@@ -100,6 +101,7 @@ module GoImport
             end
 
             @organizations[organization.integration_id] = organization
+            organization.set_is_immutable
 
             return organization
         end
@@ -132,6 +134,7 @@ module GoImport
             end
 
             @deals[deal.integration_id] = deal
+            deal.set_is_immutable
 
             return deal
         end
@@ -168,6 +171,7 @@ module GoImport
             end
             
             @notes[note.integration_id] = note
+            note.set_is_immutable
 
             return note
         end

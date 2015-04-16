@@ -36,11 +36,10 @@ describe GoImport::SerializeHelper do
             coworker = GoImport::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
             organization.responsible_coworker = coworker
 
-            emp = organization.add_employee({
-                :integration_id => "1",
-                :first_name => "Kalle",
-                :last_name => "Anka"
-            })
+            emp = GoImport::Person.new
+            emp.integration_id = "1"
+            emp.first_name = "Kalle"
+            emp.last_name = "Anka"
             emp.direct_phone_number = '234234234'
             emp.currently_employed = true
             rootmodel.add_organization organization

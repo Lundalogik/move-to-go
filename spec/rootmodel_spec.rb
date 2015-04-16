@@ -27,6 +27,20 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 2
     end
 
+    it "will make coworkers immutable after it has been added" do
+        # given
+        coworker = GoImport::Coworker.new
+        coworker.integration_id = "123key"
+        coworker.first_name = "vincent"
+
+        # when
+        rootmodel.add_coworker(coworker)
+
+        # then
+        coworker.is_immutable.should eq true
+    end
+    
+
     it "will only add coworkers" do
         # given
         not_a_coworker = { :integration_id => "123", :first_name => "Vincent" }
@@ -78,6 +92,19 @@ describe "RootModel" do
         rootmodel.organizations.length.should eq 1
     end
 
+    it "will make organizations immutable after it has been added" do
+        # given
+        organization = GoImport::Organization.new
+        organization.integration_id = "123key"
+        organization.name = "Beagle Boys"
+
+        # when
+        rootmodel.add_organization(organization)
+
+        # then
+        organization.is_immutable.should eq true
+    end
+    
     it "will only add organizations" do
         # given
         not_an_organization = { :integration_id => "123", :name => "This is not a note"}
@@ -148,6 +175,19 @@ describe "RootModel" do
         rootmodel.find_deal_by_integration_id("123key").name.should eq "Big deal"
         rootmodel.deals.length.should eq 1
     end
+
+    it "will make deal immutable after it has been added" do
+        # given
+        deal = GoImport::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big deal"
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        deal.is_immutable.should eq true
+    end    
 
     it "will only add deals" do
         # given
@@ -244,6 +284,18 @@ describe "RootModel" do
             rootmodel.add_note(not_a_note)
         }.to raise_error(ArgumentError)
         rootmodel.notes.length.should eq 0
+    end
+
+    it "will make note immutable after it has been added" do
+        # given
+        note = GoImport::Note.new        
+        note.text = "this is a note"
+
+        # when
+        rootmodel.add_note(note)
+
+        # then
+        note.is_immutable.should eq true
     end
     
     it "can add a note from a new note" do

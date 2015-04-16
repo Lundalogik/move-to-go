@@ -84,6 +84,21 @@ describe "Person" do
         person.organization.is_a?(GoImport::OrganizationReference).should eq true
     end
 
+    # *** TODO:
+    # Enable this when sources are fixed, see comment in organization.add_employee
+    
+    # it "should be immutable when added to an organization" do
+    #     # given
+    #     org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+    #     person = GoImport::Person.new({:integration_id => "456", :first_name => "vincent"})
+
+    #     # when
+    #     org.add_employee person
+
+    #     # then
+    #     person.is_immutable.should eq true
+    # end
+
     describe "parse_name_to_firstname_lastname_se" do
         it "can parse 'Kalle Nilsson' into firstname 'Kalle' and lastname 'Nilsson'" do
             person.parse_name_to_firstname_lastname_se 'Kalle Nilsson'
