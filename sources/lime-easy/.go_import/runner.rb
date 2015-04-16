@@ -78,7 +78,7 @@ def convert_source
     end
 
     # deal notes
-    process_rows(" - Reading Deal Notess '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
+    process_rows(" - Reading Deal Notes '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
         # adds itself if applicable
         rootmodel.add_note(to_deal_note(converter, row, rootmodel))
     end
