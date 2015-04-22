@@ -376,7 +376,7 @@ module GoImport
         end
 
         def create_zip(filename, xml, files)
-            Zip::File.open(filename, Zip::File::CREATE) do |zip_file|
+            Zip::File.open("#{Dir.pwd}/#{filename}", Zip::File::CREATE) do |zip_file|
                 puts "Add go.xml file to zip '#{filename}'..."
                 zip_file.add('go.xml', xml)
 
