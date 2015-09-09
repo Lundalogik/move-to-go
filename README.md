@@ -83,15 +83,15 @@ Datasource -> [your code] -> rootmodel -> go.zip
 
 Helpfull rootmodel code:
 ```ruby
-”””
-create a brand new rootmodel. Usually only done once for an import
-”””
+
+# create a brand new rootmodel. Usually only done once for an import
+
 rootmodel = GoImport::RootModel.new
 
-”””
-Settings. The rootmodel is capable of storing how a brand new 
-LIME GO app should be set up. Most commonly; which custom fields should exist	 and how the business statuses should be configured
-”””
+
+# Settings. The rootmodel is capable of storing how a brand new 
+# LIME GO app should be set up. Most commonly; which custom fields should exist	 and how the business statuses should be configured
+
 rootmodel.settings.with_person  do |person|
 	person.set_custom_field( { :integration_id => ’shoe_size’, :title => ’Shoe size’, :type => :String} )
 end
@@ -102,22 +102,22 @@ rootmodel.settings.with_deal do |deal|
 	deal.add_status( {:label => ’4. Deal lost’, :assessment => GoImport::DealState::NegativeEndState })
 end
 
-”””
-Once a object, such as an organisation is created and mapped to import data it should be added to the rootmodel
-”””
+
+# Once a object, such as an organisation is created and mapped to import data it should be added to the rootmodel
+
 organisation = GoImport::Organisation.new() 
-#Add data to your new fancy organisation…
+# Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
-#As imported persons belong to an imported organisation, they must be mapped together. The rootmodel will help you with this:
+# As imported persons belong to an imported organisation, they must be mapped together. The rootmodel will help you with this:
 person = GoImport::Person.new() 
 #Add data to your fancy new person…
 id = import_data_row[’id’]
 organisation = rootmodel.find_organization_by_integration_id(id)
 organisation.add_employee(person)
 
-#The same goes for deals and notes, however, the syntax differs slightly.
-#A deal or a note has relations to both organisations and persons
+# The same goes for deals and notes, however, the syntax differs slightly.
+# A deal or a note has relations to both organisations and persons
 
 deal = GoImport::Deal.new() 
 #Add data to your fancy new deal…
@@ -142,7 +142,7 @@ organization.organization_number = row[’orgnr’]
 organization.web_site = row[’website’]
 bisnode_id = row[’Bisnode-id’]
 
-#It’s not uncommon that e-mail addresses are miss formed from a import source. GoImport supplies a helper function for this
+# It’s not uncommon that e-mail addresses are miss formed from a import source. GoImport supplies a helper function for this
 if GoImport::EmailHelper.is_valid?(row[’e-mail’])
 	organization.email = row[’e-mail’]
 end
@@ -160,10 +160,10 @@ organization.with_visit_address do |addr|
 	addr.city = row[’visit city’]
 end
 
-#Add a responsible coworker to the organisation
+# Add a responsible coworker to the organisation
 organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(row[’Medarbetare’])
 
-#A very important and common thing is to set tags on organisations
+# A very important and common thing is to set tags on organisations
 organization.set_tag(row[’customer category’])
 ```
 
