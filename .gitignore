@@ -27,4 +27,7 @@ syntax: glob
 
 # my own artifacts
 export.xml
+.idea
+
 /Gemfile.lock
+
