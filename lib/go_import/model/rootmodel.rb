@@ -34,26 +34,19 @@ module GoImport
 
         def initialize()
             @settings = Settings.new
-            @organizations = []
-            @coworkers = []
+            @organizations = {}
+            @coworkers = {}
             @import_coworker = Coworker.new
             @import_coworker.integration_id = "import"
             @import_coworker.first_name = "Import"
-            @coworkers.push @import_coworker
-            @deals = []
-            @notes = []
+            @coworkers[@import_coworker.integration_id] = @import_coworker
+            @deals = {}
+            @notes = {}
             @documents = Documents.new
         end
 
         # Adds the specifed coworker object to the model.
-        # @example Add a coworker from a hash
-        #    rootmodel.add_coworker({
-        #        :integration_id=>"123",
-        #        :first_name=>"Kalle",
-        #        :last_name=>"Anka",
-        #        :email=>"kalle.anka@vonanka.com"
-        #    })
-        #
+
         # @example Add a coworker from a new coworker
         #    coworker = GoImport::Coworker.new
         #    coworker.integration_id = "123"
@@ -61,106 +54,78 @@ module GoImport
         #    coworker.last_name="Anka"
         #    coworker.email = "kalle.anka@vonanka.com"
         #    rootmodel.add_coworker(coworker)
-        #
-        # @example If you want to keep adding coworkers and dont care about duplicates not being added
-        #    begin
-        #       rootmodel.add_coworker(coworker)
-        #    rescue GoImport::AlreadyAddedError
-        #       puts "Warning: already added coworker"
-        #    end
-        # @see Coworker
         def add_coworker(coworker)
-            @coworkers = [] if @coworkers == nil
-
             if coworker.nil?
                 return nil
             end
 
-            coworker = Coworker.new(coworker) if !coworker.is_a?(Coworker)
+            if !coworker.is_a?(Coworker)
+                raise ArgumentError.new("Expected a coworker")
+            end
+
+            if coworker.integration_id.nil? || coworker.integration_id.length == 0
+                raise IntegrationIdIsRequiredError, "An integration id is required for a coworker."
+            end
 
             if find_coworker_by_integration_id(coworker.integration_id) != nil
                 raise AlreadyAddedError, "Already added a coworker with integration_id #{coworker.integration_id}"
             end
 
-            @coworkers.push(coworker)
+            @coworkers[coworker.integration_id] = coworker
+            coworker.set_is_immutable
 
             return coworker
         end
 
         # Adds the specifed organization object to the model.
-        # @example Add an organization from a hash
-        #    rootmodel.add_organization({
-        #        :integration_id => "123",
-        #        :name => "Beagle Boys",
-        #    })
-        #
         # @example Add an organization from a new organization
         #    organization = GoImport::Organization.new
         #    organization.integration_id = "123"
         #    organization.name = "Beagle Boys"
         #    rootmodel.add_organization(organization)
-        #
-        # @example If you want to keep adding organizations and dont
-        # care about duplicates not being added. Your model might not
-        # be saved due to duplicate integration_ids.
-        #    begin
-        #       rootmodel.add_organization(organization)
-        #    rescue GoImport::AlreadyAddedError
-        #       puts "Warning: already added organization"
-        #    end
-        # @see Coworker
         def add_organization(organization)
-            @organizations = [] if @organizations.nil?
-
             if organization.nil?
                 return nil
             end
 
-            organization = Organization.new(organization) if !organization.is_a?(Organization)
+            if !organization.is_a?(Organization)
+                raise ArgumentError.new("Expected an organization")
+            end
+            
+            if organization.integration_id.nil? || organization.integration_id.length == 0
+                raise IntegrationIdIsRequiredError, "An integration id is required for an organization."
+            end
 
-            if (!organization.integration_id.nil? && organization.integration_id.length > 0) &&
-                find_organization_by_integration_id(organization.integration_id) != nil
+            if find_organization_by_integration_id(organization.integration_id) != nil
                 raise AlreadyAddedError, "Already added an organization with integration_id #{organization.integration_id}"
             end
 
-            @organizations.push(organization)
+            @organizations[organization.integration_id] = organization
+            organization.set_is_immutable
 
             return organization
         end
 
         # Adds the specifed deal object to the model.
-        # @example Add an deal from a hash
-        #    rootmodel.add_deal({
-        #        :integration_id => "123",
-        #        :name => "Big deal",
-        #    })
-        #
         # @example Add a deal from a new deal
         #    deal = GoImport::Deal.new
         #    deal.integration_id = "123"
         #    deal.name = "Big deal"
         #    rootmodel.add_deal(deal)
-        #
-        # @example If you want to keep adding deals and dont
-        # care about duplicates not being added. Your model might not
-        # be saved due to duplicate integration_ids.
-        #    begin
-        #       rootmodel.add_deal(deal)
-        #    rescue GoImport::AlreadyAddedError
-        #       puts "Warning: already added deal"
-        #    end
-        # @see Coworker
         def add_deal(deal)
-            @deals = [] if @deals.nil?
-
             if deal.nil?
                 return nil
             end
 
-            deal = Deal.new(deal) if !deal.is_a?(Deal)
+            if !deal.is_a?(Deal)
+                raise ArgumentError.new("Expected a deal")
+            end
 
-            if (!deal.integration_id.nil? && deal.integration_id.length > 0) &&
-               find_deal_by_integration_id(deal.integration_id) != nil
+            if deal.integration_id.nil? || deal.integration_id.length == 0
+                raise IntegrationIdIsRequiredError, "An integration id is required for a deal."
+            end
+
+            if find_deal_by_integration_id(deal.integration_id) != nil
                 raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
             end
             
@@ -168,44 +133,36 @@ module GoImport
                 deal.responsible_coworker = @import_coworker
             end
 
-            @deals.push(deal)
+            @deals[deal.integration_id] = deal
+            deal.set_is_immutable
 
             return deal
         end
 
         # Adds the specifed note object to the model.
-        # @example Add an deal from a hash
-        #    rootmodel.add_note({
-        #        :integration_id => "123",
-        #        :text => "This is a note",
-        #    })
+        #
+        # If no integration_id has been specifed go-import generate
+        # one.
         #
         # @example Add a note from a new note
         #    note = GoImport::Note.new
         #    note.integration_id = "123"
-        #    note.text = "Big deal"
+        #    note.text = "This is a note"
         #    rootmodel.add_note(note)
-        #
-        # @example If you want to keep adding deals and dont
-        # care about duplicates not being added. Your model might not
-        # be saved due to duplicate integration_ids.
-        #    begin
-        #       rootmodel.add_deal(deal)
-        #    rescue GoImport::AlreadyAddedError
-        #       puts "Warning: already added deal"
-        #    end
-        # @see Coworker
         def add_note(note)
-            @notes = [] if @notes == nil
-
             if note.nil?
                 return nil
-             end
+            end
 
-            note = Note.new(note) if !note.is_a?(Note)
+            if !note.is_a?(Note)
+                raise ArgumentError.new("Expected a note")
+            end
 
-            if (!note.integration_id.nil? && note.integration_id.length > 0) &&
-                    find_note_by_integration_id(note.integration_id) != nil
+            if note.integration_id.nil? || note.integration_id.length == 0
+                note.integration_id = @notes.length.to_s
+            end
+            
+            if find_note_by_integration_id(note.integration_id) != nil
                 raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
             end
 
@@ -213,7 +170,8 @@ module GoImport
                 note.created_by = @import_coworker
             end
             
-            @notes.push(note)
+            @notes[note.integration_id] = note
+            note.set_is_immutable
 
             return note
         end
@@ -231,28 +189,35 @@ module GoImport
         end
 
         def find_coworker_by_integration_id(integration_id)
-            return @coworkers.find do |coworker|
-                coworker.integration_id == integration_id
+            if @coworkers.has_key?(integration_id)
+                return @coworkers[integration_id]
+            else
+                return nil
             end
         end
 
         def find_organization_by_integration_id(integration_id)
-            return @organizations.find do |organization|
-                organization.integration_id == integration_id
+            if @organizations.has_key?(integration_id)
+                return @organizations[integration_id]
+            else
+                return nil
             end
+
         end
 
         def find_person_by_integration_id(integration_id)
             return nil if @organizations.nil?
-            @organizations.each do |organization|
+            @organizations.each do |key, organization|
                 person = organization.find_employee_by_integration_id(integration_id)
                 return person if person
             end
         end
 
         def find_note_by_integration_id(integration_id)
-            return @notes.find do |note|
-                note.integration_id == integration_id
+            if @notes.has_key?(integration_id)
+                return @notes[integration_id]
+            else
+                return nil
             end
         end
 
@@ -260,7 +225,7 @@ module GoImport
         def find_deals_for_organization(organization)
             deals = []
 
-            deals = @deals.select do |deal|
+            deals = @deals.values.select do |deal|
                 !deal.customer.nil? && deal.customer.integration_id == organization.integration_id
             end
 
@@ -268,34 +233,37 @@ module GoImport
         end
 
         def find_deal_by_integration_id(integration_id)
-            return @deals.find do |deal|
-                deal.integration_id == integration_id
+            if @deals.has_key?(integration_id)
+                return @deals[integration_id]
+            else
+                return nil
             end
         end
 
-        # Returns a string describing problems with the data. For instance if integration_id for any entity is not unique.
+        # Returns a string describing problems with the data. For
+        # instance if integration_id for any entity is not unique.
         def sanity_check
             error = String.new
 
-            dups = get_integration_id_duplicates(with_non_empty_integration_id(@coworkers))
-            dups_error_items = (dups.collect{|coworker| coworker.integration_id}).compact
-            if dups.length > 0
-                error = "#{error}\nDuplicate coworker integration_id: #{dups_error_items.join(", ")}."
-            end
+            # dups = get_integration_id_duplicates(with_non_empty_integration_id(@coworkers))
+            # dups_error_items = (dups.collect{|coworker| coworker.integration_id}).compact
+            # if dups.length > 0
+            #     error = "#{error}\nDuplicate coworker integration_id: #{dups_error_items.join(", ")}."
+            # end
 
-            dups = get_integration_id_duplicates(with_non_empty_integration_id(@organizations))
-            dups_error_items = (dups.collect{|org| org.integration_id}).compact
-            if dups.length > 0
-                error = "#{error}\nDuplicate organization integration_id: #{dups_error_items.join(", ")}."
-            end
+            # dups = get_integration_id_duplicates(with_non_empty_integration_id(@organizations))
+            # dups_error_items = (dups.collect{|org| org.integration_id}).compact
+            # if dups.length > 0
+            #     error = "#{error}\nDuplicate organization integration_id: #{dups_error_items.join(", ")}."
+            # end
 
-            dups = get_integration_id_duplicates(with_non_empty_integration_id(@deals))
-            dups_error_items = (dups.collect{|deal| deal.integration_id}).compact
-            if dups_error_items.length > 0
-                error = "#{error}\nDuplicate deal integration_id: #{dups_error_items.join(", ")}."
-            end
+            # dups = get_integration_id_duplicates(with_non_empty_integration_id(@deals))
+            # dups_error_items = (dups.collect{|deal| deal.integration_id}).compact
+            # if dups_error_items.length > 0
+            #     error = "#{error}\nDuplicate deal integration_id: #{dups_error_items.join(", ")}."
+            # end
 
-            persons = @organizations.collect{|o| o.employees}.flatten.compact
+            persons = @organizations.collect{|k, o| o.employees}.flatten.compact
             dups = get_integration_id_duplicates(with_non_empty_integration_id(persons))
             dups_error_items = (dups.collect{|person| person.integration_id}).compact
             if dups_error_items.length > 0
@@ -315,7 +283,7 @@ module GoImport
             errors = String.new
             warnings = String.new
 
-            @organizations.each do |o|
+            @organizations.each do |k, o|
                 validation_message = o.validate()
 
                 if !validation_message.empty?
@@ -324,7 +292,8 @@ module GoImport
             end
 
             converter_deal_statuses = @settings.deal.statuses.map {|status| status.label} if @settings.deal != nil
-            @deals.each do |deal|
+            @deals.each do |key, deal|
+            #@deals.each do |deal|
                 error, warning = deal.validate converter_deal_statuses
 
                 if !error.empty?
@@ -335,7 +304,8 @@ module GoImport
                 end
             end
 
-            @notes.each do |note|
+            #@notes.each do |note|
+            @notes.each do |key, note|
                 validation_message = note.validate
 
                 if !validation_message.empty?
@@ -406,7 +376,7 @@ module GoImport
         end
 
         def create_zip(filename, xml, files)
-            Zip::File.open(filename, Zip::File::CREATE) do |zip_file|
+            Zip::File.open("#{Dir.pwd}/#{filename}", Zip::File::CREATE) do |zip_file|
                 puts "Add go.xml file to zip '#{filename}'..."
                 zip_file.add('go.xml', xml)
 

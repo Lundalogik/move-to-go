@@ -34,14 +34,19 @@ module GoImport
         end
     end
 
-    class Deal
+    class Deal < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
         # Get/set the deal's status. Statuses must be configured in
         # LIME Go before the import.
-        attr_accessor :status
+        immutable_accessor :status
 
-        attr_accessor :id, :integration_id, :name, :description, :probability, :order_date
+        immutable_accessor :id
+        immutable_accessor :integration_id
+        immutable_accessor :name
+        immutable_accessor :description
+        immutable_accessor :probability
+        immutable_accessor :order_date
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
@@ -132,12 +137,14 @@ module GoImport
         # already exists in the application use the status label
         # (String) or integration id (Integer) here.
         def status=(status)
+            raise_if_immutable
             @status = DealStatus.new if @status.nil?
             
             @status.status_reference = DealStatusReference.from_deal_status(status)
         end
 
         def customer=(customer)
+            raise_if_immutable
             @customer_reference = OrganizationReference.from_organization(customer)
 
             if customer.is_a?(Organization)
@@ -151,6 +158,7 @@ module GoImport
         end
 
         def responsible_coworker=(coworker)
+            raise_if_immutable
             @responsible_coworker_reference = CoworkerReference.from_coworker(coworker)
 
             if coworker.is_a?(Coworker)
@@ -159,6 +167,7 @@ module GoImport
         end
 
         def customer_contact=(person)
+            raise_if_immutable
             @customer_contact_reference = PersonReference.from_person(person)
 
             if person.is_a?(Person)
@@ -171,6 +180,8 @@ module GoImport
         # ignored. This makes it easier for us to convert a string
         # into an integer value.
         def value=(value)
+            raise_if_immutable
+            
             if value.nil?
                 @value = "0"
             elsif value.respond_to?(:empty?) && value.empty?

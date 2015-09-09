@@ -1,7 +1,9 @@
 module GoImport
-    class Note
+    class Note < CanBecomeImmutable
         include SerializeHelper
-        attr_accessor :id, :integration_id, :date
+        immutable_accessor :id
+        immutable_accessor :integration_id
+        immutable_accessor :date
 
         attr_reader :text
         attr_reader :organization, :created_by, :person, :deal
@@ -51,6 +53,7 @@ module GoImport
         end
 
         def organization=(org)
+            raise_if_immutable
             @organization_reference = OrganizationReference.from_organization(org)
 
             if org.is_a?(Organization)
@@ -59,6 +62,7 @@ module GoImport
         end
 
         def created_by=(coworker)
+            raise_if_immutable
             @created_by_reference = CoworkerReference.from_coworker(coworker)
 
             if coworker.is_a?(Coworker)
@@ -67,6 +71,7 @@ module GoImport
         end
 
         def person=(person)
+            raise_if_immutable
             @person_reference = PersonReference.from_person(person)
 
             if person.is_a?(Person)
@@ -75,6 +80,7 @@ module GoImport
         end
 
         def deal=(deal)
+            raise_if_immutable
             @deal_reference = DealReference.from_deal(deal)
 
             if deal.is_a?(Deal)
@@ -83,6 +89,7 @@ module GoImport
         end
 
         def classification=(classification)
+            raise_if_immutable
             if classification == NoteClassification::Comment || classification == NoteClassification::SalesCall ||
                     classification == NoteClassification::TalkedTo || classification == NoteClassification::TriedToReach ||
                     classification == NoteClassification::ClientVisit
@@ -93,6 +100,7 @@ module GoImport
         end
 
         def text=(text)
+            raise_if_immutable
             @text = text
 
             if @text.nil?

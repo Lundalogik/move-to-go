@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rspec'
-gem 'roo'
+gem 'roo', '~> 2.0'
 gem 'thor'
 gem 'go_import'
 gem 'progress'

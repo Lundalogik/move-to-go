@@ -79,7 +79,7 @@ As long as your data is free from duplicates this will create a unique key, whic
 ## Rootmodel
 The rootmodel is an object that keeps track of your imported data and turns it into a format LIME Go can read. The rootmodel helps you keep track go objects and relations between them during the import
 
-Datasource -> [your code] -> rootmodel -> go.zip 
+Datasource -> [your code] -> rootmodel -> go.zip
 
 Helpfull rootmodel code:
 ```ruby
@@ -89,14 +89,14 @@ Helpfull rootmodel code:
 rootmodel = GoImport::RootModel.new
 
 
-# Settings. The rootmodel is capable of storing how a brand new 
+# Settings. The rootmodel is capable of storing how a brand new
 # LIME GO app should be set up. Most commonly; which custom fields should exist	 and how the business statuses should be configured
 
 rootmodel.settings.with_person  do |person|
 	person.set_custom_field( { :integration_id => ’shoe_size’, :title => ’Shoe size’, :type => :String} )
 end
 
-rootmodel.settings.with_deal do |deal|     
+rootmodel.settings.with_deal do |deal|
 	deal.add_status( {:label => ’1. Kvalificering’ })
 	deal.add_status( {:label => ’2. Deal closed’, :assessment => GoImport::DealState::PositiveEndState })
 	deal.add_status( {:label => ’4. Deal lost’, :assessment => GoImport::DealState::NegativeEndState })
@@ -105,12 +105,12 @@ end
 
 # Once a object, such as an organisation is created and mapped to import data it should be added to the rootmodel
 
-organisation = GoImport::Organisation.new() 
+organisation = GoImport::Organisation.new()
 # Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
 # As imported persons belong to an imported organisation, they must be mapped together. The rootmodel will help you with this:
-person = GoImport::Person.new() 
+person = GoImport::Person.new()
 #Add data to your fancy new person…
 id = import_data_row[’id’]
 organisation = rootmodel.find_organization_by_integration_id(id)
@@ -119,7 +119,7 @@ organisation.add_employee(person)
 # The same goes for deals and notes, however, the syntax differs slightly.
 # A deal or a note has relations to both organisations and persons
 
-deal = GoImport::Deal.new() 
+deal = GoImport::Deal.new()
 #Add data to your fancy new deal…
 org_id = deal_import_data_row[’organisation_id’]
 person_id = deal_import_data_row[’person_id’]
@@ -133,7 +133,7 @@ deal.organisation = rootmodel.find_person_by_integration_id(org_id)
 ## Organisations
 A core concept in the LIME Go import is a organisation. A organisation. When importing an organisation to LIME Go, we will try to match the organisation to existing source data in LIME Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won’t override our source data in LIME Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
 
-An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`. 
+An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`.
 
 ```ruby
 organisation = GoImport::Organisation.new()

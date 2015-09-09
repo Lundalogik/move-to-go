@@ -28,11 +28,22 @@ module GoImport
         end
     end
 
-    class Person < PersonReference
+    class Person < CanBecomeImmutable    
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
-        attr_accessor :first_name, :last_name,
-            :direct_phone_number, :fax_phone_number, :mobile_phone_number, :home_phone_number,
-            :position, :email, :alternative_email, :postal_address, :currently_employed
+
+        immutable_accessor :id
+        immutable_accessor :integration_id        
+        immutable_accessor :first_name
+        immutable_accessor :last_name
+        immutable_accessor :direct_phone_number
+        immutable_accessor :fax_phone_number
+        immutable_accessor :mobile_phone_number
+        immutable_accessor :home_phone_number
+        immutable_accessor :position
+        immutable_accessor :email
+        immutable_accessor :alternative_email
+        immutable_accessor :postal_address
+        immutable_accessor :currently_employed
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values, :organization

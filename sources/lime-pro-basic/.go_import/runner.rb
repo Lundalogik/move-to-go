@@ -388,7 +388,7 @@ class LIMEProConnection
                 desc = @tablestructure.find{|tbl| tbl.name == field.relatedTable}.descriptive
                 next "[#{table.name}].[#{field.name}],(SELECT #{desc} from [#{field.relatedTable}] WHERE [#{table.name}].[#{field.name}] = [#{field.relatedTable}].[id#{field.relatedTable}]) as #{field.name}_descriptive"
             when "set"
-                next "dbo.lfn_getfieldsettext2([#{field.name}],';','#{LIME_LANGUAGE}')"
+                next "dbo.lfn_getfieldsettext2([#{field.name}],';','#{LIME_LANGUAGE}') as #{field.name}"
             when "option"
                 next "(SELECT #{LIME_LANGUAGE} FROM string WHERE idstring = #{field.name}) as #{field.name}"
             else

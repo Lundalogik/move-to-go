@@ -1,9 +1,15 @@
 # encoding: utf-8
 module GoImport
-    class Coworker
+    class Coworker < CanBecomeImmutable
         include SerializeHelper
-        attr_accessor :id, :integration_id, :email, :first_name, :last_name, :direct_phone_number,
-        :mobile_phone_number, :home_phone_number
+        immutable_accessor :id
+        immutable_accessor :integration_id
+        immutable_accessor :email
+        immutable_accessor :first_name
+        immutable_accessor :last_name
+        immutable_accessor :direct_phone_number
+        immutable_accessor :mobile_phone_number
+        immutable_accessor :home_phone_number
 
         def initialize(opt = nil)
             if opt != nil
