@@ -1,4 +1,4 @@
-# go_import
+﻿# go_import
 
 ## What is go_import?
 go_import is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
@@ -140,6 +140,7 @@ organisation = GoImport::Organisation.new()
 organisation.name = row[’name’]
 organization.organization_number = row[’orgnr’]
 organization.web_site = row[’website’]
+organization.email = row[’email’]
 bisnode_id = row[’Bisnode-id’]
 
 # It’s not uncommon that e-mail addresses are miss formed from a import source. GoImport supplies a helper function for this
