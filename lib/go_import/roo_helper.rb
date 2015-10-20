@@ -71,6 +71,8 @@ module GoImport
                     Roo::Base.integer_to_timestring(onecell)
                 when :formula
                     onecell.to_s
+                when :link
+                    onecell.to_s
                 else
                     raise "unhandled celltype #{@data.celltype(row,col,sheet)} for cell at row: #{row}, col: #{col} in sheet #{sheet}"
                 end || ""
