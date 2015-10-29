@@ -239,7 +239,7 @@ def init_deal(row, rootmodel, includes)
     deal.description = row['Description']
 
     if defined?(DEAL_RESPONSIBLE_FIELD) && !DEAL_RESPONSIBLE_FIELD.nil? && !DEAL_RESPONSIBLE_FIELD.empty?
-        coworker_id = row["isUser-#{DEAL_RESPONSIBLE_FIELD}"]
+        coworker_id = row["idUser-#{DEAL_RESPONSIBLE_FIELD}"]
         deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
     end
 
