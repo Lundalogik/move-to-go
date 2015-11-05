@@ -90,29 +90,46 @@ rootmodel = GoImport::RootModel.new
 
 
 # Settings. The rootmodel is capable of storing how a brand new
+<<<<<<< HEAD
+# LIME GO app should be set up. Most commonly; which custom fields should exist
+# and how the business statuses should be configured
+=======
 # LIME GO app should be set up. Most commonly; which custom fields should exist	 and how the business statuses should be configured
+>>>>>>> master
 
 rootmodel.settings.with_person  do |person|
-	person.set_custom_field( { :integration_id => ’shoe_size’, :title => ’Shoe size’, :type => :String} )
+	person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
 end
 
 rootmodel.settings.with_deal do |deal|
+<<<<<<< HEAD
+	deal.add_status( {:label => '1. Kvalificering' })
+	deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
+	deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+=======
 	deal.add_status( {:label => ’1. Kvalificering’ })
 	deal.add_status( {:label => ’2. Deal closed’, :assessment => GoImport::DealState::PositiveEndState })
 	deal.add_status( {:label => ’4. Deal lost’, :assessment => GoImport::DealState::NegativeEndState })
+>>>>>>> master
 end
 
 
-# Once a object, such as an organisation is created and mapped to import data it should be added to the rootmodel
+# Once a object, such as an organisation is created and mapped to import data
+# it should be added to the rootmodel
 
 organisation = GoImport::Organisation.new()
 # Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
+<<<<<<< HEAD
+# As imported persons belong to an imported organisation, they must be mapped
+# together. The rootmodel will help you with this:
+=======
 # As imported persons belong to an imported organisation, they must be mapped together. The rootmodel will help you with this:
+>>>>>>> master
 person = GoImport::Person.new()
 #Add data to your fancy new person…
-id = import_data_row[’id’]
+id = import_data_row['id']
 organisation = rootmodel.find_organization_by_integration_id(id)
 organisation.add_employee(person)
 
@@ -121,8 +138,8 @@ organisation.add_employee(person)
 
 deal = GoImport::Deal.new()
 #Add data to your fancy new deal…
-org_id = deal_import_data_row[’organisation_id’]
-person_id = deal_import_data_row[’person_id’]
+org_id = deal_import_data_row['organisation_id']
+person_id = deal_import_data_row['person_id']
 deal.organisation = rootmodel.find_organization_by_integration_id(org_id)
 deal.organisation = rootmodel.find_person_by_integration_id(org_id)
 #Above example works the same for a note
@@ -131,12 +148,23 @@ deal.organisation = rootmodel.find_person_by_integration_id(org_id)
 
 
 ## Organisations
-A core concept in the LIME Go import is a organisation. A organisation. When importing an organisation to LIME Go, we will try to match the organisation to existing source data in LIME Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won’t override our source data in LIME Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
+A core concept in the LIME Go import is a organisation. A organisation. When importing an organisation to LIME Go, we will try to match the organisation to existing source data in LIME Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won't override our source data in LIME Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
 
 An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`.
 
 ```ruby
 organisation = GoImport::Organisation.new()
+<<<<<<< HEAD
+organisation.name = row['name']
+organization.organization_number = row['orgnr']
+organization.web_site = row['website']
+bisnode_id = row['Bisnode-id']
+
+# It's not uncommon that e-mail addresses are miss formed from a import source.
+# GoImport supplies a helper function for this
+if GoImport::EmailHelper.is_valid?(row['e-mail'])
+	organization.email = row['e-mail']
+=======
 organisation.name = row[’name’]
 organization.organization_number = row[’orgnr’]
 organization.web_site = row[’website’]
@@ -146,26 +174,118 @@ bisnode_id = row[’Bisnode-id’]
 # It’s not uncommon that e-mail addresses are miss formed from a import source. GoImport supplies a helper function for this
 if GoImport::EmailHelper.is_valid?(row[’e-mail’])
 	organization.email = row[’e-mail’]
+>>>>>>> master
 end
 
 organization.with_postal_address do |address|
-	address.street = row[’street’]
-	address.zip_code = row[’zip’]
-	address.city = row[’city’]
-	address.location = row[’location’] # Country
+	address.street = row['street']
+	address.zip_code = row['zip']
+	address.city = row['city']
+	address.location = row['location'] # Country
 end
 
 organization.with_visit_address do |addr|
-	addr.street = row[’visit street’]
- 	addr.zip_code = row[’visit zip’]
-	addr.city = row[’visit city’]
+	addr.street = row['visit street']
+ 	addr.zip_code = row['visit zip']
+	addr.city = row['visit city']
 end
 
 # Add a responsible coworker to the organisation
-organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(row[’Medarbetare’])
+organization.responsible_coworker = rootmodel.find_coworker_by_integration_id(row['Medarbetare'])
 
 # A very important and common thing is to set tags on organisations
-organization.set_tag(row[’customer category’])
+organization.set_tag(row['customer category'])
+
+# If you have created custom fields in the settings you can set their value.
+# First parameter is the id of the custom field and second is the desired value
+organization.set_custom_value(”customer_number”, row['cust_no'])
+
+# Relations. There are five relation types in LIME Go to pick from.
+# The following is an example of assigning relations to a organisation
+if row['Customer relation'] == 'Customer'
+	# We have made a deal with this organization.
+	organization.relation = GoImport::Relation::IsACustomer
+elsif row['Customer relation'] == 'Prospect'
+	# Something is happening with this organization, we might have
+  # booked a meeting with them or created a deal, etc.
+	organization.relation = GoImport::Relations::WorkingOnIt
+elsif row['Customer relation'] == 'Lost customer'
+	# We had something going with this organization but we
+	# couldn't close the deal and we don't think they will be a
+	# customer to us in the foreseeable future.
+	organization.relation = GoImport::Relation::WasACustomer
+else
+	organization.relation = GoImport::Relation::BeenInTouch
+end
+
+```
+
+## Persons
+Persons are employees of the organizations in LIME Go. Just as with the organisations, the imported persons will be
+matched against the source data in LIME Go.
+
+```ruby
+person = GoImport::Person.new()
+
+person.first_name = "Kalle"
+person.last_name = "Kula"
+# It is common that the persons name in the imported data isn't in seperate
+# fields, but as a single string. GoImport supplies a helper function
+person.parse_name_to_firstname_lastname_se(row['name'])
+# or
+
+# Validate email:
+if GoImport::EmailHelper.is_valid?(row['Email'])
+		person.email = row['Email']
+end
+
+# If the phone number data is a mess
+person.mobile_phone_number, person.direct_phone_number = GoImport::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
+# or if it is very well formed
+person.direct_phone_number = row['direct number']
+person.mobile_phone_number = row['mobile']
+
+person.position = row['position']
+
+# Add tags. Tags are used for values  
+person.set_tag("VIP")
+
+# If you have created custom fields during the setup
+person.set_custom_value("shoe_size", row['shoe size'])
+
+```
+
+## Smart helper functions and ruby trix
+
+### Parse a persons full name into a first and last name
+```ruby
+person.parse_name_to_firstname_lastname_se(name, when_missing = '')
+```
+
+### Parse a phone number
+```ruby
+
+number = GoImport::PhoneHelper.parse_numbers("046 - 270 48 00")
+
+# In the case there are multiple numbers in the same string
+source = "046 - 270 48 00/ 031-712 44 00"
+number1, number2 = GoImport::PhoneHelper.parse_numbers(source, '/')
+
+#If you are pick about only getting valid phone number you can use a strict mode.
+# Parses the specifed number_string and returns only valid numbers.
+GoImport::PhoneHelper.parse_numbers_strict(number_string, delimiters = ',')
+
+GoImport::PhoneHelper.set_country_code(country_code)
+# Sets the country code used during parsning. The default is Swedish (:se) and
+# if you are parsing Swedish numbers you don't need to set the country code.
+
+```
+
+### Validate an email address
+```ruby
+GoImport::EmailHelper.is_valid?("kalle.kula@lundalogik.se") => True
+
+GoImport::EmailHelper.is_valid?("kalle@.kula @lundalogik.se") => False
 ```
 
 ## Running an import more than once.
