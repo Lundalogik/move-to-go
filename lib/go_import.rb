@@ -7,6 +7,7 @@ module GoImport
     require 'go_import/errors'
     require 'go_import/serialize_helper'
     require 'go_import/model_helpers'
+    require 'go_import/can_become_immutable'
     GoImport::require_all_in 'go_import/model/*.rb'
     require 'go_import/csv_helper'
     require 'go_import/roo_helper'

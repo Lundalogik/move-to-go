@@ -37,12 +37,20 @@ module GoImport
             end
         end
     end
-
-    class Organization
+    
+    class Organization < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
-
-        attr_accessor :id, :integration_id, :name, :organization_number, :email, :web_site,
-        :postal_address, :visit_address, :central_phone_number, :source_data
+        
+        immutable_accessor :id
+        immutable_accessor :integration_id
+        immutable_accessor :name
+        immutable_accessor :organization_number
+        immutable_accessor :email
+        immutable_accessor :web_site
+        immutable_accessor :postal_address
+        immutable_accessor :visit_address
+        immutable_accessor :central_phone_number
+        immutable_accessor :source_data
 
         # Sets/gets the date when this organization's relation was
         # changed. Default is Now.
@@ -127,10 +135,23 @@ module GoImport
             @employees = [] if @employees == nil
             person = if val.is_a? Person then val else Person.new(val) end
             @employees.push(person)
-            person
+
+            # *** TODO:
+            #
+            # The person should be immutable after it has been added
+            # to the organization. However most sources (LIME Easy,
+            # LIME Pro, Excel, SalesForce, etc) are updating the
+            # person after is has been added to the organization. We
+            # must update the sources before we can set the person
+            # immutable here.
+            
+            #person.set_is_immutable
+            
+            return person
         end
 
         def responsible_coworker=(coworker)
+            raise_if_immutable
             @responsible_coworker_reference = CoworkerReference.from_coworker(coworker)
 
             if coworker.is_a?(Coworker)
@@ -142,6 +163,8 @@ module GoImport
         # relation must be a valid value from the Relation module
         # otherwise an InvalidRelationError error will be thrown.
         def relation=(relation)
+            raise_if_immutable
+            
             if relation == Relation::NoRelation || relation == Relation::WorkingOnIt ||
                     relation == Relation::IsACustomer || relation == Relation::WasACustomer || relation == Relation::BeenInTouch
                 @relation = relation
@@ -151,8 +174,10 @@ module GoImport
                 raise InvalidRelationError
             end
         end
-
+        
         def relation_last_modified=(date)
+            raise_if_immutable
+            
             begin
                 @relation_last_modified = @relation != Relation::NoRelation ? Date.parse(date).strftime("%Y-%m-%d") : nil
             rescue

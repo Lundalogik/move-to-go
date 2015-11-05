@@ -33,6 +33,30 @@ module GoImport
         end
     end
 
+    module ImmutableModel
+        @is_immutable = false
+        def self.immutable_accessor(name)
+            define_method(name) do
+                return instance_variable_get("@#{name}")
+            end
+
+            define_method("#{name}=") do |value|
+                raise_if_immutable
+                instance_variable_set("@#{name}", value)
+            end
+        end
+
+        def raise_if_immutable
+            if @is_immutable
+                raise ObjectIsImmutableError
+            end
+        end
+
+        def is_immutable()
+            @is_immutable = true
+        end
+    end
+    
     module ModelWithIntegrationIdSameAs
         # check if other is same as regarding integration_id or id
         def same_as?(other)

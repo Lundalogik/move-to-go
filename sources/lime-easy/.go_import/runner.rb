@@ -78,7 +78,7 @@ def convert_source
     end
 
     # deal notes
-    process_rows(" - Reading Deal Notess '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
+    process_rows(" - Reading Deal Notes '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
         # adds itself if applicable
         rootmodel.add_note(to_deal_note(converter, row, rootmodel))
     end
@@ -239,7 +239,7 @@ def init_deal(row, rootmodel, includes)
     deal.description = row['Description']
 
     if defined?(DEAL_RESPONSIBLE_FIELD) && !DEAL_RESPONSIBLE_FIELD.nil? && !DEAL_RESPONSIBLE_FIELD.empty?
-        coworker_id = row["isUser-#{DEAL_RESPONSIBLE_FIELD}"]
+        coworker_id = row["idUser-#{DEAL_RESPONSIBLE_FIELD}"]
         deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(coworker_id)
     end
 

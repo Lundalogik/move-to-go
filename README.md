@@ -1,4 +1,4 @@
-# go_import
+﻿# go_import
 
 ## What is go_import?
 go_import is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
@@ -90,17 +90,27 @@ rootmodel = GoImport::RootModel.new
 
 
 # Settings. The rootmodel is capable of storing how a brand new
+<<<<<<< HEAD
 # LIME GO app should be set up. Most commonly; which custom fields should exist
 # and how the business statuses should be configured
+=======
+# LIME GO app should be set up. Most commonly; which custom fields should exist	 and how the business statuses should be configured
+>>>>>>> master
 
 rootmodel.settings.with_person  do |person|
 	person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
 end
 
 rootmodel.settings.with_deal do |deal|
+<<<<<<< HEAD
 	deal.add_status( {:label => '1. Kvalificering' })
 	deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
 	deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+=======
+	deal.add_status( {:label => ’1. Kvalificering’ })
+	deal.add_status( {:label => ’2. Deal closed’, :assessment => GoImport::DealState::PositiveEndState })
+	deal.add_status( {:label => ’4. Deal lost’, :assessment => GoImport::DealState::NegativeEndState })
+>>>>>>> master
 end
 
 
@@ -111,8 +121,12 @@ organisation = GoImport::Organisation.new()
 # Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
+<<<<<<< HEAD
 # As imported persons belong to an imported organisation, they must be mapped
 # together. The rootmodel will help you with this:
+=======
+# As imported persons belong to an imported organisation, they must be mapped together. The rootmodel will help you with this:
+>>>>>>> master
 person = GoImport::Person.new()
 #Add data to your fancy new person…
 id = import_data_row['id']
@@ -140,6 +154,7 @@ An organisation has the following attributes and functions. Assuming we have rea
 
 ```ruby
 organisation = GoImport::Organisation.new()
+<<<<<<< HEAD
 organisation.name = row['name']
 organization.organization_number = row['orgnr']
 organization.web_site = row['website']
@@ -149,6 +164,17 @@ bisnode_id = row['Bisnode-id']
 # GoImport supplies a helper function for this
 if GoImport::EmailHelper.is_valid?(row['e-mail'])
 	organization.email = row['e-mail']
+=======
+organisation.name = row[’name’]
+organization.organization_number = row[’orgnr’]
+organization.web_site = row[’website’]
+organization.email = row[’email’]
+bisnode_id = row[’Bisnode-id’]
+
+# It’s not uncommon that e-mail addresses are miss formed from a import source. GoImport supplies a helper function for this
+if GoImport::EmailHelper.is_valid?(row[’e-mail’])
+	organization.email = row[’e-mail’]
+>>>>>>> master
 end
 
 organization.with_postal_address do |address|

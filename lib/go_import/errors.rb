@@ -2,6 +2,9 @@ module GoImport
     class AlreadyAddedError < StandardError
     end
 
+    class IntegrationIdIsRequiredError < StandardError
+    end
+
     class InvalidCustomFieldError < StandardError
     end
 
@@ -21,5 +24,8 @@ module GoImport
         def initalize(classification)
             super("#{classification} is not a valid note classification")
         end
+    end
+
+    class ObjectIsImmutableError < StandardError
     end
 end
