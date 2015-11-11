@@ -229,6 +229,36 @@ describe "RootModel" do
         deal.responsible_coworker.integration_id.should eq coworker.integration_id
     end
 
+    it "will not set responsible coworker to import_coworker if allowed" do
+        # given
+        deal = GoImport::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big Deal"
+        
+        rootmodel.configuration[:allow_deals_without_responsible] = true
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        deal.responsible_coworker.should eq nil
+    end
+
+    it "will set responsible coworker to import_coworker if configured" do
+        # given
+        deal = GoImport::Deal.new
+        deal.integration_id = "123key"
+        deal.name = "Big Deal"
+        
+        rootmodel.configuration[:allow_deals_without_responsible] = false
+
+        # when
+        rootmodel.add_deal(deal)
+
+        # then
+        deal.responsible_coworker.integration_id.should eq rootmodel.import_coworker.integration_id
+    end
+
     it "will not add a new deal when the deal is already added (same integration id)" do
         # given
         deal1 = GoImport::Deal.new({
