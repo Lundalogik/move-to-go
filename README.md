@@ -12,6 +12,8 @@ go_import is a [ruby gem](https://rubygems.org/gems/go_import). Install with
 gem install go_import
 ```
 
+Before starting, during and after an import, please use [this checklist](Checklist.md)
+
 ## Working with sources
 
 To help you get started a couple of different sources are included in go-import. These sources contains basic code and a folder structure for a specific import.
