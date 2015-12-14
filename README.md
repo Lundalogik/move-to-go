@@ -95,13 +95,13 @@ rootmodel = GoImport::RootModel.new
 
 
 rootmodel.settings.with_person  do |person|
-	person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
+    person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
 end
 
 rootmodel.settings.with_deal do |deal|
-	deal.add_status( {:label => '1. Kvalificering' })
-	deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
-	deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+    deal.add_status( {:label => '1. Kvalificering' })
+    deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
+    deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
 end
 
 
@@ -149,20 +149,20 @@ bisnode_id = row['Bisnode-id']
 # It's not uncommon that e-mail addresses are miss formed from a import source.
 # GoImport supplies a helper function for this
 if GoImport::EmailHelper.is_valid?(row['e-mail'])
-	organization.email = row['e-mail']
+    organization.email = row['e-mail']
 end
 
 organization.with_postal_address do |address|
-	address.street = row['street']
-	address.zip_code = row['zip']
-	address.city = row['city']
-	address.location = row['location'] # Country
+    address.street = row['street']
+    address.zip_code = row['zip']
+    address.city = row['city']
+    address.location = row['location'] # Country
 end
 
 organization.with_visit_address do |addr|
-	addr.street = row['visit street']
- 	addr.zip_code = row['visit zip']
-	addr.city = row['visit city']
+    addr.street = row['visit street']
+    addr.zip_code = row['visit zip']
+    addr.city = row['visit city']
 end
 
 # Add a responsible coworker to the organisation
@@ -178,19 +178,19 @@ organization.set_custom_value(”customer_number”, row['cust_no'])
 # Relations. There are five relation types in LIME Go to pick from.
 # The following is an example of assigning relations to a organisation
 if row['Customer relation'] == 'Customer'
-	# We have made a deal with this organization.
-	organization.relation = GoImport::Relation::IsACustomer
+    # We have made a deal with this organization.
+    organization.relation = GoImport::Relation::IsACustomer
 elsif row['Customer relation'] == 'Prospect'
-	# Something is happening with this organization, we might have
+    # Something is happening with this organization, we might have
   # booked a meeting with them or created a deal, etc.
-	organization.relation = GoImport::Relations::WorkingOnIt
+    organization.relation = GoImport::Relations::WorkingOnIt
 elsif row['Customer relation'] == 'Lost customer'
-	# We had something going with this organization but we
-	# couldn't close the deal and we don't think they will be a
-	# customer to us in the foreseeable future.
-	organization.relation = GoImport::Relation::WasACustomer
+    # We had something going with this organization but we
+    # couldn't close the deal and we don't think they will be a
+    # customer to us in the foreseeable future.
+    organization.relation = GoImport::Relation::WasACustomer
 else
-	organization.relation = GoImport::Relation::BeenInTouch
+    organization.relation = GoImport::Relation::BeenInTouch
 end
 
 ```
@@ -211,7 +211,7 @@ person.parse_name_to_firstname_lastname_se(row['name'])
 
 # Validate email:
 if GoImport::EmailHelper.is_valid?(row['Email'])
-		person.email = row['Email']
+        person.email = row['Email']
 end
 
 # If the phone number data is a mess
@@ -222,7 +222,7 @@ person.mobile_phone_number = row['mobile']
 
 person.position = row['position']
 
-# Add tags. Tags are used for values  
+# Add tags. Tags are used for values
 person.set_tag("VIP")
 
 # If you have created custom fields during the setup
@@ -261,6 +261,14 @@ GoImport::PhoneHelper.set_country_code(country_code)
 GoImport::EmailHelper.is_valid?("kalle.kula@lundalogik.se") => True
 
 GoImport::EmailHelper.is_valid?("kalle@.kula @lundalogik.se") => False
+```
+
+## Runtime configuration
+
+By default go-import will set a deal's responsible to the import coworker if no one specified. You can override this to allow no coworker by adding the following to your converter.rb
+
+```ruby
+ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
 ```
 
 ## Running an import more than once.

@@ -13,6 +13,15 @@ module GoImport
 
         attr_accessor :settings, :organizations, :coworkers, :deals, :notes
 
+        # The configuration is used to set run-time properties for
+        # go-import. This should not be confused with the model's
+        # settings. Sets the following properties:
+        #
+        # ALLOW_DEALS_WITHOUT_RESPONSIBLE - if set to true, deals
+        # without a responsible will NOT have the import user set as
+        # default.
+        attr_accessor :configuration
+
         attr_reader :documents
 
         def serialize_variables
@@ -43,6 +52,9 @@ module GoImport
             @deals = {}
             @notes = {}
             @documents = Documents.new
+            @configuration = {}
+
+            configure
         end
 
         # Adds the specifed coworker object to the model.
@@ -129,7 +141,7 @@ module GoImport
                 raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
             end
             
-            if deal.responsible_coworker.nil?
+            if !configuration[:allow_deals_without_responsible] && deal.responsible_coworker.nil?
                 deal.responsible_coworker = @import_coworker
             end
 
@@ -137,6 +149,15 @@ module GoImport
             deal.set_is_immutable
 
             return deal
+        end
+
+        def configure()
+            if defined?(ALLOW_DEALS_WITHOUT_RESPONSIBLE)
+                config_value = ALLOW_DEALS_WITHOUT_RESPONSIBLE.to_s
+
+                configuration[:allow_deals_without_responsible] =
+                    config_value.downcase == "true" || config_value == "1"
+            end
         end
 
         # Adds the specifed note object to the model.
