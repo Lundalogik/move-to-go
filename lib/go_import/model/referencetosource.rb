@@ -42,5 +42,17 @@ module GoImport
             @format = 'External'
             @id = id
         end
+
+        def ecp_no(id)
+            @name = 'eno'
+            @format = 'External'
+            @id = id
+        end
+
+        def ecp_dk(id)
+            @name = 'edk'
+            @format = 'External'
+            @id = id
+        end
     end
 end
