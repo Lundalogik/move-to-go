@@ -16,4 +16,5 @@ module GoImport
     require 'go_import/excel_helper'
     require 'go_import/templating'
     require 'go_import/source'
+    require 'go_import/shard_helper'
 end
