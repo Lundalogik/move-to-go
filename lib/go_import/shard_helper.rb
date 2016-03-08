@@ -10,8 +10,6 @@ module GoImport
 
             def shard_model(model)
                 @current_shard.configuration = model.configuration
-                #@current_shard.coworkers = model.coworkers
-                #@current_shard_count += model.coworkers.length
 
                 model.coworkers.each{ |key, coworker| 
                     if coworker.integration_id != "import"
