@@ -67,6 +67,10 @@ class GoImportCommandLine < Thor
            :desc => "Name of the file to put imported documents in (default in same as --output)",
            :type => :string,
            :required => false)
+    option(:shard_size,
+           :desc => "Large imports are sharded into several zip-files. This property sets how many objects each zip-file should contain. Default is 25 000",
+           :type => :numeric,
+           :required => false)
     def run_import()
         if !options.log_to_file.nil?
             $stdout = File.new(options.log_to_file == "log_to_file" ? "go-import.log" : options.log_to_file, 'w')
@@ -99,14 +103,25 @@ class GoImportCommandLine < Thor
                 log_and_remove_invalid_files model, max_file_size
             end
 
-            go_data_zip = options.output.nil? == true ? "go.zip" : options.output
-            go_files = options.output_documents.nil? == true ? nil : ::File.basename(options.output_documents,File.extname(options.output_documents))
-            model.save_to_zip(go_data_zip, go_files)
-            puts "Source has been been converted into '#{go_data_zip}'."
-            puts "  - and files into '#{go_files}.zip'." if !go_files.nil?
-            if !warnings_msg.empty? 
-                puts "WARNINGS: "
-                puts warnings_msg
+            puts "Starting sharding of model..."
+            sharder = GoImport::ShardHelper.new(options.shard_size)
+            models_to_serialize = sharder.shard_model(model)
+
+            if models_to_serialize.length > 1
+                puts "Import is large and will be broken into #{models_to_serialize.length} files"
+            end
+
+            models_to_serialize.each_with_index do |model, i| 
+                go_data_zip = options.output.nil? == true ? "go" : options.output
+                go_data_zip += "_#{i}.zip"
+                go_files = options.output_documents.nil? == true ? nil : ::File.basename(options.output_documents,File.extname(options.output_documents))
+                model.save_to_zip(go_data_zip, go_files)
+                puts "Source has been been converted into '#{go_data_zip}'."
+                puts "  - and files into '#{go_files}.zip'." if !go_files.nil?
+                if !warnings_msg.empty? 
+                    puts "WARNINGS: "
+                    puts warnings_msg
+                end
             end
         else
             puts "ERROR: Source could not be converted due to:"
