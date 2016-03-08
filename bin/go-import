@@ -105,7 +105,11 @@ class GoImportCommandLine < Thor
 
             puts "Starting sharding of model..."
             sharder = GoImport::ShardHelper.new(options.shard_size)
-            models_to_serialize = sharder.shard_model(model).get_shards()
+            models_to_serialize = sharder.shard_model(model)
+
+            if models_to_serialize.length > 1
+                puts "Import is large and will be broken into #{models_to_serialize.length} files"
+            end
 
             models_to_serialize.each_with_index do |model, i| 
                 go_data_zip = options.output.nil? == true ? "go" : options.output
