@@ -103,7 +103,7 @@ class GoImportCommandLine < Thor
                 log_and_remove_invalid_files model, max_file_size
             end
 
-            puts "Starting charding of model..."
+            puts "Starting sharding of model..."
             sharder = GoImport::ShardHelper.new(options.shard_size)
             models_to_serialize = sharder.shard_model(model).get_shards()
 
