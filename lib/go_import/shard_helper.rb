@@ -1,41 +1,62 @@
 module GoImport
     class ShardHelper
-            attr_accessor :shards, :current_shard_count
-            def initialize(shard_size=25000)
-                @shard_size = shard_size
-                @current_shard = GoImport::RootModel.new
-                @shards = [@current_shard]
-                @current_shard_count = 0
+            
+            attr_accessor :shards, :current_shard_count, :current_shard
+            
+            def initialize(shard_size = nil)
+                @shard_size = shard_size || 25000
+                setup()
             end
 
             def shard_model(model)
                 @current_shard.configuration = model.configuration
-                @current_shard.coworkers = model.coworkers
-                @current_shard_count = model.coworkers.length
+                #@current_shard.coworkers = model.coworkers
+                #@current_shard_count += model.coworkers.length
 
+                model.coworkers.each{ |key, coworker| 
+                    if coworker.integration_id != "import"
+                        add_coworker(coworker)
+                    end
+                }
                 model.organizations.each{|key, org| add_organization(org)}
                 model.deals.each{|key, deal| add_deal(deal)}
                 model.notes.each{|key, note| add_note(note)}
                 add_documents(model.documents)
 
+                return_value = @shards
+                setup()
+                return return_value
             end
 
-            def get_shards()
-                return @shards
+            private
+            def setup()
+                @current_shard = GoImport::RootModel.new
+                @shards = [@current_shard]
+                @current_shard_count = 0
             end
 
+            private
             def add_note(note)
                 check_or_create_new_chard()
                 @current_shard.add_note(note)
                 @current_shard_count += 1
             end
 
+            private
             def add_deal(deal)
                 check_or_create_new_chard()
                 @current_shard.add_deal(deal)
                 @current_shard_count += 1
             end
 
+            private
+            def add_coworker(coworker)
+                check_or_create_new_chard()
+                @current_shard.add_coworker(coworker)
+                @current_shard_count += 1
+            end
+
+            private
             def add_organization(org)
                 check_or_create_new_chard()
                 if org.employees != nil
@@ -45,6 +66,7 @@ module GoImport
                 @current_shard_count += 1 
             end
 
+            private
             def add_documents(doc)
                     doc.files.each{|file| add_file(file)}
                     doc.links.each{|link| add_link(link)}
