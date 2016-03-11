@@ -67,14 +67,39 @@ FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
 class Converter
     # Reads a row from the Easy exported Company.txt
     # and ads custom fields to the go_import organization.
-
-    # NOTE!!! You should customize this method to include
+        # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
     # The method includes examples of different types of
     # fields and how you should handle them.
     # Sometimes it's enough to uncomment some code and
     # change the row name but in most cases you need to
     # do some thinking of your own.
+
+    def configure(rootmodel)
+        #####################################################################
+        ## LIME Go custom fields.
+        # This is how you add a custom field in LIME Go.
+        # Custom fields can be added to organization, deal and person.
+        # Valid types are :String and :Link. If no type is specified
+        # :String is used as default.
+
+        #rootmodel.settings.with_organization do |organization|
+            #organization.set_custom_field( { :integration_id => 'building_size', :title => 'Building Size', :type => :String } )
+        #end
+
+        # rootmodel.settings.with_person  do |person|
+        #     person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
+        # end
+
+        # rootmodel.settings.with_deal do |deal|
+            # assessment is default DealState::NoEndState
+        #     deal.add_status( {:label => '1. Kvalificering' })
+        #     deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
+        #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+        # end
+    end
+
+
     def to_organization(organization, row)
         # Here are some standard fields that are present
         # on a LIME Go organization and are usually represented
@@ -315,25 +340,7 @@ class Converter
         # return classification
     end
 
-    def configure(rootmodel)
-        #####################################################################
-        ## LIME Go custom fields.
-        # This is how you add a custom field in LIME Go.
-        # Custom fields can be added to organization, deal and person.
-        # Valid types are :String and :Link. If no type is specified
-        # :String is used as default.
-
-        # rootmodel.settings.with_person  do |person|
-        #     person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
-        # end
-
-        # rootmodel.settings.with_deal do |deal|
-            # assessment is default DealState::NoEndState
-        #     deal.add_status( {:label => '1. Kvalificering' })
-        #     deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
-        #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
-        # end
-    end
+    
 
     # HOOKS
     #
