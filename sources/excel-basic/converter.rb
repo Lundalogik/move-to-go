@@ -30,10 +30,17 @@ class Converter
         # are :String and :Link. If no type is specified :String is
         # used as default.
 
+        # Organizastion
         # rootmodel.settings.with_organization do |organization|
         #     organization.set_custom_field( { :integration_id => 'source', :title => 'Källa', :type => :Link } )
         # end
-    end
+
+        #Person
+        #rootmodel.settings.with_person  do |person|
+            # person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe Size', :type => :String} )
+        #end
+
+        end
 
     def import_person_to_organization(row, rootmodel)
         person = to_person(row, rootmodel)

@@ -51,6 +51,17 @@ class Converter
         # rootmodel.settings.with_organization do |organization|
         #     organization.set_custom_field( { :integration_id => 'source', :title => 'Källa', :type => :Link } )
         # end
+
+        # rootmodel.settings.with_person  do |person|
+        #     person.set_custom_field( { :integration_id => 'shoe_size', :title => 'Shoe size', :type => :String} )
+        # end
+
+        # rootmodel.settings.with_deal do |deal|
+        # assessment is default DealState::NoEndState
+        #     deal.add_status( {:label => '1. Kvalificering' })
+        #     deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
+        #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+        # end
     end
 
     def import_person_to_organization(row, rootmodel)
