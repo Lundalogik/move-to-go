@@ -108,6 +108,7 @@ def convert_source
     con.fetch_data "company" do |row|
         organization = init_organization(row, con.get_class_by_name('company'), rootmodel)
         rootmodel.add_organization(converter.to_organization(organization, row))
+        converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
     end
    
     # persons

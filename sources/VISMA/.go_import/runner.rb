@@ -39,6 +39,7 @@ def convert_source
             if not row["NAMN"] == ""
                 organization = converter.to_organization(row, rootmodel)
                 rootmodel.add_organization(organization)
+                converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
             end
         end
     end
