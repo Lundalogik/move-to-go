@@ -115,6 +115,8 @@ def account_to_organization(row, rootmodel)
     
     organization.responsible_coworker =
         rootmodel.find_coworker_by_integration_id(row['OwnerId'])
+   
+    converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
 
     return organization
 end

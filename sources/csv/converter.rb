@@ -12,8 +12,15 @@ COWORKER_FILE = "data/coworkers.csv"
 ORGANIZATION_FILE = "data/organizations.csv"
 PERSON_FILE = "data/persons.csv"
 DEAL_FILE = "data/deals.csv"
-
 # Ie if you dont want to import deals, set DEAL_FILE = ""
+
+# Default encoding for files are 'ISO-8859-1' (aka latin1)
+# If the file is in any other encoding this must be specified with 
+# SOURCE_ENCODING set to correct value
+# Ruby can handle lots of encodings, but common ones are:
+# SOURCE_ENCODING = "UTF-8"
+# SOURCE_ENCODING = "bom|UTF-8"
+# SOURCE_ENCODING = "UTF-16"
 
 # If you are importing files then you must set the FILES_FOLDER
 # constant. FILES_FOLDER should point to the folder where the files
