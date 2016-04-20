@@ -103,7 +103,7 @@ module GoImport
             if !organization.is_a?(Organization)
                 raise ArgumentError.new("Expected an organization")
             end
-            
+
             if organization.integration_id.nil? || organization.integration_id.length == 0
                 raise IntegrationIdIsRequiredError, "An integration id is required for an organization."
             end
@@ -140,7 +140,7 @@ module GoImport
             if find_deal_by_integration_id(deal.integration_id) != nil
                 raise AlreadyAddedError, "Already added a deal with integration_id #{deal.integration_id}"
             end
-            
+
             if !configuration[:allow_deals_without_responsible] && deal.responsible_coworker.nil?
                 deal.responsible_coworker = @import_coworker
             end
@@ -182,7 +182,7 @@ module GoImport
             if note.integration_id.nil? || note.integration_id.length == 0
                 note.integration_id = @notes.length.to_s
             end
-            
+
             if find_note_by_integration_id(note.integration_id) != nil
                 raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
             end
@@ -190,7 +190,7 @@ module GoImport
             if note.created_by.nil?
                 note.created_by = @import_coworker
             end
-            
+
             @notes[note.integration_id] = note
             note.set_is_immutable
 
@@ -213,6 +213,7 @@ module GoImport
             if @coworkers.has_key?(integration_id)
                 return @coworkers[integration_id]
             else
+                report_failed_to_find_object("coworker", integration_id)
                 return nil
             end
         end
@@ -221,6 +222,7 @@ module GoImport
             if @organizations.has_key?(integration_id)
                 return @organizations[integration_id]
             else
+                report_failed_to_find_object("organization", integration_id)
                 return nil
             end
 
@@ -232,12 +234,15 @@ module GoImport
                 person = organization.find_employee_by_integration_id(integration_id)
                 return person if person
             end
+            report_failed_to_find_object("person", integration_id)
+            return nil
         end
 
         def find_note_by_integration_id(integration_id)
             if @notes.has_key?(integration_id)
                 return @notes[integration_id]
             else
+                report_failed_to_find_object("note", integration_id)
                 return nil
             end
         end
@@ -257,6 +262,7 @@ module GoImport
             if @deals.has_key?(integration_id)
                 return @deals[integration_id]
             else
+                report_failed_to_find_object("deal", integration_id)
                 return nil
             end
         end
@@ -377,7 +383,7 @@ module GoImport
             end
             serialize_to_file(go_data_file)
             create_zip(zip_filename, go_data_file, documents.files)
-            
+
             if !files_filename.nil?
                 go_files_file = Tempfile.new('go-files')
                 puts "Creating go.xml file with documents information..."
@@ -393,7 +399,7 @@ module GoImport
                     ::File.delete files_zip_filename
                 end
                 create_zip(files_zip_filename, go_files_file, documents.files)
-            end            
+            end
         end
 
         def create_zip(filename, xml, files)
@@ -451,6 +457,10 @@ module GoImport
             return objects.select do |obj|
                 obj.integration_id != nil && !obj.integration_id.empty?
             end
+        end
+
+        def report_failed_to_find_object(object, integration_id)
+          puts "Failed to find a #{object} when looking for id: #{integration_id}"
         end
     end
 end

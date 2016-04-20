@@ -10,7 +10,7 @@ describe "RootModel" do
         rootmodel.find_coworker_by_integration_id("import").first_name.should eq "Import"
         rootmodel.coworkers.length.should eq 1
     end
-    
+
     it "can add a coworker from a new coworker" do
         # given
         coworker = GoImport::Coworker.new
@@ -39,7 +39,7 @@ describe "RootModel" do
         # then
         coworker.is_immutable.should eq true
     end
-    
+
 
     it "will only add coworkers" do
         # given
@@ -49,7 +49,7 @@ describe "RootModel" do
         expect {
             rootmodel.add_coworker(not_a_coworker)
         }.to raise_error(ArgumentError)
-        rootmodel.coworkers.length.should eq 1        
+        rootmodel.coworkers.length.should eq 1
     end
 
     it "will not add a new coworker when the coworker is already added (same integration id)" do
@@ -104,7 +104,7 @@ describe "RootModel" do
         # then
         organization.is_immutable.should eq true
     end
-    
+
     it "will only add organizations" do
         # given
         not_an_organization = { :integration_id => "123", :name => "This is not a note"}
@@ -115,7 +115,7 @@ describe "RootModel" do
         }.to raise_error(ArgumentError)
         rootmodel.organizations.length.should eq 0
     end
-    
+
     it "will not add a new organization when the organization is already added (same integration id)" do
         # given
         org = GoImport::Organization.new({
@@ -187,7 +187,7 @@ describe "RootModel" do
 
         # then
         deal.is_immutable.should eq true
-    end    
+    end
 
     it "will only add deals" do
         # given
@@ -234,7 +234,7 @@ describe "RootModel" do
         deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big Deal"
-        
+
         rootmodel.configuration[:allow_deals_without_responsible] = true
 
         # when
@@ -249,7 +249,7 @@ describe "RootModel" do
         deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big Deal"
-        
+
         rootmodel.configuration[:allow_deals_without_responsible] = false
 
         # when
@@ -318,7 +318,7 @@ describe "RootModel" do
 
     it "will make note immutable after it has been added" do
         # given
-        note = GoImport::Note.new        
+        note = GoImport::Note.new
         note.text = "this is a note"
 
         # when
@@ -327,7 +327,7 @@ describe "RootModel" do
         # then
         note.is_immutable.should eq true
     end
-    
+
     it "can add a note from a new note" do
         # given
         note = GoImport::Note.new
@@ -472,6 +472,27 @@ describe "RootModel" do
         found_person.integration_id.should eq "123"
         found_person.first_name.should eq "Billy"
         found_person.last_name.should eq "Bob"
+    end
+
+    it "Will will not find a person by wrong integration id" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        organization.add_employee({
+            :integration_id => "123",
+            :first_name => "Billy",
+            :last_name => "Bob"
+        })
+
+        rootmodel.add_organization(organization)
+
+        # when
+        found_person = rootmodel.find_person_by_integration_id("321")
+
+        # then
+        found_person.should eq nil
+
     end
 
     it "Will find a person by integration id from an organization with many employees" do
