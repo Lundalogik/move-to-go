@@ -27,12 +27,12 @@ describe GoImport::ShardHelper do
             organization = GoImport::Organization.new
             organization.name = "Ankeborgs bibliotek"
             organization.integration_id = n.to_s
-            
+
             person = GoImport::Person.new
             person.first_name = "Kalle"
             person.last_name = "Kula"
             organization.add_employee(person)
-            
+
             person = GoImport::Person.new
             person.first_name = "Nisse"
             person.last_name = "Nice"
@@ -79,7 +79,7 @@ describe GoImport::ShardHelper do
         end
 
         sharder = GoImport::ShardHelper.new(5)
-        
+
         # when, then
         sharder.shard_model(model).length.should eq 4
     end
@@ -116,6 +116,26 @@ describe GoImport::ShardHelper do
         sharder.shard_model(model)[0].find_deal_by_integration_id("123").should eq deal
     end
 
+    it "should keep the settings into a shard" do
+        # given
+
+        model =  GoImport::RootModel.new
+
+        model.settings.with_organization do |organization|
+            organization.set_custom_field( { :integrationid => 'external_url', :title => 'Link to external system', :type => :Link } )
+        end
+
+        model.settings.with_deal do |deal|
+            deal.add_status({:label => "Prospecting", :integration_id => "prospect"})
+            deal.add_status({:label => "Qualified", :integration_id => "qualification"})
+            deal.add_status({:label => "Won", :integration_id => "won", :assessment => GoImport::DealState::PositiveEndState })
+            deal.add_status({:label => "Lost", :integration_id => "Lost", :assessment => GoImport::DealState::NegativeEndState })
+        end
+
+        sharder = GoImport::ShardHelper.new()
+
+        # when, then
+        sharder.shard_model(model)[0].settings.should eq model.settings
+    end
+
 end
-
-
