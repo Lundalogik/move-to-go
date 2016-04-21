@@ -1,17 +1,17 @@
 module GoImport
     class ShardHelper
-            
+
             attr_accessor :shards, :current_shard_count, :current_shard
-            
+
             def initialize(shard_size = nil)
                 @shard_size = shard_size || 25000
                 setup()
             end
 
             def shard_model(model)
-                @current_shard.configuration = model.configuration
+                @current_shard.settings = model.settings
 
-                model.coworkers.each{ |key, coworker| 
+                model.coworkers.each{ |key, coworker|
                     if coworker.integration_id != "import"
                         add_coworker(coworker)
                     end
@@ -61,7 +61,7 @@ module GoImport
                     @current_shard_count += org.employees.length
                 end
                 @current_shard.add_organization(org)
-                @current_shard_count += 1 
+                @current_shard_count += 1
             end
 
             private
@@ -74,16 +74,16 @@ module GoImport
             def add_file(file)
                 check_or_create_new_chard()
                 @current_shard.add_file(file)
-                @current_shard_count += 1 
+                @current_shard_count += 1
             end
 
             private
             def add_link(link)
                 check_or_create_new_chard()
                 @current_shard.add_link(link)
-                @current_shard_count += 1 
+                @current_shard_count += 1
             end
-            
+
             private
             def check_or_create_new_chard()
                 if @current_shard_count > @shard_size
