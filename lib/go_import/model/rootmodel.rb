@@ -479,7 +479,7 @@ module GoImport
 
         def report_failed_to_find_object(object, integration_id)
           c = caller_locations(2).first
-          puts "#{c.label}:#{c.lineno}: Failed to find a #{object} when looking for id: #{integration_id}"
+          puts "Warning: #{c.label}:#{c.lineno}: Failed to find a #{object} when looking for id: #{integration_id}"
         end
     end
 end
