@@ -22,7 +22,7 @@ module GoImport
         # default.
         attr_accessor :configuration
 
-        attr_reader :documents
+        attr_reader :documents, :persons
 
         def serialize_variables
             [
@@ -55,6 +55,10 @@ module GoImport
             @configuration = {}
 
             configure
+        end
+
+        def persons
+          return @organizations.collect{|k, o| o.employees}.flatten.compact
         end
 
         # Adds the specifed coworker object to the model.
@@ -220,7 +224,7 @@ module GoImport
             if @coworkers.has_key?(integration_id)
                 return @coworkers[integration_id]
             else
-                report_failed_to_find_object("coworker", integration_id) if report_result
+                report_failed_to_find_object("coworker", ":#{integration_id}") if report_result
                 return nil
             end
         end
@@ -229,7 +233,7 @@ module GoImport
             if @organizations.has_key?(integration_id)
                 return @organizations[integration_id]
             else
-                report_failed_to_find_object("organization", integration_id) if report_result
+                report_failed_to_find_object("organization", ":#{integration_id}") if report_result
                 return nil
             end
 
@@ -241,7 +245,7 @@ module GoImport
                 person = organization.find_employee_by_integration_id(integration_id)
                 return person if person
             end
-            report_failed_to_find_object("person", integration_id) if report_result
+            report_failed_to_find_object("person", ":#{integration_id}") if report_result
             return nil
         end
 
@@ -249,7 +253,7 @@ module GoImport
             if @notes.has_key?(integration_id)
                 return @notes[integration_id]
             else
-                report_failed_to_find_object("note", integration_id) if report_result
+                report_failed_to_find_object("note", ":#{integration_id}") if report_result
                 return nil
             end
         end
@@ -261,7 +265,6 @@ module GoImport
             deals = @deals.values.select do |deal|
                 !deal.customer.nil? && deal.customer.integration_id == organization.integration_id
             end
-
             return deals
         end
 
@@ -269,9 +272,92 @@ module GoImport
             if @deals.has_key?(integration_id)
                 return @deals[integration_id]
             else
-                report_failed_to_find_object("deal", integration_id, caller_locations(1,1)[0].label) if report_result
+                report_failed_to_find_object("deal", ":#{integration_id}") if report_result
                 return nil
             end
+        end
+
+        # Finds a organization based on one of its property.
+        # Returns the first found matching organization
+        # Method is much slower then using find_organization_by_integration_id
+        # @example Finds a organization on its name
+        #      rm.find_organization {|org| org.name == "Lundalogik" }
+        def find_organization(report_result=!!configuration[:report_result], &block)
+          result = find(@organizations.values.flatten, &block)
+          report_failed_to_find_object("organization") if result.nil? and report_result
+          return result
+        end
+
+        # Finds organizations based on one of their property.
+        # Returns all matching organizations
+        # @example Selects organizations on their names
+        #      rm.select_organizations {|org| org.name == "Lundalogik" }
+        def select_organizations(report_result=!!configuration[:report_result], &block)
+          result = select(@organizations.values.flatten, &block)
+          report_failed_to_find_object("organization") if result.empty? and report_result
+          return result
+        end
+
+        # Finds a person based on one of its property.
+        # Returns the first found matching person
+        # @example Finds a person on its name
+        #      rm.find_person {|person| person.first_name == "Kalle" }
+        def find_person(report_result=!!configuration[:report_result], &block)
+          result = find(persons, &block)
+          report_failed_to_find_object("person") if result.nil? and report_result
+          return result
+        end
+
+        # Finds persons based on one of their property.
+        # Returns all matching persons
+        # @example Selects persons on their names
+        #      rm.select_organization {|org| org.name == "Lundalogik" }
+        def select_persons(report_result=!!configuration[:report_result], &block)
+          result = select(persons, &block)
+          report_failed_to_find_object("person") if result.empty? and report_result
+          return result
+        end
+
+        # Finds a deal based on one of its property.
+        # Returns the first found matching deal
+        # Method is much slower then using find_deal_by_integration_id
+        # @example Finds a deal on its name
+        #      rm.find_deal {|deal| deal.value == 120000 }
+        def find_deal(report_result=!!configuration[:report_result], &block)
+          result = find(@deals.values.flatten, &block)
+          report_failed_to_find_object("person") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a coworker based on one of its property.
+        # Returns the first found matching coworker
+        # @example Finds a coworker on its name
+        #      rm.find_coworker {|coworker| coworker.email == "kalle@kula.se" }
+        def find_coworker(report_result=!!configuration[:report_result], &block)
+          result = find(@coworker.values.flatten, &block)
+          report_failed_to_find_object("coworker") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a note based on one of its property.
+        # Returns the first found matching note
+        # @example Finds a note on its name
+        #      rm.find_note {|note| note.text == "hello!" }
+        def find_note(report_result=!!configuration[:report_result], &block)
+          result = find(@notes.values.flatten, &block)
+          report_failed_to_find_object("note") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a document based on one of its property.
+        # Returns the first found matching document
+        # @example Finds a document on its name
+        #      rm.find_document(:file) {|document| document.name == "Important Tender" }
+        def find_document(type, report_result=!!configuration[:report_result], &block)
+          result = find(@documents.files, &block) if type == :file
+          result = find(@documents.links, &block) if type == :link
+          report_failed_to_find_object("document") if result.nil? and report_result
+          return result
         end
 
         # Returns a string describing problems with the data. For
@@ -450,11 +536,11 @@ module GoImport
         end
 
         def report_rootmodel_status
-          nbr_of_persons = @organizations.collect{|k, o| o.employees}.flatten.compact.length
+          #nbr_of_persons = @organizations.collect{|k, o| o.employees}.flatten.compact.length
           nbr_of_documents = @documents.files.length + @documents.links.length
           puts "Rootmodel contains:\n" \
           " Organizations: #{@organizations.length}\n" \
-          " Persons:       #{nbr_of_persons}\n" \
+          " Persons:       #{persons.length}\n" \
           " Deals:         #{@deals.length}\n" \
           " Notes:         #{@notes.length}\n" \
           " Documents:     #{nbr_of_documents}"
@@ -477,9 +563,32 @@ module GoImport
             end
         end
 
-        def report_failed_to_find_object(object, integration_id)
+        # Prints a warning text if a find-function returns nil
+        def report_failed_to_find_object(object, search_string="")
           c = caller_locations(2).first
-          puts "Warning: #{c.label}:#{c.lineno}: Failed to find a #{object} when looking for id: #{integration_id}"
+          puts "Warning: #{c.label}:#{c.lineno}: Failed to find #{object}#{search_string}"
         end
+
+        def find(array)
+          result = nil
+          array.each do |obj|
+            if yield(obj)
+              result = obj
+              break
+            end
+          end
+          return result
+        end
+
+        def select(array)
+          result = []
+          array.each do |obj|
+            if yield(obj)
+              result.push obj
+            end
+          end
+          return result
+        end
+
     end
 end
