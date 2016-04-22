@@ -311,7 +311,7 @@ module GoImport
         # Finds persons based on one of their property.
         # Returns all matching persons
         # @example Selects persons on their names
-        #      rm.select_organization {|org| org.name == "Lundalogik" }
+        #      rm.select_person {|p| p.first_name == "Kalle" }
         def select_persons(report_result=!!configuration[:report_result], &block)
           result = select(persons, &block)
           report_failed_to_find_object("person") if result.empty? and report_result
@@ -329,15 +329,36 @@ module GoImport
           return result
         end
 
+        # Finds deals based on one of their property.
+        # Returns all matching deals
+        # @example Selects deals on their names
+        #      rm.select_deals {|deal| deal.name == "Big Deal" }
+        def select_deals(report_result=!!configuration[:report_result], &block)
+          result = select(@deals.values.flatten, &block)
+          report_failed_to_find_object("deal") if result.empty? and report_result
+          return result
+        end
+
         # Finds a coworker based on one of its property.
         # Returns the first found matching coworker
         # @example Finds a coworker on its name
         #      rm.find_coworker {|coworker| coworker.email == "kalle@kula.se" }
         def find_coworker(report_result=!!configuration[:report_result], &block)
-          result = find(@coworker.values.flatten, &block)
+          result = find(@coworkers.values.flatten, &block)
           report_failed_to_find_object("coworker") if result.nil? and report_result
           return result
         end
+
+        # Finds coworkers based on one of their property.
+        # Returns all matching coworkers
+        # @example Selects coworkers on their names
+        #      rm.select_coworkers {|coworker| coworker.email == "kalle@kula.se" }
+        def select_coworkers(report_result=!!configuration[:report_result], &block)
+          result = select(@coworkers, &block)
+          report_failed_to_find_object("coworker") if result.empty? and report_result
+          return result
+        end
+
 
         # Finds a note based on one of its property.
         # Returns the first found matching note
