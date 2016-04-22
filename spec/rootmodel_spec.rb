@@ -790,7 +790,7 @@ describe "RootModel" do
         result.should eq []
     end
 
-    it "will find companies based on their property" do
+    it "will find persons based on their property" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
@@ -818,7 +818,7 @@ describe "RootModel" do
         result.length.should eq 2
     end
 
-    it "will return empty array if it doesn't find a document on a property" do
+    it "will return empty array if it doesn't find any persons on their property" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
@@ -842,6 +842,47 @@ describe "RootModel" do
 
         # when
         result = rootmodel.select_persons{|per| per.position == "Slave"}
+
+        # then
+        result.should eq []
+    end
+
+    it "will find deals based on their property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.value = 1234
+        deal.integration_id = "1"
+        rootmodel.add_deal deal
+
+        deal = GoImport::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        rootmodel.add_deal deal
+
+        # when
+        result = rootmodel.select_deals{|d| d.value == 1234}
+        # then
+        result.length.should eq 2
+    end
+
+    it "will return empty array if it doesn't find any persons on their property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.value = 1234
+        deal.integration_id = "1"
+        rootmodel.add_deal deal
+
+        deal = GoImport::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        rootmodel.add_deal deal
+
+        # when
+        result = rootmodel.select_deals{|d| d.name == "Small deal"}
 
         # then
         result.should eq []
