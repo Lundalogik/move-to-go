@@ -862,7 +862,7 @@ describe "RootModel" do
         rootmodel.add_deal deal
 
         # when
-        result = rootmodel.select_deals{|d| d.value == 1234}
+        result = rootmodel.select_deals{|d| d.value == "1234"}
         # then
         result.length.should eq 2
     end
