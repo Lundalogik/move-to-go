@@ -28,11 +28,11 @@ module GoImport
         end
     end
 
-    class Person < CanBecomeImmutable    
+    class Person < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
         immutable_accessor :id
-        immutable_accessor :integration_id        
+        immutable_accessor :integration_id
         immutable_accessor :first_name
         immutable_accessor :last_name
         immutable_accessor :direct_phone_number
@@ -60,7 +60,7 @@ module GoImport
             set_tag 'Import'
         end
 
-        def organization=(org)
+        def set_organization_reference=(org)
             @organization = OrganizationReference.from_organization(org)
         end
 
