@@ -847,6 +847,44 @@ describe "RootModel" do
         result.should eq []
     end
 
+    it "will find coworker based on their property" do
+        # when
+        coworker1 = GoImport::Coworker.new({
+                                               :integration_id => "111key",
+                                               :first_name => "Kalle",
+                                               :last_name => "Anka",
+                                               :email => "kalle.anka@vonanka.com"
+                                           })
+        coworker2 = GoImport::Coworker.new({
+
+                                               :integration_id => "222key",
+                                               :first_name => "Knatte",
+                                               :last_name => "Anka",
+                                               :email => "knatte.anka@vonanka.com"
+                                           })
+        rootmodel.add_coworker(coworker1)
+        rootmodel.add_coworker(coworker2)
+
+        # then
+        result = rootmodel.find_coworker{|coworker| coworker.email == "knatte.anka@vonanka.com"}
+        result.should eq coworker2
+    end
+
+    it "will return nil if it doesn't find an coworker on a property" do
+        # when
+        coworker1 = GoImport::Coworker.new({
+                                               :integration_id => "111key",
+                                               :first_name => "Kalle",
+                                               :last_name => "Anka",
+                                               :email => "kalle.anka@vonanka.com"
+                                           })
+        rootmodel.add_coworker(coworker1)
+
+        # then
+        result = rootmodel.find_coworker{|coworker| coworker.email == "Kall"}
+        result.should eq nil
+    end
+
     it "will find deals based on their property" do
         # given
         deal = GoImport::Deal.new
