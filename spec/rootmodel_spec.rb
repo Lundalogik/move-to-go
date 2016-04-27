@@ -10,7 +10,7 @@ describe "RootModel" do
         rootmodel.find_coworker_by_integration_id("import").first_name.should eq "Import"
         rootmodel.coworkers.length.should eq 1
     end
-    
+
     it "can add a coworker from a new coworker" do
         # given
         coworker = GoImport::Coworker.new
@@ -39,7 +39,7 @@ describe "RootModel" do
         # then
         coworker.is_immutable.should eq true
     end
-    
+
 
     it "will only add coworkers" do
         # given
@@ -49,7 +49,7 @@ describe "RootModel" do
         expect {
             rootmodel.add_coworker(not_a_coworker)
         }.to raise_error(ArgumentError)
-        rootmodel.coworkers.length.should eq 1        
+        rootmodel.coworkers.length.should eq 1
     end
 
     it "will not add a new coworker when the coworker is already added (same integration id)" do
@@ -104,7 +104,7 @@ describe "RootModel" do
         # then
         organization.is_immutable.should eq true
     end
-    
+
     it "will only add organizations" do
         # given
         not_an_organization = { :integration_id => "123", :name => "This is not a note"}
@@ -115,7 +115,7 @@ describe "RootModel" do
         }.to raise_error(ArgumentError)
         rootmodel.organizations.length.should eq 0
     end
-    
+
     it "will not add a new organization when the organization is already added (same integration id)" do
         # given
         org = GoImport::Organization.new({
@@ -187,7 +187,7 @@ describe "RootModel" do
 
         # then
         deal.is_immutable.should eq true
-    end    
+    end
 
     it "will only add deals" do
         # given
@@ -234,7 +234,7 @@ describe "RootModel" do
         deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big Deal"
-        
+
         rootmodel.configuration[:allow_deals_without_responsible] = true
 
         # when
@@ -249,7 +249,7 @@ describe "RootModel" do
         deal = GoImport::Deal.new
         deal.integration_id = "123key"
         deal.name = "Big Deal"
-        
+
         rootmodel.configuration[:allow_deals_without_responsible] = false
 
         # when
@@ -318,7 +318,7 @@ describe "RootModel" do
 
     it "will make note immutable after it has been added" do
         # given
-        note = GoImport::Note.new        
+        note = GoImport::Note.new
         note.text = "this is a note"
 
         # when
@@ -327,7 +327,7 @@ describe "RootModel" do
         # then
         note.is_immutable.should eq true
     end
-    
+
     it "can add a note from a new note" do
         # given
         note = GoImport::Note.new
@@ -474,6 +474,27 @@ describe "RootModel" do
         found_person.last_name.should eq "Bob"
     end
 
+    it "Will will not find a person by wrong integration id" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        organization.add_employee({
+            :integration_id => "123",
+            :first_name => "Billy",
+            :last_name => "Bob"
+        })
+
+        rootmodel.add_organization(organization)
+
+        # when
+        found_person = rootmodel.find_person_by_integration_id("321")
+
+        # then
+        found_person.should eq nil
+
+    end
+
     it "Will find a person by integration id from an organization with many employees" do
         # given
         organization = GoImport::Organization.new
@@ -501,6 +522,32 @@ describe "RootModel" do
         found_person.last_name.should eq "Bob"
     end
 
+    it "will have correct count on number of persons" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        organization.add_employee({
+            :integration_id => "123",
+            :first_name => "Billy",
+            :last_name => "Bob"
+        })
+        organization.add_employee({
+            :integration_id => "456",
+            :first_name => "Vincent",
+            :last_name => "Vega"
+        })
+
+        rootmodel.add_organization(organization)
+
+        # when
+        persons = rootmodel.persons
+
+        # then
+        persons.length.should eq 2
+
+    end
+
     it "will report when two links has the same integration id during sanity check" do
         # given
         link1 = GoImport::Link.new
@@ -517,5 +564,365 @@ describe "RootModel" do
 
         # then
         rootmodel.sanity_check.should eq "Duplicate link integration_id: 1."
+    end
+
+    it "will find an organization based on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        organization2 = GoImport::Organization.new
+        organization2.name = "Bongo bong"
+        organization2.integration_id = "123"
+        rootmodel.add_organization(organization2)
+
+        # when
+        result = rootmodel.find_organization{|org| org.name == "Hubba Bubba"}
+
+        # then
+        result.should eq organization
+    end
+
+    it "will return nil if it doesn't find an organization on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        organization2 = GoImport::Organization.new
+        organization2.name = "Bongo bong"
+        organization2.integration_id = "123"
+        rootmodel.add_organization(organization2)
+
+        # when
+        result = rootmodel.find_organization{|org| org.name == "Nope"}
+
+        # then
+        result.should eq nil
+    end
+
+    it "will find an person based on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        person = GoImport::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+
+        organization.add_employee(person)
+
+        # when
+        result = rootmodel.find_person{|per| per.email == "kalle@kula.se"}
+
+        # then
+        result.should eq person
+    end
+
+    it "will return nil if it doesn't find a person on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        person = GoImport::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+
+        organization.add_employee(person)
+
+        # when
+        result = rootmodel.find_person{|per| per.email == "john@appleseed.com"}
+
+        # then
+        result.should eq nil
+    end
+
+    it "will find an deal based on a property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.integration_id = "321"
+        deal.value = 23456789
+        rootmodel.add_deal(deal)
+
+        # when
+        result = rootmodel.find_deal{|d| d.name == "Big Deal"}
+
+        # then
+        result.should eq deal
+    end
+
+    it "will return nil if it doesn't find a deal on a property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.integration_id = "321"
+        deal.value = 23456789
+        rootmodel.add_deal(deal)
+
+        # when
+        result = rootmodel.find_deal{|d| d.value == 0}
+
+        # then
+        result.should eq nil
+    end
+
+    it "will find an note based on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        note = GoImport::Note.new
+        note.text = "Hello!"
+        note.organization = organization
+
+        rootmodel.add_note(note)
+        # when
+        result = rootmodel.find_note{|n| n.text == "Hello!"}
+
+        # then
+        result.should eq note
+    end
+
+    it "will return nil if it doesn't find a note on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        note = GoImport::Note.new
+        note.text = "Hello!"
+        note.organization = organization
+
+        rootmodel.add_note(note)
+        # when
+        result = rootmodel.find_note{|n| n.text == "Goodbye!"}
+
+        # then
+        result.should eq nil
+    end
+
+    it "will find an document based on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        link = GoImport::Link.new
+        link.name = "Tender"
+        link.integration_id = "123"
+        link.url = "https://go.lime-go.com"
+        link.organization = organization
+
+        rootmodel.documents.add_link(link)
+        # when
+        result = rootmodel.find_document(:link){|l| l.url == "https://go.lime-go.com"}
+
+        # then
+        result.should eq link
+    end
+
+    it "will return nil if it doesn't find a document on a property" do
+      # given
+      organization = GoImport::Organization.new
+      organization.name = "Hubba Bubba"
+      organization.integration_id = "321"
+      rootmodel.add_organization(organization)
+
+      link = GoImport::Link.new
+      link.name = "Tender"
+      link.integration_id = "123"
+      link.url = "https://go.lime-go.com"
+      link.organization = organization
+
+      rootmodel.documents.add_link(link)
+      # when
+      result = rootmodel.find_document(:link){|l| l.name == "Contract"}
+
+      # then
+      result.should eq nil
+    end
+
+    it "will find companies based on their property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "123"
+        rootmodel.add_organization(organization)
+        # when
+        result = rootmodel.select_organizations{|org| org.name == "Hubba Bubba"}
+
+        # then
+        result.length.should eq 2
+    end
+
+    it "will return empty array if it doesn't find any organization on a property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "123"
+        rootmodel.add_organization(organization)
+        # when
+        result = rootmodel.select_organizations{|org| org.name == "Hubba"}
+
+        # then
+        result.should eq []
+    end
+
+    it "will find persons based on their property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+        person = GoImport::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+        person.position = "Chief"
+        organization.add_employee(person)
+
+        organization = GoImport::Organization.new
+        organization.name = "Bongo Bong"
+        organization.integration_id = "123"
+        rootmodel.add_organization(organization)
+        person = GoImport::Person.new
+        person.first_name = "Nisse"
+        person.email = "nisse@elf.com"
+        person.position = "Chief"
+        organization.add_employee(person)
+
+        # when
+        result = rootmodel.select_persons{|per| per.position == "Chief"}
+        # then
+        result.length.should eq 2
+    end
+
+    it "will return empty array if it doesn't find any persons on their property" do
+        # given
+        organization = GoImport::Organization.new
+        organization.name = "Hubba Bubba"
+        organization.integration_id = "321"
+        rootmodel.add_organization(organization)
+        person = GoImport::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+        person.position = "Chief"
+        organization.add_employee(person)
+
+        organization = GoImport::Organization.new
+        organization.name = "Bongo Bong"
+        organization.integration_id = "123"
+        rootmodel.add_organization(organization)
+        person = GoImport::Person.new
+        person.first_name = "Nisse"
+        person.email = "nisse@elf.com"
+        person.position = "Chief"
+        organization.add_employee(person)
+
+        # when
+        result = rootmodel.select_persons{|per| per.position == "Slave"}
+
+        # then
+        result.should eq []
+    end
+
+    it "will find coworker based on their property" do
+        # when
+        coworker1 = GoImport::Coworker.new({
+                                               :integration_id => "111key",
+                                               :first_name => "Kalle",
+                                               :last_name => "Anka",
+                                               :email => "kalle.anka@vonanka.com"
+                                           })
+        coworker2 = GoImport::Coworker.new({
+
+                                               :integration_id => "222key",
+                                               :first_name => "Knatte",
+                                               :last_name => "Anka",
+                                               :email => "knatte.anka@vonanka.com"
+                                           })
+        rootmodel.add_coworker(coworker1)
+        rootmodel.add_coworker(coworker2)
+
+        # then
+        result = rootmodel.find_coworker{|coworker| coworker.email == "knatte.anka@vonanka.com"}
+        result.should eq coworker2
+    end
+
+    it "will return nil if it doesn't find an coworker on a property" do
+        # when
+        coworker1 = GoImport::Coworker.new({
+                                               :integration_id => "111key",
+                                               :first_name => "Kalle",
+                                               :last_name => "Anka",
+                                               :email => "kalle.anka@vonanka.com"
+                                           })
+        rootmodel.add_coworker(coworker1)
+
+        # then
+        result = rootmodel.find_coworker{|coworker| coworker.email == "Kall"}
+        result.should eq nil
+    end
+
+    it "will find deals based on their property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.value = 1234
+        deal.integration_id = "1"
+        rootmodel.add_deal deal
+
+        deal = GoImport::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        rootmodel.add_deal deal
+
+        # when
+        result = rootmodel.select_deals{|d| d.value == "1234"}
+        # then
+        result.length.should eq 2
+    end
+
+    it "will return empty array if it doesn't find any persons on their property" do
+        # given
+        deal = GoImport::Deal.new
+        deal.name = "Big Deal"
+        deal.value = 1234
+        deal.integration_id = "1"
+        rootmodel.add_deal deal
+
+        deal = GoImport::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        rootmodel.add_deal deal
+
+        # when
+        result = rootmodel.select_deals{|d| d.name == "Small deal"}
+
+        # then
+        result.should eq []
     end
 end

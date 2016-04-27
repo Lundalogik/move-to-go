@@ -76,7 +76,7 @@ class GoImportCommandLine < Thor
             $stdout = File.new(options.log_to_file == "log_to_file" ? "go-import.log" : options.log_to_file, 'w')
             $stdout.sync = true
         end
-        max_file_size = options.max_file_size.nil? ? GoImport::File::DEFAULT_MAX_FILE_SIZE : options.max_file_size 
+        max_file_size = options.max_file_size.nil? ? GoImport::File::DEFAULT_MAX_FILE_SIZE : options.max_file_size
 
         if !is_valid_goimport_project?
             return
@@ -102,6 +102,7 @@ class GoImportCommandLine < Thor
             if options.ignore_invalid_files && model.documents.files.length > 0
                 log_and_remove_invalid_files model, max_file_size
             end
+            model.report_rootmodel_status()
 
             puts "Starting sharding of model..."
             sharder = GoImport::ShardHelper.new(options.shard_size)
@@ -111,14 +112,14 @@ class GoImportCommandLine < Thor
                 puts "Import is large and will be broken into #{models_to_serialize.length} files"
             end
 
-            models_to_serialize.each_with_index do |model, i| 
+            models_to_serialize.each_with_index do |model, i|
                 go_data_zip = options.output.nil? == true ? "go" : options.output
                 go_data_zip += "_#{i}.zip"
                 go_files = options.output_documents.nil? == true ? nil : ::File.basename(options.output_documents,File.extname(options.output_documents))
                 model.save_to_zip(go_data_zip, go_files)
                 puts "Source has been been converted into '#{go_data_zip}'."
                 puts "  - and files into '#{go_files}.zip'." if !go_files.nil?
-                if !warnings_msg.empty? 
+                if !warnings_msg.empty?
                     puts "WARNINGS: "
                     puts warnings_msg
                 end
@@ -205,4 +206,3 @@ class GoImportCommandLine < Thor
 end
 
 GoImportCommandLine.start(ARGV)
-

@@ -33,6 +33,7 @@ module GoImport
         #    source = "046 - 270 48 00/ 031-712 44 00"
         #    number1, number2 = GoImport::PhoneHelper.parse_numbers(source, '/')
         def self.parse_numbers(number_string, delimiters = ',', strict_mode = false)
+            return nil if number_string.nil?
             numbers = []
 
             if delimiters.is_a?(Array)

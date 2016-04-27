@@ -25,7 +25,7 @@ describe "Person" do
         person.set_custom_value('the key', 'the value')
 
         person.set_custom_value('the key', 'the value 2')
-        
+
         value = person.custom_values[0]
         field = value.field
 
@@ -78,7 +78,7 @@ describe "Person" do
         org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
         # when
-        person.organization = org
+        person.set_organization_reference = org
 
         # then
         person.organization.is_a?(GoImport::OrganizationReference).should eq true
@@ -86,7 +86,7 @@ describe "Person" do
 
     # *** TODO:
     # Enable this when sources are fixed, see comment in organization.add_employee
-    
+
     # it "should be immutable when added to an organization" do
     #     # given
     #     org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
@@ -127,4 +127,3 @@ describe "Person" do
         end
     end
 end
-

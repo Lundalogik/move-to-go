@@ -94,4 +94,26 @@ describe GoImport::PhoneHelper do
         # then
         number.should eq "+4722130030"
     end
+
+    it "should handle nil" do
+        # given
+        source = nil
+
+        # when
+        number = GoImport::PhoneHelper.parse_numbers(source)
+
+        # then
+        number.should eq nil
+    end
+
+    it "should handle empty string" do
+        # given
+        source = ""
+
+        # when
+        number = GoImport::PhoneHelper.parse_numbers(source)
+
+        # then
+        number.should eq ""
+    end
 end

@@ -37,10 +37,10 @@ module GoImport
             end
         end
     end
-    
+
     class Organization < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
-        
+
         immutable_accessor :id
         immutable_accessor :integration_id
         immutable_accessor :name
@@ -134,6 +134,7 @@ module GoImport
         def add_employee(val)
             @employees = [] if @employees == nil
             person = if val.is_a? Person then val else Person.new(val) end
+            person.set_organization_reference = self
             @employees.push(person)
 
             # *** TODO:
@@ -144,9 +145,9 @@ module GoImport
             # person after is has been added to the organization. We
             # must update the sources before we can set the person
             # immutable here.
-            
+
             #person.set_is_immutable
-            
+
             return person
         end
 
@@ -164,7 +165,7 @@ module GoImport
         # otherwise an InvalidRelationError error will be thrown.
         def relation=(relation)
             raise_if_immutable
-            
+
             if relation == Relation::NoRelation || relation == Relation::WorkingOnIt ||
                     relation == Relation::IsACustomer || relation == Relation::WasACustomer || relation == Relation::BeenInTouch
                 @relation = relation
@@ -174,10 +175,10 @@ module GoImport
                 raise InvalidRelationError
             end
         end
-        
+
         def relation_last_modified=(date)
             raise_if_immutable
-            
+
             begin
                 @relation_last_modified = @relation != Relation::NoRelation ? Date.parse(date).strftime("%Y-%m-%d") : nil
             rescue
