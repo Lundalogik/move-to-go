@@ -564,6 +564,7 @@ module GoImport
           " Persons:       #{persons.length}\n" \
           " Deals:         #{@deals.length}\n" \
           " Notes:         #{@notes.length}\n" \
+          " Coworkers:     #{@coworkers.length - 1}\n" \
           " Documents:     #{nbr_of_documents}"
         end
 

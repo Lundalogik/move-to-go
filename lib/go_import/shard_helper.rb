@@ -9,6 +9,7 @@ module GoImport
             end
 
             def shard_model(model)
+                @current_shard.configuration = model.configuration
                 @current_shard.settings = model.settings
 
                 model.coworkers.each{ |key, coworker|
