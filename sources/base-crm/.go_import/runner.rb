@@ -116,11 +116,11 @@ def convert_source
             person.mobile_phone_number = GoImport::PhoneHelper.parse_numbers(row['mobile'])
             person.email = row['email']
 
-            employer = rootmodel.find_organization {|org|
+            organization = rootmodel.find_organization {|org|
                org.name == row["organisation_name"]
              }
-            if not employer.nil?
-              employer.add_employee(person)
+            if not organization.nil?
+              organization.add_employee(person)
             else
               puts "No organization for person '#{person.first_name} #{person.last_name}, #{person.integration_id}' could be found. Person will not be imported!"
               ignored_persons += 1
@@ -225,8 +225,8 @@ def convert_source
                 org = person.organization
                 note.person = person
               end
+              note.organization = org
             end
-            note.organization = org
             rootmodel.add_note(note)
         end
     end

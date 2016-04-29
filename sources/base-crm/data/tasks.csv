@@ -1,0 +1,5 @@
+content,owner,send_time,done_at,created_at,date,id,remind,taskable_company_name,taskable_first_name,taskable_id,taskable_last_name,taskable_name,taskable_type,updated_at
+"Ring kund ang uppföljning,Kalle Kula,2014-09-04T06:15:00Z,2014-09-04T06:59:32Z,2014-09-03T08:59:53Z,,7338118,true,"""",Petter,69512473,Johansson,,SalesAccount,2014-09-04T06:59:32Z"
+"Ring boka ny utb!,Kalle Kula,2014-09-08T07:45:00Z,,2014-09-04T07:00:36Z,,7402212,true,"""",Petter,69512473,Johansson,,SalesAccount,2014-09-07T14:45:04Z"
+"Ring boka möte för fördjupat samarbete,Kalle Kula,2014-09-08T08:00:00Z,,2014-09-04T07:25:17Z,,7402869,true,"""",Anna,69512622,Andersson,,SalesAccount,2014-09-04T07:25:17Z"
+"Boka nytt möte,Kalle Kula,2014-09-08T10:45:00Z,,2014-09-04T07:18:36Z,,7402562,true,"""",Cyrus,69512640,TheVirus,,SalesAccount,2014-09-07T14:44:51Z"

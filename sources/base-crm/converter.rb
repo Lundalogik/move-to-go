@@ -11,7 +11,12 @@ class Converter
     end
 
     rootmodel.settings.with_deal do |deal|
-
+        deal.add_status({:label => "Prospecting", :integration_id => "Prospecting"})
+        deal.add_status({:label => "Qualified", :integration_id => "Qualified"})
+        deal.add_status({:label => "Won", :integration_id => "Won",
+                            :assessment => GoImport::DealState::PositiveEndState })
+        deal.add_status({:label => "Lost", :integration_id => "Lost",
+                            :assessment => GoImport::DealState::NegativeEndState })
     end
   end
 

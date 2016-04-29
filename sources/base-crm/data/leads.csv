@@ -1,0 +1,4 @@
+first_name,last_name,company_name,owner,city,country,created_at,creator,description,email,facebook,fax,id,industry,linkedin,mobile,phone,region,skype,status,street,tags,title,twitter,updated_at,website,zip
+Robin,Hood,Reklam1 AB,Kalle Kula,Lund,Sweden,2014-09-04T09:42:33Z,Kalle Kula,,,,,16685740,tillverkning,,0733-11 11 11,,,,Working,,reklam,Försäljnings- och marknadschef,,2014-09-04T09:42:33Z,,
+Tony,Tonfisk,Hantverkare2,Kalle Kula,Borås,,2014-09-04T14:36:01Z,Kalle Kula,"Ringde, intresse finns",tony@tonfisk.se,,,16694927,Magasin/katalog,,0701121212,,,,Unqualified,gatan 11,,Ansvarig,,2014-09-10T14:44:29Z,,
+Thomas,Tomasso,"Bregott fabriken",Kalle Kula,Jönköping,Sweden,2015-06-30T12:47:04Z,Kalle Kula,,thomas.tomasso@bregott.se,,,35451881,,,07088000 00,090505050,,,Working,gatan 12,,Delägare,,2015-06-30T12:47:04Z,,553 17
