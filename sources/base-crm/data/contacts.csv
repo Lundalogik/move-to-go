@@ -1,0 +1,13 @@
+first_name,last_name,is_organisation,name,organisation_name,owner,tags,email,address,mobile,phone,customer_status,prospect_status,custom Name#1,custom First name#1,city,country,created_at,creator,description,facebook,fax,id,industry,last_activity_date,linkedin,linkedin_display,private,region,skype,title,twitter,updated_at,website,zip
+Håka,Lind,false,Håka Lind,AD Company,Kalle Kula,"",hakan.lind@ad.com,gatan 2,+46701234123,"",current,,,,Göteborg,Sweden,2015-08-12T09:59:32Z,Kalle Kula,,,,98153928,,,,,false,"",,"Service Manager production system, IT coordinator",,2015-10-02T09:19:17Z,,56130
+,,true,itteknik,,Kalle Kula,from iPhone,,vägen 23,,,current,,,,Malmö,Sverige,2015-11-25T15:17:20Z,Kalle Kula,,,,108910004,,,,,false,,,,,2015-11-25T15:17:21Z,,34250
+Anna,Berg,false,Anna Berg,itteknik,Kalle Kula,"Flexibla Kontoret,Hantverksappen,vvs",info@roret.se,Brunnvägen 1,070-1110000,"",current,,,,Stockholm,Sweden,2016-02-15T07:41:56Z,Kalle Kula,,,,117069853,,,,,false,"",,"Ekonomi, Admin",,2016-02-15T07:41:56Z,,57450
+Anna,Ståhl,false,Anna Ståhl,AB Bors Rör,Kalle Kula,from iPhone,,,076-800 10 00,,,,,,,,2015-08-19T08:49:26Z,Kalle Kula,,,,98708109,,,,,false,,,,,2015-08-19T08:49:26Z,,
+,,true,AB Bors Rör,,Kalle Kula,"flexibla kontoret,vvs","","","","",,,,,"","",2015-09-17T12:01:44Z,Kalle Kula,,,,101402913,,,,,false,"",,,,2015-11-09T13:45:58Z,,""
+,,true,AB Familjen,,Kalle Kula,from iPhone,,,,,,,,,Åre,Sweden,2015-08-19T06:26:58Z,Kalle Kula,,,,98702143,,,,,false,Jämtlands Län,,,,2015-08-21T07:29:44Z,,
+,,true,AB Laholms,,Kalle Kula,from iPhone,,,,,,,,,,,2015-08-19T06:21:27Z,Kalle Kula,,,,98702035,,,,,false,,,,,2015-08-19T06:21:27Z,,
+,,true,AD Company,,Kalle Kula,from iPhone,,gatan 2,,,current,,,,Lund,,2015-10-12T14:38:43Z,Kalle Kula,,,,104062513,,,,,false,,,,,2015-11-19T10:40:39Z,,553 00
+,,true,AB Affär,,Kalle Kula,"",,,,,current,,,,Lund,Sweden,2015-08-18T21:59:33Z,Kalle Kula,,,,98677167,Digital sinage mm,,,,false,,,,,2015-08-18T21:59:33Z,,
+,,true,AB Affären,,Kalle Kula,"",,,,,,,,,,,2014-09-05T07:45:04Z,Kalle Kula,,,,69769303,Redovisnings konsult,,,,false,,,,,2014-09-05T15:33:17Z,,
+,,true,Ahlgrens Bilar,,Kalle Kula,"from iPhone,flexibla kontoret,Flexibla/Hantverksappen",,,,,,,,,,,2015-08-19T06:37:39Z,Kalle Kula,,,,98702525,,,,,false,,,,,2015-08-19T06:37:39Z,,
+Alex,Alexandersson,false,Alex Alexandersson,Ahlgrens Bilar,Kalle Kula,from iPhone,Alex.Alexandersson@ahlgrens.se,,0707 840000,,,,,,,,2015-08-19T09:30:24Z,Kalle Kula,,,,98710895,,,,,false,,,,,2015-08-19T09:30:24Z,,
