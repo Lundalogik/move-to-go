@@ -2,9 +2,9 @@
 
 Gem::Specification.new do |s|
     s.name        = 'go_import'
-    s.version     = '3.0.41'
+    s.version     = '3.0.42'
     s.platform    = Gem::Platform::RUBY
-    s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game']
+    s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game', 'Rickard Helldin']
     s.email       = 'support@lundalogik.se'
     s.summary     = 'Tool to generate Lime Go zip import files'
     s.description = <<-EOF
