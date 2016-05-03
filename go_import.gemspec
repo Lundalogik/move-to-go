@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
     s.name        = 'go_import'
-    s.version     = '3.0.40'
+    s.version     = '3.0.41'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game']
     s.email       = 'support@lundalogik.se'
