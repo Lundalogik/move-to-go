@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require "thor"
-require "go_import"
+require_relative '../lib/go_import'
 require 'progress'
+
 
 RUNNER_DIR = ".go_import"
 
