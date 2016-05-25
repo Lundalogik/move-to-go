@@ -57,11 +57,11 @@ def convert_source
         end
     end
 
-    if defined?(NOTE_SHEET)
-        if excel_workbook.has_sheet?(NOTE_SHEET)
-            note_rows = excel_workbook.rows_for_sheet NOTE_SHEET
+    if defined?(HISTORY_SHEET)
+        if excel_workbook.has_sheet?(HISTORY_SHEET)
+            history_rows = excel_workbook.rows_for_sheet HISTORY_SHEET
         else
-            puts "WARNING: can't find sheet '#{NOTE_SHEET}'"
+            puts "WARNING: can't find sheet '#{HISTORY_SHEET}'"
         end
     end
 
@@ -82,7 +82,7 @@ def convert_source
 
     # Now start to read data from the excel file and add to the
     # rootmodel. We begin with coworkers since they are referenced
-    # from everywhere (orgs, deals, notes)
+    # from everywhere (orgs, deals, histories)
     if defined?(coworker_rows) && !coworker_rows.nil?
         puts "Trying to convert coworkers..."
         coworker_rows.each do |row|
@@ -118,12 +118,12 @@ def convert_source
         end
     end
 
-    # Notes must be owned by a coworker and the be added to
-    # organizations and notes and might refernce a person
-    if defined?(note_rows) && !note_rows.nil?
-        puts "Trying to convert notes..."
-        note_rows.each do |row|
-            rootmodel.add_note(converter.to_note(row, rootmodel))
+    # histories must be owned by a coworker and the be added to
+    # organizations and histories and might refernce a person
+    if defined?(histories_rows) && !histories_rows.nil?
+        puts "Trying to convert history..."
+        history_rows.each do |row|
+            rootmodel.add_history(converter.to_history(row, rootmodel))
         end
     end
 

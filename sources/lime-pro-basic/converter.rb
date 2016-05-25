@@ -55,11 +55,11 @@ DEAL_COMPANY_FIELD = 'company'
 # Notes
 # Set if notes should be imported and name of relationfields.
 # Defaults should work well
-IMPORT_NOTES = true
-NOTE_COWORKER_FIELD = 'coworker'
-NOTE_COMPANY_FIELD = 'company'
-NOTE_PERSON_FIELD = 'person'
-NOTE_DEAL_FIELD = 'business'
+IMPORT_HISTORY = true
+HISTORY_COWORKER_FIELD = 'coworker'
+HISTORY_COMPANY_FIELD = 'company'
+HISTORY_PERSON_FIELD = 'person'
+HISTORY_DEAL_FIELD = 'business'
 
 ############################################################################
 
@@ -325,7 +325,7 @@ class Converter
     end
 
     # Reads a row from the History table 
-    # and ads custom fields to the go_import note.
+    # and ads custom fields to the go_import history.
 
     # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
@@ -334,26 +334,26 @@ class Converter
     # Sometimes it's enough to uncomment some code and
     # change the row name but in most cases you need to
     # do some thinking of your own.
-    def to_note(note, row)
+    def to_history(history, row)
 
-        # note.text = row['text']
+        # history.text = row['text']
 
-        # Set the note classification. The value must be a value from the
-        # GoImport::NoteClassification enum. If no classification is
-        # set the note will get the default classification 'Comment'
+        # Set the history classification. The value must be a value from the
+        # GoImport::HistoryClassification enum. If no classification is
+        # set the history will get the default classification 'Comment'
         
         # case row['type']
         # when 'Sales call' 
-        #   note.classification = GoImport::NoteClassification::SalesCall
+        #   history.classification = GoImport::HistoryClassification::SalesCall
         # when 'Customer Visit'
-        # note.classification = GoImport::NoteClassification::ClientVisit
+        # history.classification = GoImport::historyClassification::ClientVisit
         # when 'No answer'
-        #   note.classification = GoImport::NoteClassification::TriedToReach
+        #   history.classification = GoImport::HistoryClassification::TriedToReach
         # else
-        #   note.classification = GoImport::NoteClassification::Comment
+        #   history.classification = GoImport::HistoryClassification::Comment
         # end
         
-        return note
+        return history
     end
 
     
@@ -380,15 +380,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a note to
+    # with hooks, below is an example of an organization hook that adds a history to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        note = GoImport::Note.new
-    #        note.text = row['fieldname']
-    #        note.organization = organization
-    #        note.created_by = rootmodel.import_coworker
-    #        rootmodel.add_note(note)
+    #        history = GoImport::History.new
+    #        history.text = row['fieldname']
+    #        history.organization = organization
+    #        history.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(history)
     #    end
     #end
 

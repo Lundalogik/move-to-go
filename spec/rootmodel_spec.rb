@@ -107,7 +107,7 @@ describe "RootModel" do
 
     it "will only add organizations" do
         # given
-        not_an_organization = { :integration_id => "123", :name => "This is not a note"}
+        not_an_organization = { :integration_id => "123", :name => "This is not a history"}
 
         # when, then
         expect {
@@ -305,77 +305,77 @@ describe "RootModel" do
         }.to raise_error(GoImport::IntegrationIdIsRequiredError)
     end
 
-    it "will only add notes" do
+    it "will only add history" do
         # given
-        not_a_note = { :integration_id => "123", :text => "This is not a note"}
+        not_a_history = { :integration_id => "123", :text => "This is not a history"}
 
         # when, then
         expect {
-            rootmodel.add_note(not_a_note)
+            rootmodel.add_history(not_a_history)
         }.to raise_error(ArgumentError)
-        rootmodel.notes.length.should eq 0
+        rootmodel.histories.length.should eq 0
     end
 
-    it "will make note immutable after it has been added" do
+    it "will make history immutable after it has been added" do
         # given
-        note = GoImport::Note.new
-        note.text = "this is a note"
+        history = GoImport::History.new
+        history.text = "this is a history"
 
         # when
-        rootmodel.add_note(note)
+        rootmodel.add_history(history)
 
         # then
-        note.is_immutable.should eq true
+        history.is_immutable.should eq true
     end
 
-    it "can add a note from a new note" do
+    it "can add a history from a new history" do
         # given
-        note = GoImport::Note.new
-        note.integration_id = "123key"
-        note.text = "This is a note"
+        history = GoImport::History.new
+        history.integration_id = "123key"
+        history.text = "This is a history"
 
         # when
-        rootmodel.add_note(note)
+        rootmodel.add_history(history)
 
         # then
-        rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
-        rootmodel.notes.length.should eq 1
+        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a history"
+        rootmodel.histories.length.should eq 1
     end
 
-    it "will generate an integration id if the new note dont have one" do
+    it "will generate an integration id if the new history dont have one" do
         # given
-        note = GoImport::Note.new
-        note.text = "This is a note"
+        history = GoImport::History.new
+        history.text = "This is a history"
 
         # when
-        rootmodel.add_note(note)
+        rootmodel.add_history(history)
 
         # then
-        note.integration_id.length.should be > 0
+        history.integration_id.length.should be > 0
     end
 
-    it "will generate unique integration ids for each note" do
+    it "will generate unique integration ids for each history" do
         # given
-        note1 = GoImport::Note.new
-        note1.text = "This is a note"
+        history1 = GoImport::History.new
+        history1.text = "This is a history"
 
-        note2 = GoImport::Note.new
-        note2.text = "This is a different note"
+        history2 = GoImport::History.new
+        history2.text = "This is a different history"
 
         # when
-        rootmodel.add_note note1
-        rootmodel.add_note note2
+        rootmodel.add_history history1
+        rootmodel.add_history history2
 
         # then
-        note1.integration_id.should be != note2.integration_id
+        history1.integration_id.should be != history2.integration_id
     end
 
-    it "will not add a nil note" do
+    it "will not add a nil history" do
         # given, when
-        rootmodel.add_note(nil)
+        rootmodel.add_history(nil)
 
         # then
-        rootmodel.notes.length.should eq 0
+        rootmodel.histories.length.should eq 0
     end
 
     it "will not add a nil organization" do
@@ -431,25 +431,25 @@ describe "RootModel" do
         rootmodel.documents.files.length.should eq 1
     end
 
-    it "will not add a new note when the note is already added (same integration id)" do
+    it "will not add a new history when the history is already added (same integration id)" do
         # given
-        note = GoImport::Note.new({
+        history = GoImport::History.new({
                                       :integration_id => "123key",
-                                      :text => "This is a note"
+                                      :text => "This is a history"
                                   })
-        rootmodel.add_note(note)
-        rootmodel.notes.length.should eq 1
+        rootmodel.add_history(history)
+        rootmodel.histories.length.should eq 1
 
         # when, then
-        note2 = GoImport::Note.new({
+        history2 = GoImport::History.new({
                                        :integration_id => "123key",
-                                       :text => "This is another note"
+                                       :text => "This is another history"
                                    })
         expect {
-            rootmodel.add_note(note2)
+            rootmodel.add_history(history2)
         }.to raise_error(GoImport::AlreadyAddedError)
-        rootmodel.notes.length.should eq 1
-        rootmodel.find_note_by_integration_id("123key").text.should eq "This is a note"
+        rootmodel.histories.length.should eq 1
+        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a history"
     end
 
     it "Will find a person by integration id" do
@@ -674,39 +674,39 @@ describe "RootModel" do
         result.should eq nil
     end
 
-    it "will find an note based on a property" do
+    it "will find an history based on a property" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
         organization.integration_id = "321"
         rootmodel.add_organization(organization)
 
-        note = GoImport::Note.new
-        note.text = "Hello!"
-        note.organization = organization
+        history = GoImport::History.new
+        history.text = "Hello!"
+        history.organization = organization
 
-        rootmodel.add_note(note)
+        rootmodel.add_history(history)
         # when
-        result = rootmodel.find_note{|n| n.text == "Hello!"}
+        result = rootmodel.find_history{|n| n.text == "Hello!"}
 
         # then
-        result.should eq note
+        result.should eq history
     end
 
-    it "will return nil if it doesn't find a note on a property" do
+    it "will return nil if it doesn't find a history on a property" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
         organization.integration_id = "321"
         rootmodel.add_organization(organization)
 
-        note = GoImport::Note.new
-        note.text = "Hello!"
-        note.organization = organization
+        history = GoImport::History.new
+        history.text = "Hello!"
+        history.organization = organization
 
-        rootmodel.add_note(note)
+        rootmodel.add_history(history)
         # when
-        result = rootmodel.find_note{|n| n.text == "Goodbye!"}
+        result = rootmodel.find_history{|n| n.text == "Goodbye!"}
 
         # then
         result.should eq nil

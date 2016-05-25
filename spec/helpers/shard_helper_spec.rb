@@ -49,9 +49,9 @@ describe GoImport::ShardHelper do
         end
 
         (1..10).each do |n|
-            note = GoImport::Note.new
-            note.text = "Important note"
-            model.add_note(note)
+            history = GoImport::History.new
+            history.text = "Important history"
+            model.add_history(history)
         end
 
         (1..10).each do |n|

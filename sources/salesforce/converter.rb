@@ -98,15 +98,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a note to
+    # with hooks, below is an example of an organization hook that adds a history to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        note = GoImport::Note.new
-    #        note.text = row['fieldname']
-    #        note.organization = organization
-    #        note.created_by = rootmodel.import_coworker
-    #        rootmodel.add_note(note)
+    #        history = GoImport::History.new
+    #        history.text = row['fieldname']
+    #        history.organization = organization
+    #        history.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(history)
     #    end
     #end
 

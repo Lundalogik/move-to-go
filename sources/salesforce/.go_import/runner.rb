@@ -267,25 +267,25 @@ def to_deal(row, rootmodel, converter)
     return deal
 end
 
-def to_note(row, rootmodel)
+def to_history(row, rootmodel)
     if row['IsDeleted'] != '0'
         return nil
     end
 
-    note = GoImport::Note.new
+    history = GoImport::History.new
 
-    note.integration_id = row['Id']
-    note.text = row['Title'] + ' ' + row['Body']
+    history.integration_id = row['Id']
+    history.text = row['Title'] + ' ' + row['Body']
     
-    note.date = row['CreatedDate']
+    history.date = row['CreatedDate']
 
-    note.created_by = rootmodel.find_coworker_by_integration_id(row['CreatedById'])
-    note.organization = rootmodel.find_organization_by_integration_id(row['AccountId'])
+    history.created_by = rootmodel.find_coworker_by_integration_id(row['CreatedById'])
+    history.organization = rootmodel.find_organization_by_integration_id(row['AccountId'])
 
     # TODO: we should probably set the classification in the same was
     # a a deal's status is set.
     
-    return note
+    return history
 end
 
 def add_opportunity_stages_as_deal_status_to_model(rootmodel)
@@ -389,9 +389,9 @@ def convert_source
             rootmodel.add_deal(to_deal(row, rootmodel, converter))
         end
 
-        puts "Trying to import notes..."
+        puts "Trying to import history..."
         process_rows(NOTE_FILE) do |row|
-            rootmodel.add_note(to_note(row, rootmodel))
+            rootmodel.add_history(to_history(row, rootmodel))
         end
     end
     

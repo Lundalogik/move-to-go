@@ -7,7 +7,7 @@ ORGANIZATION_FILE = "data/contacts.csv"
 LEADS_FILE = "data/leads.csv"
 PERSON_FILE = "data/contacts.csv"
 DEAL_FILE = "data/deals.csv"
-NOTE_FILE = "data/notes.csv"
+HISTORY_FILE = "data/histories.csv"
 SOURCE_ENCODING = "utf-8"
 
 
@@ -24,7 +24,7 @@ def convert_source
     puts "Trying to convert Base CRM source to LIME Go..."
 
     converter = Converter.new
-    ignored_notes = 0
+    ignored_histories = 0
     ignored_persons = 0
 
     # A rootmodel is used to represent all entitite/models that is
@@ -166,14 +166,14 @@ def convert_source
             organization.add_employee(person)
 
             if row['description']
-              note = GoImport::Note.new()
+              history = GoImport::History.new()
 
-              note.text = row['description']
-              note.person = person
-              note.organization = organization
-              note.created_by = coworker
+              history.text = row['description']
+              history.person = person
+              history.organization = organization
+              history.created_by = coworker
 
-              rootmodel.add_note(note)
+              rootmodel.add_history(history)
             end
             rootmodel.add_organization(organization)
       end
@@ -199,37 +199,37 @@ def convert_source
         end
     end
 
-    # notes
-    if defined?(NOTE_FILE) && !NOTE_FILE.nil? && !NOTE_FILE.empty?
-        process_rows(NOTE_FILE, source_encoding) do |row|
-            note = converter.to_note(row, rootmodel)
-            note.integration_id = row['id']
-            note.text = row['content']
-            note.created_by = rootmodel.find_coworker_by_integration_id(row["owner"])
+    # historys
+    if defined?(HISTORY_FILE) && !HISTORY_FILE.nil? && !HISTORY_FILE.empty?
+        process_rows(HISTORY_FILE, source_encoding) do |row|
+            history = converter.to_history(row, rootmodel)
+            history.integration_id = row['id']
+            history.text = row['content']
+            history.created_by = rootmodel.find_coworker_by_integration_id(row["owner"])
             notable_id = row['noteable_id']
             case row["noteable_type"]
             when "Deal"
               deal = rootmodel.find_deal_by_integration_id(notable_id)
-              note.deal = deal
+              history.deal = deal
             when "Lead"
-              note.person = rootmodel.find_person_by_integration_id("p#{notable_id}")
-              note.organization = rootmodel.find_organization_by_integration_id("l#{notable_id}")
+              history.person = rootmodel.find_person_by_integration_id("p#{notable_id}")
+              history.organization = rootmodel.find_organization_by_integration_id("l#{notable_id}")
             when "Contact"
-              puts "Ignoreing note for unbound person: #{row['owner']}"
-              ignored_notes += 1
+              puts "Ignoreing history for unbound person: #{row['owner']}"
+              ignored_histories += 1
               next
             else
               org = rootmodel.find_organization_by_integration_id(notable_id)
               if org.nil?
                 person = rootmodel.find_person_by_integration_id(notable_id)
                 org = person.organization
-                note.person = person
+                history.person = person
               end
-              note.organization = org
+              history.organization = org
             end
-            rootmodel.add_note(note)
+            rootmodel.add_history(history)
         end
     end
-    puts "Ignored #{ignored_persons} persons and #{ignored_notes} notes"
+    puts "Ignored #{ignored_persons} persons and #{ignored_histories} histories"
     return rootmodel
 end

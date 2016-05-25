@@ -132,15 +132,15 @@ def convert_source
         puts "Deals are not imported. To enable set IMPORT_DEALS = true in converter.rb."
     end
 
-    if defined?(IMPORT_NOTES) && IMPORT_NOTES == true
+    if defined?(IMPORT_HISTORY) && IMPORT_HISTORY == true
         con.fetch_data 'history' do |row|
-            note = converter.to_note(init_note(row, con.get_class_by_name('history'), rootmodel), row)
-            #if !note.organization.nil? || !note.person.nil?
-                rootmodel.add_note(note)
+            history = converter.to_history(init_history(row, con.get_class_by_name('history'), rootmodel), row)
+            #if !history.organization.nil? || !history.person.nil?
+                rootmodel.add_history(history)
             #end
         end
     else
-        puts "Notes/history is not imported. To enable set IMPORT_NOTES = true in converter.rb."
+        puts "History is not imported. To enable set IMPORT_HISTORY = true in converter.rb."
     end
 
     """
@@ -258,27 +258,27 @@ def init_deal(row, table, rootmodel)
     return deal
 end
 
-def init_note(row, table, rootmodel)
-    note = GoImport::Note.new
+def init_history(row, table, rootmodel)
+    history = GoImport::History.new
 
-    note.integration_id = row['idhistory'].to_s
+    history.integration_id = row['idhistory'].to_s
 
-    coworker = rootmodel.find_coworker_by_integration_id(row[NOTE_COWORKER_FIELD].to_s)
-    note.created_by = coworker if coworker
+    coworker = rootmodel.find_coworker_by_integration_id(row[HISTORY_COWORKER_FIELD].to_s)
+    history.created_by = coworker if coworker
  
-    organization = rootmodel.find_organization_by_integration_id(row[NOTE_COMPANY_FIELD].to_s)
-    note.organization = organization if organization   
+    organization = rootmodel.find_organization_by_integration_id(row[HISTORY_COMPANY_FIELD].to_s)
+    history.organization = organization if organization
 
-    person = rootmodel.find_person_by_integration_id(row[NOTE_PERSON_FIELD].to_s)
-    note.person = person if person
+    person = rootmodel.find_person_by_integration_id(row[HISTORY_PERSON_FIELD].to_s)
+    history.person = person if person
 
-    deal = rootmodel.find_deal_by_integration_id(row[NOTE_DEAL_FIELD].to_s)
-    note.deal = deal if deal
+    deal = rootmodel.find_deal_by_integration_id(row[HISTORY_DEAL_FIELD].to_s)
+    history.deal = deal if deal
 
-    note.text = table.get_value_for_field_with_label(row, FieldLabel::Notes)
-    note.date = table.get_value_for_field_with_label(row, FieldLabel::StartDate)
+    history.text = table.get_value_for_field_with_label(row, FieldLabel::historys)
+    history.date = table.get_value_for_field_with_label(row, FieldLabel::StartDate)
 
-    return note
+    return history
 end
 
 

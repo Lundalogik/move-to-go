@@ -7,12 +7,12 @@ require_relative("../converter")
 EXPORT_FOLDER = 'export'
 COWORKER_FILE = "#{EXPORT_FOLDER}/User.txt"
 ORGANIZATION_FILE = "#{EXPORT_FOLDER}/Company.txt"
-ORGANIZATION_NOTE_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
+ORGANIZATION_HISTORY_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
 ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
 PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
 INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
 DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
-DEAL_NOTE_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
+DEAL_HISTORY_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
 PROJECT_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Project-Document.txt"
 
 def convert_source
@@ -56,10 +56,10 @@ def convert_source
         converter.to_person(person, row)
     end
 
-    # organization notes
-    process_rows(" - Reading Organization Notes '#{ORGANIZATION_NOTE_FILE}'", ORGANIZATION_NOTE_FILE) do |row|
+    # organization histories
+    process_rows(" - Reading Organization History '#{ORGANIZATION_HISTORY_FILE}'", ORGANIZATION_HISTORY_FILE) do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_organization_note(converter, row, rootmodel))
+        rootmodel.add_history(to_organization_history(converter, row, rootmodel))
     end
 
     # Organization - Deal connection
@@ -77,10 +77,10 @@ def convert_source
         rootmodel.add_deal(converter.to_deal(deal, row))
     end
 
-    # deal notes
-    process_rows(" - Reading Deal Notes '#{DEAL_NOTE_FILE}'", DEAL_NOTE_FILE) do |row|
+    # deal histories
+    process_rows(" - Reading Deal Histories '#{DEAL_HISTORY_FILE}'", DEAL_HISTORY_FILE) do |row|
         # adds itself if applicable
-        rootmodel.add_note(to_deal_note(converter, row, rootmodel))
+        rootmodel.add_history(to_deal_history(converter, row, rootmodel))
     end
 
     # documents
@@ -152,37 +152,37 @@ end
 
 # Turns a row from the Easy exported Company-History.txt file into
 # a go_import model that is used to generate xml.
-def to_organization_note(converter, row, rootmodel)
+def to_organization_history(converter, row, rootmodel)
     organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
     coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
 
     if organization && coworker
-        note = GoImport::Note.new()
-        note.organization = organization
-        note.created_by = coworker
-        note.person = organization.find_employee_by_integration_id(row['idPerson'])
-        note.date = row['Date']
+        history = GoImport::History.new()
+        history.organization = organization
+        history.created_by = coworker
+        history.person = organization.find_employee_by_integration_id(row['idPerson'])
+        history.date = row['Date']
         
-        if converter.respond_to?(:get_note_classification_for_activity_on_company)
-            # we will get an InvalidNoteClassificationError if we are
+        if converter.respond_to?(:get_history_classification_for_activity_on_company)
+            # we will get an InvalidHistoryClassificationError if we are
             # setting and invalid classification. So no need to verify
             # return value from converter.
             classification =
-                converter.get_note_classification_for_activity_on_company(row['Category'])
+                converter.get_history_classification_for_activity_on_company(row['Category'])
 
             if classification.nil?
-                classification = GoImport::NoteClassification::Comment
+                classification = GoImport::HistoryClassification::Comment
             end
             
-            note.classification = classification
+            history.classification = classification
 
-            note.text = row['History']
+            history.text = row['History']
         else
-            note.classification = GoImport::NoteClassification::Comment
-            note.text = "#{row['Category']}: #{row['History']}"            
+            history.classification = GoImport::HistoryClassification::Comment
+            history.text = "#{row['Category']}: #{row['History']}"
         end
 
-        return note.text.empty? ? nil : note
+        return history.text.empty? ? nil : history
     end
 
     return nil
@@ -257,7 +257,7 @@ end
 
 # Turns a row from the Easy exported Project-History.txt file into
 # a go_import model that is used to generate xml
-def to_deal_note(converter, row, rootmodel)
+def to_deal_history(converter, row, rootmodel)
     # TODO: This could be improved to read a person from an
     # organization connected to this deal if any, but since it is
     # a many to many connection between organizations and deals
@@ -266,34 +266,34 @@ def to_deal_note(converter, row, rootmodel)
     coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
 
     if deal && coworker
-        note = GoImport::Note.new()
-        note.deal = deal
-        note.created_by = coworker
-        note.date = row['Date']
+        history = GoImport::History.new()
+        history.deal = deal
+        history.created_by = coworker
+        history.date = row['Date']
         # Raw history looks like this <category>: <person>: <text>
-        note.text = row['RawHistory']
+        history.text = row['RawHistory']
 
-        if converter.respond_to?(:get_note_classification_for_activity_on_project)
-            # we will get an InvalidNoteClassificationError if we are
+        if converter.respond_to?(:get_history_classification_for_activity_on_project)
+            # we will get an InvalidHistoryClassificationError if we are
             # setting and invalid classification. So no need to verify
             # return value from converter.
 
             classification =
-                converter.get_note_classification_for_activity_on_project(row['Category'])
+                converter.get_history_classification_for_activity_on_project(row['Category'])
 
             if classification.nil?
-                classification = GoImport::NoteClassification::Comment
+                classification = GoImport::HistoryClassification::Comment
             end
             
-            note.classification = classification
-            note.text = row['RawHistory'].to_s.sub("#{row['Category']}:", "")
+            history.classification = classification
+            history.text = row['RawHistory'].to_s.sub("#{row['Category']}:", "")
         else
-            note.classification = GoImport::NoteClassification::Comment
-            note.text = row['RawHistory']
+            history.classification = GoImport::HistoryClassification::Comment
+            history.text = row['RawHistory']
         end
         
 
-        return note.text.empty? ? nil : note
+        return history.text.empty? ? nil : history
     end
 
     return nil
@@ -338,11 +338,11 @@ end
 def make_sure_database_has_been_exported()
     return File.exists?(COWORKER_FILE) &&
         File.exists?(ORGANIZATION_FILE) &&
-        File.exists?(ORGANIZATION_NOTE_FILE) &&
+        File.exists?(ORGANIZATION_HISTORY_FILE) &&
         File.exists?(ORGANIZATION_DOCUMENT_FILE) &&
         File.exists?(PERSON_FILE) &&
         File.exists?(INCLUDE_FILE) &&
         File.exists?(DEAL_FILE) &&
-        File.exists?(DEAL_NOTE_FILE) &&
+        File.exists?(DEAL_HISTORY_FILE) &&
         File.exists?(PROJECT_DOCUMENT_FILE)
 end

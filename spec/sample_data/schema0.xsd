@@ -7,7 +7,7 @@
       <xs:element minOccurs="0" maxOccurs="1" name="Coworkers" type="ArrayOfCoworker" />
       <xs:element minOccurs="0" maxOccurs="1" name="Organizations" type="ArrayOfOrganization" />
       <xs:element minOccurs="0" maxOccurs="1" name="Deals" type="ArrayOfDeal" />
-      <xs:element minOccurs="0" maxOccurs="1" name="Notes" type="ArrayOfNote" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Histories" type="ArrayOfHistory" />
       <xs:element minOccurs="0" maxOccurs="1" name="Documents" type="Documents" />
     </xs:sequence>
     <xs:attribute name="Version" type="Version" use="required" />
@@ -196,12 +196,12 @@
       <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ArrayOfNote">
+  <xs:complexType name="ArrayOfHistory">
     <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="Note" nillable="true" type="Note" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="History" nillable="true" type="History" />
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="Note">
+  <xs:complexType name="History">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />

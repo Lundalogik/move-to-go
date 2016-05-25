@@ -1,5 +1,5 @@
 module GoImport
-    class Note < CanBecomeImmutable
+    class History < CanBecomeImmutable
         include SerializeHelper
         immutable_accessor :id
         immutable_accessor :integration_id
@@ -8,8 +8,8 @@ module GoImport
         attr_reader :text
         attr_reader :organization, :created_by, :person, :deal
 
-        # The note's classification. It should be a value from
-        # {#NoteClassification}. The default value is Comment.
+        # The history classification. It should be a value from
+        # {#HistoryClassification}. The default value is Comment.
         attr_reader :classification
 
         def initialize(opt = nil)
@@ -20,7 +20,7 @@ module GoImport
                 end
             end
 
-            @classification = NoteClassification::Comment if @classification.nil?
+            @classification = HistoryClassification::Comment if @classification.nil?
         end
 
         def serialize_variables
@@ -49,7 +49,7 @@ module GoImport
         end
 
         def serialize_name
-            "Note"
+            "History"
         end
 
         def organization=(org)
@@ -90,12 +90,12 @@ module GoImport
 
         def classification=(classification)
             raise_if_immutable
-            if classification == NoteClassification::Comment || classification == NoteClassification::SalesCall ||
-                    classification == NoteClassification::TalkedTo || classification == NoteClassification::TriedToReach ||
-                    classification == NoteClassification::ClientVisit
+            if classification == HistoryClassification::Comment || classification == HistoryClassification::SalesCall ||
+                    classification == HistoryClassification::TalkedTo || classification == HistoryClassification::TriedToReach ||
+                    classification == HistoryClassification::ClientVisit
                 @classification = classification
             else
-                raise InvalidNoteClassificationError, classification
+                raise InvalidHistoryClassificationError, classification
             end
         end
 
@@ -126,16 +126,20 @@ module GoImport
         def validate
             error = String.new
 
-            if @text.nil? || @text.empty?
-                error = "Text is required for note\n"
+            if (@classification.nil? || @classification.empty?)
+                error = "Classification is required for history\n"
+            end
+
+            if (@text.nil? || @text.empty?) && classification != HistoryClassification::TriedToReach
+                error = "Text is required for history\n"
             end
 
             if @created_by.nil?
-                error = "#{error}Created_by is required for note\n"
+                error = "#{error}Created_by is required for history\n"
             end
 
             if @organization.nil? && @deal.nil? && @person.nil?
-                error = "#{error}Organization, deal or person is required for note\n"
+                error = "#{error}Organization, deal or person is required for history\n"
             end
 
             return error

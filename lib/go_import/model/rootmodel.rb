@@ -8,10 +8,10 @@ module GoImport
     # The root model for Go import. This class is the container for everything else.
     class RootModel
         # the import_coworker is a special coworker that is set as
-        # responsible for objects that requires a coworker, eg a note.
+        # responsible for objects that requires a coworker, eg a history.
         attr_accessor :import_coworker
 
-        attr_accessor :settings, :organizations, :coworkers, :deals, :notes
+        attr_accessor :settings, :organizations, :coworkers, :deals, :histories
 
         # The configuration is used to set run-time properties for
         # go-import. This should not be confused with the model's
@@ -30,7 +30,7 @@ module GoImport
              {:id => :coworkers, :type => :coworkers},
              {:id => :organizations, :type => :organizations},
              {:id => :deals, :type => :deals},
-             {:id => :notes, :type => :notes},
+             {:id => :histories, :type => :histories},
              {:id => :documents, :type => :documents},
             ]
         end
@@ -50,7 +50,7 @@ module GoImport
             @import_coworker.first_name = "Import"
             @coworkers[@import_coworker.integration_id] = @import_coworker
             @deals = {}
-            @notes = {}
+            @histories = {}
             @documents = Documents.new
             @configuration = {}
 
@@ -171,41 +171,41 @@ module GoImport
             end
         end
 
-        # Adds the specifed note object to the model.
+        # Adds the specifed history object to the model.
         #
         # If no integration_id has been specifed go-import generate
         # one.
         #
-        # @example Add a note from a new note
-        #    note = GoImport::Note.new
-        #    note.integration_id = "123"
-        #    note.text = "This is a note"
-        #    rootmodel.add_note(note)
-        def add_note(note)
-            if note.nil?
+        # @example Add a history from a new history
+        #    history = GoImport::History.new
+        #    history.integration_id = "123"
+        #    history.text = "This is a history"
+        #    rootmodel.add_history(history)
+        def add_history(history)
+            if history.nil?
                 return nil
             end
 
-            if !note.is_a?(Note)
-                raise ArgumentError.new("Expected a note")
+            if !history.is_a?(History)
+                raise ArgumentError.new("Expected a history")
             end
 
-            if note.integration_id.nil? || note.integration_id.length == 0
-                note.integration_id = @notes.length.to_s
+            if history.integration_id.nil? || history.integration_id.length == 0
+                history.integration_id = @histories.length.to_s
             end
 
-            if find_note_by_integration_id(note.integration_id, false) != nil
-                raise AlreadyAddedError, "Already added a note with integration_id #{note.integration_id}"
+            if find_history_by_integration_id(history.integration_id, false) != nil
+                raise AlreadyAddedError, "Already added a history with integration_id #{history.integration_id}"
             end
 
-            if note.created_by.nil?
-                note.created_by = @import_coworker
+            if history.created_by.nil?
+                history.created_by = @import_coworker
             end
 
-            @notes[note.integration_id] = note
-            note.set_is_immutable
+            @histories[history.integration_id] = history
+            history.set_is_immutable
 
-            return note
+            return history
         end
 
         def add_link(link)
@@ -249,11 +249,11 @@ module GoImport
             return nil
         end
 
-        def find_note_by_integration_id(integration_id, report_result=!!configuration[:report_result])
-            if @notes.has_key?(integration_id)
-                return @notes[integration_id]
+        def find_history_by_integration_id(integration_id, report_result=!!configuration[:report_result])
+            if @histories.has_key?(integration_id)
+                return @histories[integration_id]
             else
-                report_failed_to_find_object("note", ":#{integration_id}") if report_result
+                report_failed_to_find_object("history", ":#{integration_id}") if report_result
                 return nil
             end
         end
@@ -360,13 +360,13 @@ module GoImport
         end
 
 
-        # Finds a note based on one of its property.
-        # Returns the first found matching note
-        # @example Finds a note on its name
-        #      rm.find_note {|note| note.text == "hello!" }
-        def find_note(report_result=!!configuration[:report_result], &block)
-          result = find(@notes.values.flatten, &block)
-          report_failed_to_find_object("note") if result.nil? and report_result
+        # Finds a history based on one of its property.
+        # Returns the first found matching history
+        # @example Finds a history on its name
+        #      rm.find_history {|history| history.text == "hello!" }
+        def find_history(report_result=!!configuration[:report_result], &block)
+          result = find(@histories.values.flatten, &block)
+          report_failed_to_find_object("history") if result.nil? and report_result
           return result
         end
 
@@ -445,9 +445,9 @@ module GoImport
                 end
             end
 
-            #@notes.each do |note|
-            @notes.each do |key, note|
-                validation_message = note.validate
+            #@histories.each do |history|
+            @histories.each do |key, history|
+                validation_message = history.validate
 
                 if !validation_message.empty?
                     errors = "#{errors}\n#{validation_message}"
@@ -504,7 +504,7 @@ module GoImport
                 @organizations = []
                 @coworkers = []
                 @deals = []
-                @notes = []
+                @histories = []
                 @documents = saved_documents
                 serialize_to_file(go_files_file)
 
@@ -563,7 +563,7 @@ module GoImport
           " Organizations: #{@organizations.length}\n" \
           " Persons:       #{persons.length}\n" \
           " Deals:         #{@deals.length}\n" \
-          " Notes:         #{@notes.length}\n" \
+          " Histories:     #{@histories.length}\n" \
           " Documents:     #{nbr_of_documents}"
         end
 

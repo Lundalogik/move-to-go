@@ -15,7 +15,7 @@ COWORKER_SHEET = "Medarbetare"
 ORGANIZATION_SHEET = "Företag"
 PERSON_SHEET = "Kontaktperson"
 DEAL_SHEET = "Affär"
-NOTE_SHEET = "Anteckningar"
+HISTORY_SHEET = "Anteckningar"
 FILE_SHEET = "Dokument"
 
 # Then you need to modify the script below according to the TODO
@@ -143,19 +143,19 @@ class Converter
         return person
     end
 
-    def to_note(row, rootmodel)
-        note = GoImport::Note.new()
+    def to_history(row, rootmodel)
+        history = GoImport::History.new()
 
         # *** TODO:
         #
-        # Set note properties from the row.
+        # Set history properties from the row.
 
-        note.organization = rootmodel.find_organization_by_integration_id(row['ID'])
-        note.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av'])
-        note.text = row['Text']
-        note.date = row['Skapad den']
+        history.organization = rootmodel.find_organization_by_integration_id(row['ID'])
+        history.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av'])
+        history.text = row['Text']
+        history.date = row['Skapad den']
 
-        return note
+        return history
     end
 
     def to_file(row, rootmodel)
@@ -173,15 +173,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a note to
+    # with hooks, below is an example of an organization hook that adds a history to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        note = GoImport::Note.new
-    #        note.text = row['fieldname']
-    #        note.organization = organization
-    #        note.created_by = rootmodel.import_coworker
-    #        rootmodel.add_note(note)
+    #        history = GoImport::History.new
+    #        history.text = row['fieldname']
+    #        history.organization = organization
+    #        history.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(history)
     #    end
     #end
 

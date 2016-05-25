@@ -296,45 +296,45 @@ class Converter
         return deal
     end
 
-    def get_note_classification_for_activity_on_company(activity)
+    def get_history_classification_for_activity_on_company(activity)
         # When notes are added to LIME Go this method is called for
         # every note that is connected to a company in LIME Easy. The
         # note's activity from LIME Easy is supplied as an argument
         # and this method should return a classification for the note
         # in LIME Go. The return value must be a value from the
-        # GoImport::NoteClassification enum. If no classification is
+        # GoImport::HistoryClassification enum. If no classification is
         # return the note will get the default classification 'Comment'
 
         # case activity
         # when 'SalesCall' 
-        #   classification = GoImport::NoteClassification::SalesCall
+        #   classification = GoImport::HistoryClassification::SalesCall
         # when 'Customer Visit'
-        # classification = GoImport::NoteClassification::ClientVisit
+        # classification = GoImport::HistoryClassification::ClientVisit
         # when 'No answer'
-        #   classification = GoImport::NoteClassification::TriedToReach
+        #   classification = GoImport::HistoryClassification::TriedToReach
         # else
-        #     classification = GoImport::NoteClassification::Comment
+        #     classification = GoImport::HistoryClassification::Comment
         # end
         
         # return classification
     end
 
-    def get_note_classification_for_activity_on_project(activity)
-        # When notes are added to LIME Go this method is called for
-        # every note that is connected to a project in LIME Easy. The
-        # note's activity from LIME Easy is supplied as an argument
-        # and this method should return a classification for the note
+    def get_history_classification_for_activity_on_project(activity)
+        # When histories are added to LIME Go this method is called for
+        # every history that is connected to a project in LIME Easy. The
+        # histories activity from LIME Easy is supplied as an argument
+        # and this method should return a classification for the history
         # in LIME Go. The return value must be a value from the
-        # GoImport::NoteClassification enum. If no classification is
-        # return the note will get the default classification 'Comment'
+        # GoImport::HistoryClassification enum. If no classification is
+        # return the history will get the default classification 'Comment'
         
         # case activity
         # when 'Installation' 
-        #   classification = GoImport::NoteClassification::ClientVisit
+        #   classification = GoImport::HistoryClassification::ClientVisit
         # when 'No answer'
-        #   classification = GoImport::NoteClassification::TriedToReach
+        #   classification = GoImport::HistoryClassification::TriedToReach
         # else
-        #     classification = GoImport::NoteClassification::Comment
+        #     classification = GoImport::HistoryClassification::Comment
         # end
         
         # return classification
@@ -345,15 +345,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a note to
+    # with hooks, below is an example of an organization hook that adds a history to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        note = GoImport::Note.new
-    #        note.text = row['fieldname']
-    #        note.organization = organization
-    #        note.created_by = rootmodel.import_coworker
-    #        rootmodel.add_note(note)
+    #        history = GoImport::History.new
+    #        history.text = row['fieldname']
+    #        history.organization = organization
+    #        history.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(history)
     #    end
     #end
     

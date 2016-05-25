@@ -14,7 +14,7 @@ EXCEL_FILE = "Exempelfil.xlsx"
 COWORKER_SHEET = "Medarbetare"
 ORGANIZATION_SHEET = "Företag"
 PERSON_SHEET = "Kontaktperson"
-NOTE_SHEET = "Anteckningar"
+HISTORY_SHEET = "Anteckningar"
 
 # Then you need to modify the script below according to the TODO
 # comments.
@@ -158,18 +158,18 @@ class Converter
         return person
     end
 
-    def to_note(row, rootmodel)
-        note = GoImport::Note.new()
+    def to_history(row, rootmodel)
+        history = GoImport::History.new()
 
         # *** TODO:
         #
-        # Set note properties from the row.
+        # Set history properties from the row.
 
-        note.organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/FöretagsID'])
-        note.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av medarbetare'])
-        note.text = row['Textanteckningar/Historik']
-        note.date = row['Skapad den']
+        history.organization = rootmodel.find_organization_by_integration_id(row['Kundnummer/FöretagsID'])
+        history.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad av medarbetare'])
+        history.text = row['Textanteckningar/Historik']
+        history.date = row['Skapad den']
 
-        return note
+        return history
     end
 end

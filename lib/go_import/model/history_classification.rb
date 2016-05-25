@@ -1,23 +1,23 @@
 module GoImport
-    # Defines a note's classification. This defines what kind of
-    # action that happened before the note was written.
-    module NoteClassification
+    # Defines a history type. This defines what kind of
+    # action that happened before the history was written.
+    module HistoryClassification
         # We talked to the client about a sale. This might be a phone call
         # or a talk in person.
-        SalesCall = 0
+        SalesCall = 'SalesCall'
 
         # This is a general comment about the organization or deal.
-        Comment = 1
+        Comment = 'Comment'
 
         # This is a general comment regarding a talk we had with
         # someone at the client.
-        TalkedTo = 2
+        TalkedTo = 'TalkedTo'
 
         # We tried to reach someone but failed.
-        TriedToReach = 3
+        TriedToReach = 'TriedToReach'
 
         # We had a meeting at the client's site.
-        ClientVisit = 4
+        ClientVisit = 'ClientVisit'
     end
 end
 
