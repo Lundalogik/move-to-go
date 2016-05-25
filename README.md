@@ -279,6 +279,25 @@ LIME Go will *not* overwrite data on existing organizations. This means that if 
 
 The reasoning behind this that the import is a way to load an initial state into LIME Go. It is not a way to build long running integrations. We are building a REST API for integrations.
 
+## Development of core lib
+It's possible to execute projects without to install go_import
+
+```
+Example from git root:
+  Create project
+  > ruby bin/go-import new my-test base-crm
+  As the above command also install you have to uninstall
+  > gem uninstall go_import
+
+  Project adaption, change imports to relative:
+  require 'go_import' <<-- Remove 
+  require_relative('../../lib/go_import') <<-- File .go_import/runner.rb
+  require_relative('../lib/go_import') <<-- File .go_import/converter.rb
+  
+  > cd <your project folder>
+  > ruby ../bin/go-import run
+```
+
 ## Help
 
 You can find generated documentation on [rubydoc](http://rubydoc.info/gems/go_import/frames)
