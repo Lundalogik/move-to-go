@@ -1,7 +1,8 @@
 ﻿require 'go_import'
 require 'dbf'
 
-# Customize this file to suit your input for a VISMA database.
+# Customize this file to suit your input for a 
+# VISMA Administration 2000 database.
 #
 # You must put KUND.DBS and KONTAKTER.DBS in the database folder.
 #

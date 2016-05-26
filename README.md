@@ -28,7 +28,7 @@ go-import list-sources
 - Import from CSV-files
 - Import from LIME Easy
 - Import from a Excel-file
-- Import from VISMA SPCS
+- Import from VISMA Administration 2000
 - Import from Salesforce
 - Import from a custom source
 

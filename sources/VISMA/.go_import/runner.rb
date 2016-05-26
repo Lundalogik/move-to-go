@@ -9,7 +9,7 @@ KUND_FILE = './database/KUND.DBF'
 KONTAKT_FILE = './database/KONTAKT.DBF'
 
 def convert_source
-    puts "Trying to convert VISMA source to LIME Go..."
+    puts "Trying to convert VISMA Administration 2000 source to LIME Go..."
 
     # Verify that required files exists.
     if !File.exists?(KUND_FILE)
@@ -60,8 +60,8 @@ def convert_source
     end
     puts "Processed #{imported_person_count} Persons."
 
-    # History must be owned by a coworker and the be added to
-    # organizations and histories and might refernce a person
+    # History must be owned by a coworker and then should reference
+    # organization or deal and might reference a person
     puts "Trying to process History..."
     imported_history_count = 0
     organization_rows.each do |row|
