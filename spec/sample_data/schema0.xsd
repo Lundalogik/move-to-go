@@ -266,6 +266,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="v1_0" />
       <xs:enumeration value="v2_0" />
+      <xs:enumeration value="v3_0" />
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

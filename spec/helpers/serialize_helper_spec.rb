@@ -192,7 +192,7 @@ describe GoImport::SerializeHelper do
             serialized.should match(/Ankeborgs bibliotek/)
         end
         it "should have version" do
-            serialized.should match(/<GoImport Version='v2_0'/)
+            serialized.should match(/<GoImport Version='v3_0'/)
         end
         it "should be utf-8" do
             serialized.encoding.should equal Encoding::UTF_8
