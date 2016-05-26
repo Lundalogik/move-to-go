@@ -53,10 +53,10 @@ class Converter
     return deal
   end
 
-  def to_note(row, rootmodel)
-  	note = GoImport::Note.new()
+  def to_history(row, rootmodel)
+    history = GoImport::History.new()
     # All built in fields are automagically mapped. Add your custom stuff here...
-  	return note
+    return history
   end
 
 end

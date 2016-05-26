@@ -112,12 +112,12 @@ module GoImport
                 map_symbol_to_row(p[:id],p[:type])
             when :date then
                 map_symbol_to_row(p[:id],p[:type])
-            when :notes then
+            when :histories then
                 {
                     :id => p[:id].to_s,
                     :name => symbol_to_name(p[:id]),
                     :type => p[:type],
-                    :models => SerializeHelper.get_import_rows(:note)
+                    :models => SerializeHelper.get_import_rows(:history)
                 }
             when :tags then
                 {
@@ -171,8 +171,8 @@ module GoImport
                 Person.new
             when :source_ref then
                 ReferenceToSource.new
-            when :note then
-                Note.new
+            when :history then
+                History.new
             when :address then
                 Address.new
             when :organization then

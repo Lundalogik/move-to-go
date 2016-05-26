@@ -9,7 +9,7 @@ KUND_FILE = './database/KUND.DBF'
 KONTAKT_FILE = './database/KONTAKT.DBF'
 
 def convert_source
-    puts "Trying to convert VISMA source to LIME Go..."
+    puts "Trying to convert VISMA Administration 2000 source to LIME Go..."
 
     # Verify that required files exists.
     if !File.exists?(KUND_FILE)
@@ -60,19 +60,19 @@ def convert_source
     end
     puts "Processed #{imported_person_count} Persons."
 
-    # Notes must be owned by a coworker and the be added to
-    # organizations and notes and might refernce a person
-    puts "Trying to process Notes..."
-    imported_note_count = 0
+    # History must be owned by a coworker and then should reference
+    # organization or deal and might reference a person
+    puts "Trying to process History..."
+    imported_history_count = 0
     organization_rows.each do |row|
         if not row.nil?
             if row['ANTECK_1'].length > 0
-                rootmodel.add_note(converter.to_note(row))
-                imported_note_count = imported_note_count + 1
+                rootmodel.add_history(converter.to_history(row))
+                imported_history_count = imported_history_count + 1
             end
         end
     end
-    puts "Processed #{imported_note_count} Notes."
+    puts "Processed #{imported_history_count} History."
 
     return rootmodel
 end

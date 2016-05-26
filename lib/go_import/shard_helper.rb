@@ -18,7 +18,7 @@ module GoImport
                 }
                 model.organizations.each{|key, org| add_organization(org)}
                 model.deals.each{|key, deal| add_deal(deal)}
-                model.notes.each{|key, note| add_note(note)}
+                model.histories.each{|key, history| add_history(history)}
                 add_documents(model.documents)
 
                 return_value = @shards
@@ -34,9 +34,9 @@ module GoImport
             end
 
             private
-            def add_note(note)
+            def add_history(history)
                 check_or_create_new_chard()
-                @current_shard.add_note(note)
+                @current_shard.add_history(history)
                 @current_shard_count += 1
             end
 

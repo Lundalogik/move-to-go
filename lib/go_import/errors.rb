@@ -20,9 +20,9 @@ module GoImport
     class InvalidDealStatusError < StandardError
     end
 
-    class InvalidNoteClassificationError < StandardError
+    class InvalidHistoryClassificationError < StandardError
         def initalize(classification)
-            super("#{classification} is not a valid note classification")
+            super("#{classification} is not a valid history classification")
         end
     end
 

@@ -4,7 +4,7 @@
 go_import is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
 These files can then easily be imported to LIME Go by Lundalogik. During an import an automatic matching against all base data will be performed.
 
-Organizations, Persons, Deals, Notes, Coworkers and Documents can be imported to LIME Go.
+Organizations, Persons, Deals, Histories, Coworkers and Documents can be imported to LIME Go.
 
 go_import is a [ruby gem](https://rubygems.org/gems/go_import). Install with
 
@@ -28,7 +28,7 @@ go-import list-sources
 - Import from CSV-files
 - Import from LIME Easy
 - Import from a Excel-file
-- Import from VISMA SPCS
+- Import from VISMA Administration 2000
 - Import from Salesforce
 - Import from a custom source
 
@@ -64,7 +64,7 @@ If more than one organization in the import file refers to the same organization
 
 All imported organizations will be tagged "Import".
 
-Coworkers, deals and notes are *always* imported as is. These objects are linked to an organization.
+Coworkers, deals and histories are *always* imported as is. These objects are linked to an organization.
 
 ## Integration id
 
@@ -122,8 +122,8 @@ id = import_data_row['id']
 organisation = rootmodel.find_organization_by_integration_id(id)
 organisation.add_employee(person)
 
-# The same goes for deals and notes, however, the syntax differs slightly.
-# A deal or a note has relations to both organisations and persons
+# The same goes for deals and histories, however, the syntax differs slightly.
+# A deal or a history has relations to both organisations and persons
 
 deal = GoImport::Deal.new()
 #Add data to your fancy new deal…
@@ -131,7 +131,7 @@ org_id = deal_import_data_row['organisation_id']
 person_id = deal_import_data_row['person_id']
 deal.organisation = rootmodel.find_organization_by_integration_id(org_id)
 deal.organisation = rootmodel.find_person_by_integration_id(org_id)
-#Above example works the same for a note
+#Above example works the same for a history
 
 ```
 

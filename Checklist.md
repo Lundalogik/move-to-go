@@ -8,7 +8,7 @@
 	- [ ] Documents
 	- [ ] Persons
 	- [ ] Deals
-	- [ ] Notes
+	- [ ] Histories
 
 - [ ] Check available consultant resources and schedule import date
 - [ ] Check the source of the original data. We would like to access the data as untouched and raw as possible. It is possible to import through APIs or database dumps. We do prefer these over text-files
@@ -26,7 +26,7 @@
 - [ ] Mapping of deal data
 	- [ ] External ID
 	- [ ] Decide a deal process with appropriate statuses
-	- [ ] Check IDs for coworkers, companies and notes
+	- [ ] Check IDs for coworkers, companies and histories
 	- [ ] Discuss mapping of other data into tags and custom fields
 
 - [ ] Mapping of coworker data
@@ -40,8 +40,8 @@
 	- [ ] First and last name
 	- [ ] Company ID
 
-- [ ] Mapping of note data
-	- [ ] Note text
+- [ ] Mapping of history data
+	- [ ] History text
 	- [ ] Map categories to LIME Go categories (comment, talked to, sales call, did not reach)
 	- [ ] Date
 	- [ ] Company, coworker, person and/or deal ID

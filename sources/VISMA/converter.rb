@@ -1,7 +1,8 @@
 ﻿require 'go_import'
 require 'dbf'
 
-# Customize this file to suit your input for a VISMA database.
+# Customize this file to suit your input for a 
+# VISMA Administration 2000 database.
 #
 # You must put KUND.DBS and KONTAKTER.DBS in the database folder.
 #
@@ -84,20 +85,20 @@ class Converter
         return organization
     end
 
-    def to_note(row, rootmodel)
-        note = GoImport::Note.new()
+    def to_history(row, rootmodel)
+        history = GoImport::History.new()
 
         # *** TODO:
         #
-        # Set note properties from the row.
+        # Set history properties from the row.
         organization = rootmodel.find_organization_by_integration_id(row['KUNDNR'])
         unless organization.nil?
-            note.organization = organization
+            history.organization = organization
         end
-        note.created_by = rootmodel.import_coworker
-        note.text = row['ANTECK_1']
+        history.created_by = rootmodel.import_coworker
+        history.text = row['ANTECK_1']
 
-        return note
+        return history
     end
 
     def to_person(row, rootmodel)
@@ -120,15 +121,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a note to
+    # with hooks, below is an example of an organization hook that adds a history to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        note = GoImport::Note.new
-    #        note.text = row['fieldname']
-    #        note.organization = organization
-    #        note.created_by = rootmodel.import_coworker
-    #        rootmodel.add_note(note)
+    #        history = GoImport::History.new
+    #        history.text = row['fieldname']
+    #        history.organization = organization
+    #        history.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(history)
     #    end
     #end
 

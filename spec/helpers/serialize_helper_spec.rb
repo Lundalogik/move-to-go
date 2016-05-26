@@ -3,9 +3,9 @@ require 'go_import'
 
 describe GoImport::SerializeHelper do
 
-    describe "Serialize note" do
+    describe "Serialize history" do
         let(:serialized) {
-            n = GoImport::Note.new
+            n = GoImport::History.new
             n.text = "text"
             GoImport::SerializeHelper::serialize(n,-1)
         }
@@ -13,16 +13,16 @@ describe GoImport::SerializeHelper do
             serialized.should match(/<Text>[\n ]*text[\n ]*<\/Text>/)
         end
         it "should contain start tag" do
-            serialized.should match(/<Note>/)
+            serialized.should match(/<History>/)
         end
         it "should be utf-8" do
             serialized.encoding.should equal Encoding::UTF_8
         end
     end
 
-    describe "Serialize note with xml inside" do
+    describe "Serialize history with xml inside" do
         let(:serialized) {
-            n = GoImport::Note.new
+            n = GoImport::History.new
             n.text = "<text>"
             GoImport::SerializeHelper::serialize(n,-1)
         }
@@ -192,7 +192,7 @@ describe GoImport::SerializeHelper do
             serialized.should match(/Ankeborgs bibliotek/)
         end
         it "should have version" do
-            serialized.should match(/<GoImport Version='v2_0'/)
+            serialized.should match(/<GoImport Version='v3_0'/)
         end
         it "should be utf-8" do
             serialized.encoding.should equal Encoding::UTF_8

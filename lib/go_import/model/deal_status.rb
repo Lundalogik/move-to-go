@@ -2,7 +2,7 @@ module GoImport
     class DealStatus
         include SerializeHelper
 
-        attr_accessor :id, :date, :status_reference, :note
+        attr_accessor :id, :date, :status_reference, :history
 
         def initialize(opt = nil)
             if opt != nil
@@ -14,7 +14,7 @@ module GoImport
         end
 
         def serialize_variables
-            [ :id, :label, :note ].map{ |p| { :id => p, :type => :string } } +
+            [ :id, :label, :history ].map{ |p| { :id => p, :type => :string } } +
                 [ :date ].map { |p| { :id => p, :type => :date } } +
                 [ :status_reference ].map { |p| { :id => p, :type => :deal_status_reference } }
         end
