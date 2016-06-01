@@ -49,9 +49,9 @@ describe GoImport::ShardHelper do
         end
 
         (1..10).each do |n|
-            history = GoImport::History.new
-            history.text = "Important history"
-            model.add_history(history)
+            comment = GoImport::Comment.new
+            comment.text = "Important comment"
+            model.add_comment(comment)
         end
 
         (1..10).each do |n|

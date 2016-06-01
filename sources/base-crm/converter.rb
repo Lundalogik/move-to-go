@@ -54,9 +54,9 @@ class Converter
   end
 
   def to_history(row, rootmodel)
-    history = GoImport::History.new()
+    comment = GoImport::Comment.new()
     # All built in fields are automagically mapped. Add your custom stuff here...
-    return history
+    return comment
   end
 
 end

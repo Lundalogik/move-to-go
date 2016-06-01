@@ -171,16 +171,66 @@ module GoImport
             end
         end
 
+        def add_sales_call(sales_call)
+            if sales_call.nil?
+                return nil
+            end
+            if !sales_call.is_a?(SalesCall)
+                raise ArgumentError.new("Expected a SalesCall")
+            end
+            add_history(sales_call)
+        end
+
+        def add_comment(comment)
+            if comment.nil?
+                return nil
+            end
+            if !comment.is_a?(Comment)
+                raise ArgumentError.new("Expected a Comment")
+            end
+            add_history(comment)
+        end
+
+        def add_talked_to(talked_to)
+            if talked_to.nil?
+                return nil
+            end
+            if !talked_to.is_a?(TalkedTo)
+                raise ArgumentError.new("Expected a TalkedTo")
+            end
+            add_history(talked_to)
+        end
+
+        def add_tried_to_reach(tried_to_reach)
+            if tried_to_reach.nil?
+                return nil
+            end
+            if !tried_to_reach.is_a?(TriedToReach)
+                raise ArgumentError.new("Expected a TriedToReach")
+            end
+            add_history(tried_to_reach)
+        end
+
+        def add_client_visit(client_visit)
+            if client_visit.nil?
+                return nil
+            end
+            if !client_visit.is_a?(ClientVisit)
+                raise ArgumentError.new("Expected a ClientVisit")
+            end
+            add_history(client_visit)
+        end
+
         # Adds the specifed history object to the model.
         #
         # If no integration_id has been specifed go-import generate
         # one.
         #
-        # @example Add a history from a new history
-        #    history = GoImport::History.new
-        #    history.integration_id = "123"
-        #    history.text = "This is a history"
-        #    rootmodel.add_history(history)
+        # @example Add a comment from a new comment
+        #    comment = GoImport::Comment.new
+        #    comment.integration_id = "123"
+        #    comment.text = "This is a history"
+        #    rootmodel.add_comment(comment)
         def add_history(history)
             if history.nil?
                 return nil
@@ -561,7 +611,7 @@ module GoImport
           " Organizations: #{@organizations.length}\n" \
           " Persons:       #{persons.length}\n" \
           " Deals:         #{@deals.length}\n" \
-          " Histories:     #{@histories.length}\n" \
+          " History logs:  #{@histories.length}\n" \
           " Documents:     #{nbr_of_documents}"
         end
 

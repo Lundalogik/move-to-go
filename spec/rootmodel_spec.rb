@@ -305,74 +305,139 @@ describe "RootModel" do
         }.to raise_error(GoImport::IntegrationIdIsRequiredError)
     end
 
-    it "will only add history" do
+    it "will add comment" do
+                # given
+        comment = GoImport::Comment.new
+        comment.text = "this is a comment"
+
+        # when
+        rootmodel.add_comment(comment)
+
+        # then
+        rootmodel.histories.length.should eq 1
+        rootmodel.histories["0"].is_a?(GoImport::Comment).should eq true
+    end
+
+    it "will add sales call" do
+                # given
+        salesCall = GoImport::SalesCall.new
+        salesCall.text = "this is a sales call"
+
+        # when
+        rootmodel.add_sales_call(salesCall)
+
+        # then
+        rootmodel.histories.length.should eq 1
+        rootmodel.histories["0"].is_a?(GoImport::SalesCall).should eq true
+    end
+
+    it "will add talked to" do
+                # given
+        talkedTo = GoImport::TalkedTo.new
+        talkedTo.text = "this is a sales call"
+
+        # when
+        rootmodel.add_talked_to(talkedTo)
+
+        # then
+        rootmodel.histories.length.should eq 1
+        rootmodel.histories["0"].is_a?(GoImport::TalkedTo).should eq true
+    end
+
+    it "will add tried to reach" do
+                # given
+        triedToReach = GoImport::TriedToReach.new
+        triedToReach.text = "this is a sales call"
+
+        # when
+        rootmodel.add_tried_to_reach(triedToReach)
+
+        # then
+        rootmodel.histories.length.should eq 1
+        rootmodel.histories["0"].is_a?(GoImport::TriedToReach).should eq true
+    end
+
+        it "will add client visit" do
+                # given
+        clientVisit = GoImport::ClientVisit.new
+        clientVisit.text = "this is a client visit"
+
+        # when
+        rootmodel.add_client_visit(clientVisit)
+
+        # then
+        rootmodel.histories.length.should eq 1
+        rootmodel.histories["0"].is_a?(GoImport::ClientVisit).should eq true
+    end
+
+    it "will only add comment" do
         # given
-        not_a_history = { :integration_id => "123", :text => "This is not a history"}
+        not_a_comment = { :integration_id => "123", :text => "This is not a comment"}
 
         # when, then
         expect {
-            rootmodel.add_history(not_a_history)
+            rootmodel.add_comment(not_a_comment)
         }.to raise_error(ArgumentError)
         rootmodel.histories.length.should eq 0
     end
 
-    it "will make history immutable after it has been added" do
+    it "will make comment immutable after it has been added" do
         # given
-        history = GoImport::History.new
-        history.text = "this is a history"
+        comment = GoImport::Comment.new
+        comment.text = "this is a comment"
 
         # when
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
 
         # then
-        history.is_immutable.should eq true
+        comment.is_immutable.should eq true
     end
 
-    it "can add a history from a new history" do
+    it "can add a comment from a new comment" do
         # given
-        history = GoImport::History.new
-        history.integration_id = "123key"
-        history.text = "This is a history"
+        comment = GoImport::Comment.new
+        comment.integration_id = "123key"
+        comment.text = "This is a comment"
 
         # when
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
 
         # then
-        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a history"
+        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a comment"
         rootmodel.histories.length.should eq 1
     end
 
-    it "will generate an integration id if the new history dont have one" do
+    it "will generate an integration id if the new comment dont have one" do
         # given
-        history = GoImport::History.new
-        history.text = "This is a history"
+        comment = GoImport::Comment.new
+        comment.text = "This is a comment"
 
         # when
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
 
         # then
-        history.integration_id.length.should be > 0
+        comment.integration_id.length.should be > 0
     end
 
     it "will generate unique integration ids for each history" do
         # given
-        history1 = GoImport::History.new
-        history1.text = "This is a history"
+        comment1 = GoImport::Comment.new
+        comment1.text = "This is a history"
 
-        history2 = GoImport::History.new
-        history2.text = "This is a different history"
+        comment2 = GoImport::Comment.new
+        comment2.text = "This is a different history"
 
         # when
-        rootmodel.add_history history1
-        rootmodel.add_history history2
+        rootmodel.add_comment(comment1)
+        rootmodel.add_comment(comment2)
 
         # then
-        history1.integration_id.should be != history2.integration_id
+        comment1.integration_id.should be != comment2.integration_id
     end
 
     it "will not add a nil history" do
         # given, when
-        rootmodel.add_history(nil)
+        rootmodel.add_comment(nil)
 
         # then
         rootmodel.histories.length.should eq 0
@@ -431,25 +496,25 @@ describe "RootModel" do
         rootmodel.documents.files.length.should eq 1
     end
 
-    it "will not add a new history when the history is already added (same integration id)" do
+    it "will not add a new comment when the comment is already added (same integration id)" do
         # given
-        history = GoImport::History.new({
+        comment = GoImport::Comment.new({
                                       :integration_id => "123key",
-                                      :text => "This is a history"
+                                      :text => "This is a comment"
                                   })
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
         rootmodel.histories.length.should eq 1
 
         # when, then
-        history2 = GoImport::History.new({
+        comment2 = GoImport::Comment.new({
                                        :integration_id => "123key",
-                                       :text => "This is another history"
+                                       :text => "This is another comment"
                                    })
         expect {
-            rootmodel.add_history(history2)
+            rootmodel.add_comment(comment2)
         }.to raise_error(GoImport::AlreadyAddedError)
         rootmodel.histories.length.should eq 1
-        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a history"
+        rootmodel.find_history_by_integration_id("123key").text.should eq "This is a comment"
     end
 
     it "Will find a person by integration id" do
@@ -674,23 +739,23 @@ describe "RootModel" do
         result.should eq nil
     end
 
-    it "will find an history based on a property" do
+    it "will find an comment based on a property" do
         # given
         organization = GoImport::Organization.new
         organization.name = "Hubba Bubba"
         organization.integration_id = "321"
         rootmodel.add_organization(organization)
 
-        history = GoImport::History.new
-        history.text = "Hello!"
-        history.organization = organization
+        comment = GoImport::Comment.new
+        comment.text = "Hello!"
+        comment.organization = organization
 
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
         # when
         result = rootmodel.find_history{|n| n.text == "Hello!"}
 
         # then
-        result.should eq history
+        result.should eq comment
     end
 
     it "will return nil if it doesn't find a history on a property" do
@@ -700,11 +765,11 @@ describe "RootModel" do
         organization.integration_id = "321"
         rootmodel.add_organization(organization)
 
-        history = GoImport::History.new
-        history.text = "Hello!"
-        history.organization = organization
+        comment = GoImport::Comment.new
+        comment.text = "Hello!"
+        comment.organization = organization
 
-        rootmodel.add_history(history)
+        rootmodel.add_comment(comment)
         # when
         result = rootmodel.find_history{|n| n.text == "Goodbye!"}
 

@@ -166,14 +166,14 @@ def convert_source
             organization.add_employee(person)
 
             if row['description']
-              history = GoImport::History.new()
+              comment = GoImport::Comment.new()
 
-              history.text = row['description']
-              history.person = person
-              history.organization = organization
-              history.created_by = coworker
+              comment.text = row['description']
+              comment.person = person
+              comment.organization = organization
+              comment.created_by = coworker
 
-              rootmodel.add_history(history)
+              rootmodel.add_comment(comment)
             end
             rootmodel.add_organization(organization)
       end
