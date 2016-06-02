@@ -39,12 +39,12 @@ def convert_source
     # from everywhere....
     if defined?(COWORKER_FILE) && !COWORKER_FILE.nil? && !COWORKER_FILE.empty?
         process_rows(COWORKER_FILE, source_encoding) do |row|
-          coworker = converter.to_coworker(row)
-          coworker.integration_id = "#{row['first_name']} #{row['last_name']}"
-          coworker.first_name = row['first_name']
-          coworker.last_name = row['last_name']
-          coworker.email = row['email']
-          rootmodel.add_coworker(coworker)
+            coworker = converter.to_coworker(row)
+            coworker.integration_id = "#{row['first_name']} #{row['last_name']}"
+            coworker.first_name = row['first_name']
+            coworker.last_name = row['last_name']
+            coworker.email = row['email']
+            rootmodel.add_coworker(coworker)
         end
     end
 
@@ -55,7 +55,7 @@ def convert_source
             organization = converter.to_organization(row, rootmodel)
             organization = GoImport::Organization.new
             organization.integration_id = row['id']
-        	  organization.name = row['name']
+            organization.name = row['name']
             organization.email = row['email']
             organization.web_site = row['website']
             organization.central_phone_number = GoImport::PhoneHelper.parse_numbers(row['phone']) if not row['phone'].nil?
@@ -67,33 +67,33 @@ def convert_source
             end
 
             organization.with_postal_address do |address|
-              address.street = row['address']
-        	    address.zip_code = row['zip']
-        	    address.city = row['city']
+                address.street = row['address']
+                address.zip_code = row['zip']
+                address.city = row['city']
             end
 
             case row['prospect_status']
             when "current"
-              organization.relation = GoImport::Relation::WorkingOnIt
+                organization.relation = GoImport::Relation::WorkingOnIt
             else
-              organization.relation = GoImport::Relation::BeenInTouch
+                organization.relation = GoImport::Relation::BeenInTouch
             end
 
             case row['customer_status']
             when "current"
-              organization.relation = GoImport::Relation::IsACustomer
+                organization.relation = GoImport::Relation::IsACustomer
             when "past"
-              organization.relation = GoImport::Relation::WasACustomer
+                organization.relation = GoImport::Relation::WasACustomer
             else
-              organization.relation = GoImport::Relation::BeenInTouch
+                organization.relation = GoImport::Relation::BeenInTouch
             end
 
             coworker = rootmodel.find_coworker_by_integration_id row['owner']
             organization.responsible_coworker = coworker
-        		tags = row['tags'].split(",")
-        		tags.each do |tag|
-        			organization.set_tag(tag)
-        		end
+            tags = row['tags'].split(",")
+            tags.each do |tag|
+                organization.set_tag(tag)
+            end
 
             rootmodel.add_organization(organization)
         end
@@ -117,20 +117,20 @@ def convert_source
             person.email = row['email']
 
             organization = rootmodel.find_organization {|org|
-               org.name == row["organisation_name"]
-             }
+                org.name == row["organisation_name"]
+            }
             if not organization.nil?
-              organization.add_employee(person)
+                organization.add_employee(person)
             else
-              puts "No organization for person '#{person.first_name} #{person.last_name}, #{person.integration_id}' could be found. Person will not be imported!"
-              ignored_persons += 1
+                puts "No organization for person '#{person.first_name} #{person.last_name}, #{person.integration_id}' could be found. Person will not be imported!"
+                ignored_persons += 1
             end
         end
     end
 
     # leads
     if defined?(LEADS_FILE) && !LEADS_FILE.nil? && !LEADS_FILE.empty?
-      process_rows(LEADS_FILE, source_encoding) do |row|
+        process_rows(LEADS_FILE, source_encoding) do |row|
             organization = converter.to_organization_from_lead(row, rootmodel)
 
             organization.integration_id = "l#{row['id']}"
@@ -148,10 +148,10 @@ def convert_source
             organization.responsible_coworker = coworker
 
             if not row['tags'].nil?
-              tags = row['tags'].split(",")
-              tags.each do |tag|
-                organization.set_tag(tag)
-              end
+                tags = row['tags'].split(",")
+                tags.each do |tag|
+                    organization.set_tag(tag)
+                end
             end
 
             person = GoImport::Person.new
@@ -166,17 +166,17 @@ def convert_source
             organization.add_employee(person)
 
             if row['description']
-              comment = GoImport::Comment.new()
+                comment = GoImport::Comment.new()
 
-              comment.text = row['description']
-              comment.person = person
-              comment.organization = organization
-              comment.created_by = coworker
+                comment.text = row['description']
+                comment.person = person
+                comment.organization = organization
+                comment.created_by = coworker
 
-              rootmodel.add_comment(comment)
+                rootmodel.add_comment(comment)
             end
             rootmodel.add_organization(organization)
-      end
+        end
     end
 
     # deals
@@ -191,10 +191,10 @@ def convert_source
             deal.customer_contact = rootmodel.find_person_by_integration_id(row['main_contact_id'])
             deal.responsible_coworker = rootmodel.find_coworker_by_integration_id(row['owner'])
 
-        		values = row['tags'].split(",")
-        		values.each do |value|
-        			deal.set_tag(value)
-        		end
+            values = row['tags'].split(",")
+            values.each do |value|
+                deal.set_tag(value)
+            end
             rootmodel.add_deal(deal)
         end
     end
@@ -202,30 +202,30 @@ def convert_source
     # historys
     if defined?(HISTORY_FILE) && !HISTORY_FILE.nil? && !HISTORY_FILE.empty?
         process_rows(HISTORY_FILE, source_encoding) do |row|
-            history = converter.to_history(row, rootmodel)
+            history = GoImport::Comment.new()
             history.integration_id = row['id']
             history.text = row['content']
             history.created_by = rootmodel.find_coworker_by_integration_id(row["owner"])
             notable_id = row['noteable_id']
             case row["noteable_type"]
             when "Deal"
-              deal = rootmodel.find_deal_by_integration_id(notable_id)
-              history.deal = deal
+                deal = rootmodel.find_deal_by_integration_id(notable_id)
+                history.deal = deal
             when "Lead"
-              history.person = rootmodel.find_person_by_integration_id("p#{notable_id}")
-              history.organization = rootmodel.find_organization_by_integration_id("l#{notable_id}")
+                history.person = rootmodel.find_person_by_integration_id("p#{notable_id}")
+                history.organization = rootmodel.find_organization_by_integration_id("l#{notable_id}")
             when "Contact"
-              puts "Ignoreing history for unbound person: #{row['owner']}"
-              ignored_histories += 1
-              next
+                puts "Ignoreing history for unbound person: #{row['owner']}"
+                ignored_histories += 1
+                next
             else
-              org = rootmodel.find_organization_by_integration_id(notable_id)
-              if org.nil?
-                person = rootmodel.find_person_by_integration_id(notable_id)
-                org = person.organization
-                history.person = person
-              end
-              history.organization = org
+                org = rootmodel.find_organization_by_integration_id(notable_id)
+                if org.nil?
+                    person = rootmodel.find_person_by_integration_id(notable_id)
+                    org = person.organization
+                    history.person = person
+                end
+                history.organization = org
             end
             rootmodel.add_history(history)
         end

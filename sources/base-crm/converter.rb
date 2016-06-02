@@ -35,13 +35,13 @@ class Converter
   end
 
   def to_coworker(row)
-		coworker = GoImport::Coworker.new
+        coworker = GoImport::Coworker.new
     # All built in fields are automagically mapped. Add your custom stuff here...
-		return coworker
+        return coworker
   end
 
   def to_person(row, rootmodel)
-		person = GoImport::Person.new
+        person = GoImport::Person.new
     # All built in fields are automagically mapped. Add your custom stuff here...
     return person
   end
@@ -51,12 +51,6 @@ class Converter
     # All built in fields are automagically mapped. Add your custom stuff here...
     deal.status = rootmodel.settings.deal.find_status_by_label row['stage_name']
     return deal
-  end
-
-  def to_history(row, rootmodel)
-    comment = GoImport::Comment.new()
-    # All built in fields are automagically mapped. Add your custom stuff here...
-    return comment
   end
 
 end
