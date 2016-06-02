@@ -67,7 +67,17 @@ def convert_source
     organization_rows.each do |row|
         if not row.nil?
             if row['ANTECK_1'].length > 0
-                rootmodel.add_history(converter.to_history(row))
+
+                comment = GoImport::Comment.new()
+
+                organization = rootmodel.find_organization_by_integration_id(row['KUNDNR'])
+                unless organization.nil?
+                    comment.organization = organization
+                end
+                comment.created_by = rootmodel.import_coworker
+                comment.text = row['ANTECK_1']
+                
+                rootmodel.add_history(comment)
                 imported_history_count = imported_history_count + 1
             end
         end

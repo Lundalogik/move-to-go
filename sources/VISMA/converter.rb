@@ -85,22 +85,6 @@ class Converter
         return organization
     end
 
-    def to_history(row, rootmodel)
-        comment = GoImport::Comment.new()
-
-        # *** TODO:
-        #
-        # Set comment properties from the row.
-        organization = rootmodel.find_organization_by_integration_id(row['KUNDNR'])
-        unless organization.nil?
-            comment.organization = organization
-        end
-        comment.created_by = rootmodel.import_coworker
-        comment.text = row['ANTECK_1']
-
-        return comment
-    end
-
     def to_person(row, rootmodel)
         person = GoImport::Person.new()
 
