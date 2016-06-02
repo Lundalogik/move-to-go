@@ -85,22 +85,6 @@ class Converter
         return organization
     end
 
-    def to_history(row, rootmodel)
-        history = GoImport::History.new()
-
-        # *** TODO:
-        #
-        # Set history properties from the row.
-        organization = rootmodel.find_organization_by_integration_id(row['KUNDNR'])
-        unless organization.nil?
-            history.organization = organization
-        end
-        history.created_by = rootmodel.import_coworker
-        history.text = row['ANTECK_1']
-
-        return history
-    end
-
     def to_person(row, rootmodel)
         person = GoImport::Person.new()
 
@@ -121,15 +105,15 @@ class Converter
     # HOOKS
     #
     # Sometimes you need to add exra information to the rootmodel, this can be done
-    # with hooks, below is an example of an organization hook that adds a history to
+    # with hooks, below is an example of an organization hook that adds a comment to
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        history = GoImport::History.new
-    #        history.text = row['fieldname']
-    #        history.organization = organization
-    #        history.created_by = rootmodel.import_coworker
-    #        rootmodel.add_history(history)
+    #        comment = GoImport::Comment.new
+    #        comment.text = row['fieldname']
+    #        comment.organization = organization
+    #        comment.created_by = rootmodel.import_coworker
+    #        rootmodel.add_history(comment)
     #    end
     #end
 

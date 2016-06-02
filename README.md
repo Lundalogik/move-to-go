@@ -129,10 +129,42 @@ deal = GoImport::Deal.new()
 #Add data to your fancy new deal…
 org_id = deal_import_data_row['organisation_id']
 person_id = deal_import_data_row['person_id']
-deal.organisation = rootmodel.find_organization_by_integration_id(org_id)
-deal.organisation = rootmodel.find_person_by_integration_id(org_id)
-#Above example works the same for a history
+deal.customer = rootmodel.find_organization_by_integration_id(org_id)
+deal.customer_contact = rootmodel.find_person_by_integration_id(org_id)
 
+# History logs
+# There are five types of history logs:
+# - SalesCall: We talked to the client about a sale. This might be a phone call or a talk in person.
+# - Comment: This is a general comment about the organization or deal.
+# - TalkedTo: This is a general comment regarding a talk we had with someone at the client.
+# - TriedToReach: We tried to reach someone but failed.
+# - ClientVisit: We had a meeting at the client's site.
+comment = GoImport::Comment.new()
+comment.integration_id = ...
+comment.text = ...
+comment.created_by = rootmodel.find_coworker_by_integration_id(...)
+comment.deal = rootmodel.find_deal_by_integration_id(...)                 # If related to deal
+comment.person = rootmodel.find_person_by_integration_id(...)             # if related to person
+comment.organization = rootmodel.find_organization_by_integration_id(...) # if related to organization
+rootmodel.add_comment(comment)
+
+salesCall = GoImport::SalesCall.new()
+# Set properties...
+rootmodel.add_sales_call(salesCall)
+
+talkedTo = GoImport::TalkedTo.new()
+# Set properties...
+rootmodel.add_talked_to(talkedTo)
+
+triedToReach = GoImport::TriedToReach.new()
+# Set properties...
+rootmodel.add_tried_to_reach(triedToReach)
+
+clientVisit = GoImport::clientVisit.new()
+# Set properties...
+rootmodel.add_client_visit(clientVisit)
+
+Note: When history logs have been imported in go server. It's possible to make a re-import to update fields, but it's not possible to change type of history log.
 ```
 
 
