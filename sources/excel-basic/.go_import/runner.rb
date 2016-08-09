@@ -120,7 +120,7 @@ def convert_source
 
     # histories must be owned by a coworker and the be added to
     # organizations and histories and might refernce a person
-    if defined?(histories_rows) && !histories_rows.nil?
+    if defined?(history_rows) && !history_rows.nil?
         puts "Trying to convert history..."
         history_rows.each do |row|
             rootmodel.add_history(converter.to_history(row, rootmodel))
