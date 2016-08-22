@@ -210,7 +210,7 @@ class Converter
     #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
-    #        comment.created_by = rootmodel.import_coworker
+    #        comment.created_by = rootmodel.migrator_coworker
     #        rootmodel.add_comment(comment)
     #    end
     #end

@@ -1,10 +1,12 @@
 ﻿# move-to-go
 
 ## What is move-to-go?
-move-to-go is a ruby-based import tool for [Lime Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
-These files can then easily be imported to Lime Go by Lundalogik. During an import an automatic matching against all base data will be performed.
+move-to-go is a ruby-based migration tool for [Lime Go](http://www.lime-go.com/). 
+It can take virtually any data source as input and generate a zip file that LIME Go likes.
+These files can then easily be migrated to Lime Go by Lundalogik. 
+During an migration an automatic matching against all base data will be performed.
 
-Organizations, Persons, Deals, Histories, Coworkers and Documents can be imported to Lime Go.
+Organizations, Persons, Deals, Histories, Coworkers and Documents can be migrated to Lime Go.
 
 move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 
@@ -12,11 +14,12 @@ move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 gem install move-to-go
 ```
 
-Before starting, during and after an import, please use [this checklist](Checklist.md)
+Before starting, during and after an migration, please use [this checklist](Checklist.md)
 
 ## Working with sources
 
-To help you get started a couple of different sources are included in move-to-go. These sources contains basic code and a folder structure for a specific import.
+To help you get started a couple of different sources are included in move-to-go. 
+These sources contains basic code and a folder structure for a specific migration.
 
 You can list the available sources with
 
@@ -25,12 +28,12 @@ move-to-go list-sources
 ```
 ###Current sources
 
-- Import from CSV-files
-- Import from Lime Easy
-- Import from a Excel-file
-- Import from VISMA Administration 2000
-- Import from Salesforce
-- Import from a custom source
+- Migrate from CSV-files
+- Migrate from Lime Easy
+- Migrate from a Excel-file
+- Migrate from VISMA Administration 2000
+- Migrate from Salesforce
+- Migrate from a custom source
 
 To create a new project with
 
@@ -52,25 +55,26 @@ This will create a go.zip file. If the file already exists it will be replaced.
 
 ## What happens when you move to Lime Go?
 
-Since Lime Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an import not an import in the traditional sense. What you really do when importing organizations is to tell Lime Go that these organizations are my customers.
+Since Lime Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an migration not an import in the traditional sense. 
+What you really do when migrating organizations is to tell Lime Go that these organizations are my customers.
 
-When organizations (and persons) are imported Lime Go will try to match your organizations with organizations in our database. Lime Go will try to match organizations by organization number, name, address, etc. If the import contains more data about each organization then the probability that Lime Go will find a match increase.
+When organizations (and persons) are migrated Lime Go will try to match your organizations with organizations in our database. Lime Go will try to match organizations by organization number, name, address, etc. If the migration contains more data about each organization then the probability that Lime Go will find a match increase.
 
-If an organization is found it will get the relation set in the import (default is Customer), responsible coworker, integration id, tags and custom fields. If a match is found Lime Go will *not* import fields such as address, phone number, website, etc since we believe that our data is more up to date than your data. Your data is only used for matching in this case.
+If an organization is found it will get the relation set in the migration (default is Customer), responsible coworker, integration id, tags and custom fields. If a match is found Lime Go will *not* migrate fields such as address, phone number, website, etc since we believe that our data is more up to date than your data. Your data is only used for matching in this case.
 
-If a match is not found, Lime Go will create a new organization with all data from the import file. The organization will be tagged with "FailedToMatch". This means that for these organizations address, phone number, etc will be imported.
+If a match is not found, Lime Go will create a new organization with all data from the migrat file. The organization will be tagged with "FailedToMatch". This means that for these organizations address, phone number, etc will be migrated.
 
-If more than one organization in the import file refers to the same organization Lime Go the imported organizations will be tagged with "PossibleDuplicate". Fields such as address, phone number, etc will *not* be imported.
+If more than one organization in the migration file refers to the same organization Lime Go the migrated organizations will be tagged with "PossibleDuplicate". Fields such as address, phone number, etc will *not* be migrated.
 
-All imported organizations will be tagged "Import".
+All migrated organizations will be tagged "Import".
 
-Coworkers, deals and histories are *always* imported as is. These objects are linked to an organization.
+Coworkers, deals and histories are *always* migrated as is. These objects are linked to an organization.
 
 ## Integration id
 
-It is required to set integration id for all imported objects. The integration id for example used to connect deals to organizations and coworkers are deals. When importing Lime Go will try to match imported objects to existing objects by integration id.
+It is required to set integration id for all migrated objects. The integration id for example used to connect deals to organizations and coworkers are deals. When migrating Lime Go will try to match migrated objects to existing objects by integration id.
 
-If an integration id is missing in your import file you can generate one from the row.
+If an integration id is missing in your migration file you can generate one from the row.
 
 ```ruby
 organisation.integration_id = row.to_hash
@@ -79,14 +83,14 @@ organisation.integration_id = row.to_hash
 As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data.
 
 ## Rootmodel
-The rootmodel is an object that keeps track of your imported data and turns it into a format Lime Go can read. The rootmodel helps you keep track go objects and relations between them during the import
+The rootmodel is an object that keeps track of your migrated data and turns it into a format Lime Go can read. The rootmodel helps you keep track go objects and relations between them during the migration
 
 Datasource -> [your code] -> rootmodel -> go.zip
 
 Helpfull rootmodel code:
 ```ruby
 
-# create a brand new rootmodel. Usually only done once for an import
+# create a brand new rootmodel. Usually only done once for an migration
 
 rootmodel = MoveToGo::RootModel.new
 
@@ -107,18 +111,18 @@ rootmodel.settings.with_deal do |deal|
 end
 
 
-# Once a object, such as an organisation is created and mapped to import data
+# Once a object, such as an organisation is created and mapped to migrated data
 # it should be added to the rootmodel
 
 organisation = MoveToGo::Organisation.new()
 # Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
-# As imported persons belong to an imported organisation, they must be mapped
+# As migrated persons belong to an migrated organisation, they must be mapped
 # together. The rootmodel will help you with this:
 person = MoveToGo::Person.new()
 #Add data to your fancy new person…
-id = import_data_row['id']
+id = data_row['id']
 organisation = rootmodel.find_organization_by_integration_id(id)
 organisation.add_employee(person)
 
@@ -127,8 +131,8 @@ organisation.add_employee(person)
 
 deal = MoveToGo::Deal.new()
 #Add data to your fancy new deal…
-org_id = deal_import_data_row['organisation_id']
-person_id = deal_import_data_row['person_id']
+org_id = deal_data_row['organisation_id']
+person_id = deal_ata_row['person_id']
 deal.customer = rootmodel.find_organization_by_integration_id(org_id)
 deal.customer_contact = rootmodel.find_person_by_integration_id(org_id)
 
@@ -164,12 +168,13 @@ clientVisit = MoveToGo::clientVisit.new()
 # Set properties...
 rootmodel.add_client_visit(clientVisit)
 
-Note: When history logs have been imported in go server. It's possible to make a re-import to update fields, but it's not possible to change type of history log.
+Note: When history logs have been migrated to go. 
+It's possible to make a re-migrate to update fields, but it's not possible to change type of history log.
 ```
 
 
 ## Organisations
-A core concept in the Lime Go import is a organisation. A organisation. When importing an organisation to Lime Go, we will try to match the organisation to existing source data in Lime Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won't override our source data in Lime Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
+A core concept in the Lime Go migration is a organisation. A organisation. When migrating an organisation to Lime Go, we will try to match the organisation to existing source data in Lime Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the migration, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won't override our source data in Lime Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
 
 An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`.
 
@@ -180,7 +185,7 @@ organization.organization_number = row['orgnr']
 organization.web_site = row['website']
 bisnode_id = row['Bisnode-id']
 
-# It's not uncommon that e-mail addresses are miss formed from a import source.
+# It's not uncommon that e-mail addresses are miss formed from a migration source.
 # MoveToGo supplies a helper function for this
 if MoveToGo::EmailHelper.is_valid?(row['e-mail'])
     organization.email = row['e-mail']
@@ -230,7 +235,7 @@ end
 ```
 
 ## Persons
-Persons are employees of the organizations in Lime Go. Just as with the organisations, the imported persons will be
+Persons are employees of the organizations in Lime Go. Just as with the organisations, the migrated persons will be
 matched against the source data in Lime Go.
 
 ```ruby
@@ -238,7 +243,7 @@ person = MoveToGo::Person.new()
 
 person.first_name = "Kalle"
 person.last_name = "Kula"
-# It is common that the persons name in the imported data isn't in seperate
+# It is common that the persons name in the migrated data isn't in seperate
 # fields, but as a single string. MoveToGo supplies a helper function
 person.parse_name_to_firstname_lastname_se(row['name'])
 # or
@@ -299,17 +304,18 @@ MoveToGo::EmailHelper.is_valid?("kalle@.kula @lundalogik.se") => False
 
 ## Runtime configuration
 
-By default move-to-go will set a deal's responsible to the import coworker if no one specified. You can override this to allow no coworker by adding the following to your converter.rb
+By default move-to-go will set a deal's responsible to the 'migrator' coworker if no one specified. You can override this to allow no coworker by adding the following to your converter.rb
 
 ```ruby
 ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
 ```
 
-## Running an import more than once.
+## Running an migration more than once.
 
-Lime Go will *not* overwrite data on existing organizations. This means that if you run an import twice with different data Lime Go will not get the data from the last run.
+Lime Go will *not* overwrite data on existing organizations. This means that if you run an migration twice with different data Lime Go will not get the data from the last run.
 
-The reasoning behind this that the import is a way to load an initial state into Lime Go. It is not a way to build long running integrations. We are building a REST API for integrations.
+The reasoning behind this that the migration is a way to load an initial state into Lime Go. 
+It is not a way to build long running integrations. We are building a REST API for integrations.
 
 ## Development of core lib
 It's possible to execute projects without to install move-to-go

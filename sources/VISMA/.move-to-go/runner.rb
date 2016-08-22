@@ -74,7 +74,7 @@ def convert_source
                 unless organization.nil?
                     comment.organization = organization
                 end
-                comment.created_by = rootmodel.import_coworker
+                comment.created_by = rootmodel.migrator_coworker
                 comment.text = row['ANTECK_1']
                 
                 rootmodel.add_history(comment)

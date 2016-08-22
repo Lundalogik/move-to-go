@@ -197,7 +197,7 @@ def to_organization_document(row, rootmodel)
 
     file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
     if file.created_by.nil?
-        file.created_by = rootmodel.import_coworker
+        file.created_by = rootmodel.migrator_coworker
     end
 
     org = rootmodel.find_organization_by_integration_id(row['idCompany'])
@@ -218,7 +218,7 @@ def to_deal_document(row, rootmodel)
 
     file.created_by = rootmodel.find_coworker_by_integration_id(row['idUser-Created'])
     if file.created_by.nil?
-        file.created_by = rootmodel.import_coworker
+        file.created_by = rootmodel.migrator_coworker
     end
 
     deal = rootmodel.find_deal_by_integration_id(row['idProject'])

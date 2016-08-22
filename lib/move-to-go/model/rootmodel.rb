@@ -7,9 +7,9 @@ require "progress"
 module MoveToGo
     # The root model for Go import. This class is the container for everything else.
     class RootModel
-        # the import_coworker is a special coworker that is set as
+        # the migrator_coworker is a special coworker that is set as
         # responsible for objects that requires a coworker, eg a history.
-        attr_accessor :import_coworker
+        attr_accessor :migrator_coworker
 
         attr_accessor :settings, :organizations, :coworkers, :deals, :histories
 
@@ -45,10 +45,10 @@ module MoveToGo
             @settings = Settings.new
             @organizations = {}
             @coworkers = {}
-            @import_coworker = Coworker.new
-            @import_coworker.integration_id = "import"
-            @import_coworker.first_name = "Import"
-            @coworkers[@import_coworker.integration_id] = @import_coworker
+            @migrator_coworker = Coworker.new
+            @migrator_coworker.integration_id = "migrator"
+            @migrator_coworker.first_name = "Migrator"
+            @coworkers[@migrator_coworker.integration_id] = @migrator_coworker
             @deals = {}
             @histories = {}
             @documents = Documents.new
@@ -146,7 +146,7 @@ module MoveToGo
             end
 
             if !configuration[:allow_deals_without_responsible] && deal.responsible_coworker.nil?
-                deal.responsible_coworker = @import_coworker
+                deal.responsible_coworker = @migrator_coworker
             end
 
             @deals[deal.integration_id] = deal
@@ -249,7 +249,7 @@ module MoveToGo
             end
 
             if history.created_by.nil?
-                history.created_by = @import_coworker
+                history.created_by = @migrator_coworker
             end
 
             @histories[history.integration_id] = history

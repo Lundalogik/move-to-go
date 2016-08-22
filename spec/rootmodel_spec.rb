@@ -200,7 +200,7 @@ describe "RootModel" do
         rootmodel.deals.length.should eq 0
     end
 
-    it "will set reponsible coworker to import_coworker if none specifed" do
+    it "will set reponsible coworker to migrator_coworker if none specifed" do
         # given
         deal = MoveToGo::Deal.new
         deal.integration_id = "123key"
@@ -210,10 +210,10 @@ describe "RootModel" do
         rootmodel.add_deal(deal)
 
         # then
-        deal.responsible_coworker.integration_id.should eq rootmodel.import_coworker.integration_id
+        deal.responsible_coworker.integration_id.should eq rootmodel.migrator_coworker.integration_id
     end
 
-    it "will not set reponsible coworker to import_coworker if specifed" do
+    it "will not set reponsible coworker to migrator_coworker if specifed" do
         # given
         deal = MoveToGo::Deal.new
         deal.integration_id = "123key"
@@ -229,7 +229,7 @@ describe "RootModel" do
         deal.responsible_coworker.integration_id.should eq coworker.integration_id
     end
 
-    it "will not set responsible coworker to import_coworker if allowed" do
+    it "will not set responsible coworker to migrator_coworker if allowed" do
         # given
         deal = MoveToGo::Deal.new
         deal.integration_id = "123key"
@@ -244,7 +244,7 @@ describe "RootModel" do
         deal.responsible_coworker.should eq nil
     end
 
-    it "will set responsible coworker to import_coworker if configured" do
+    it "will set responsible coworker to migrator_coworker if configured" do
         # given
         deal = MoveToGo::Deal.new
         deal.integration_id = "123key"
@@ -256,7 +256,7 @@ describe "RootModel" do
         rootmodel.add_deal(deal)
 
         # then
-        deal.responsible_coworker.integration_id.should eq rootmodel.import_coworker.integration_id
+        deal.responsible_coworker.integration_id.should eq rootmodel.migrator_coworker.integration_id
     end
 
     it "will not add a new deal when the deal is already added (same integration id)" do
