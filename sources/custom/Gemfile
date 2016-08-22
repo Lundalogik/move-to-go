@@ -1,4 +1,4 @@
 source 'http://rubygems.org'
 
 gem 'rspec'
-gem 'go_import'
+gem 'move-to-go'

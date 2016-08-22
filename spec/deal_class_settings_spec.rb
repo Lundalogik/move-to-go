@@ -1,16 +1,16 @@
 require "spec_helper"
-require "go_import"
+require "move-to-go"
 
 describe "DealClassSettings" do
     let(:deal_class_settings) {
-        GoImport::DealClassSettings.new
+        MoveToGo::DealClassSettings.new
     }
 
     it "should not allow new deal status without a label" do
         # given, when
         begin
             deal_class_settings.add_status({:integration_id => "123"})
-        rescue GoImport::InvalidDealStatusError
+        rescue MoveToGo::InvalidDealStatusError
         end
 
         # then
@@ -22,18 +22,18 @@ describe "DealClassSettings" do
         status = deal_class_settings.add_status({:label => "1. Kvalificering"})
 
         # then
-        status.assessment.should eq GoImport::DealState::NotAnEndState
+        status.assessment.should eq MoveToGo::DealState::NotAnEndState
     end
 
     it "should set assessment if specified" do
         # given, when
         status = deal_class_settings.add_status({
                                                     :label => "4. Won deal",
-                                                    :assessment => GoImport::DealState::PositiveEndState
+                                                    :assessment => MoveToGo::DealState::PositiveEndState
                                                 })
 
         # then
-        status.assessment.should eq GoImport::DealState::PositiveEndState
+        status.assessment.should eq MoveToGo::DealState::PositiveEndState
     end
 
     it "should find a status by case insensitive label" do
@@ -109,7 +109,7 @@ describe "DealClassSettings" do
         deal_class_settings.default_status = '1. Kvalificering'
 
         # then
-        deal_class_settings.default_status.is_a?(GoImport::DealStatusReference)
+        deal_class_settings.default_status.is_a?(MoveToGo::DealStatusReference)
     end
 end
 

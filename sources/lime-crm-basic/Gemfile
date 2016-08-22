@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'thor'
+gem 'move-to-go'
+gem 'rspec'
+gem 'tiny_tds'

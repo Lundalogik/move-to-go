@@ -1,4 +1,4 @@
-require 'go_import'
+require 'move-to-go'
 
 # This converter will convert one or more CVS files into a LIME Go XML
 # file.
@@ -31,7 +31,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -52,17 +52,17 @@ class Converter
         rootmodel.settings.with_deal do |deal|
             deal.add_status({:label => "1. Kvalificering", :integration_id => "qualification"})
             deal.add_status({:label => "Vunnen", :integration_id => "won",
-                                :assessment => GoImport::DealState::PositiveEndState })
+                                :assessment => MoveToGo::DealState::PositiveEndState })
             deal.add_status({:label => "Lost", :integration_id => "Lost",
-                                :assessment => GoImport::DealState::NegativeEndState })
+                                :assessment => MoveToGo::DealState::NegativeEndState })
         end
     end
 
     # Turns a row from the organization csv file into a
-    # GoImport::Organization.
+    # MoveToGo::Organization.
     # Use rootmodel to locate other related stuff such coworker
     def to_organization(row, rootmodel)
-        organization = GoImport::Organization.new
+        organization = MoveToGo::Organization.new
         # Integrationid is typically the id in the system that
         # we are getting the csv from. Must be set to be able
         # to import the same file more than once without
@@ -114,9 +114,9 @@ class Converter
         return organization
     end
 
-    # Turns a row from the coworker csv file into a GoImport::Coworker.
+    # Turns a row from the coworker csv file into a MoveToGo::Coworker.
     def to_coworker(row)
-        coworker = GoImport::Coworker.new
+        coworker = MoveToGo::Coworker.new
         coworker.integration_id = row['id']
         coworker.first_name = row['first_name']
         coworker.last_name = row['last_name']
@@ -133,13 +133,13 @@ class Converter
         return coworker
     end
 
-    # Turns a row from the person csv file into a GoImport::Person.
+    # Turns a row from the person csv file into a MoveToGo::Person.
     #
     # You MUST add the new person to an existing organization. Use the
     # rootmodel to find the organization and then add the person with
     # organization.add_employee
     def to_person(row, rootmodel)
-        person = GoImport::Person.new
+        person = MoveToGo::Person.new
         person.integration_id = row['id']
         # Note that Go has separate first and last names
         # Some splitting might be necessary
@@ -165,11 +165,11 @@ class Converter
         employer.add_employee person
     end
 
-    # Turns a row form the deal csv file into a GoImport::Deal. Use
+    # Turns a row form the deal csv file into a MoveToGo::Deal. Use
     # the rootmodel to find objects that should be linked to the new
     # deal.
     def to_deal(row, rootmodel)
-        deal = GoImport::Deal.new
+        deal = MoveToGo::Deal.new
         deal.integration_id = row['id']
         deal.name = row['name']
         # should be integer, same currency should be used in
@@ -207,7 +207,7 @@ class Converter
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        comment = GoImport::Comment.new
+    #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
     #        comment.created_by = rootmodel.import_coworker

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'go_import'
+require 'move-to-go'
 
 # This Converter will convert a generic source to a XML file that can
 # be imported into LIME Go.
@@ -7,12 +7,12 @@ require 'go_import'
 # You MUST customzie this script to read a source and return a
 # RootModel.
 #
-# Reference documentation for go_import can be found at
-# https://rubygems.org/gems/go_import (click Documentation)
+# Reference documentation for move-to-go can be found at
+# https://rubygems.org/gems/move-to-go (click Documentation)
 #
 # Generate the xml-file that should be sent to LIME Go with the
 # command:
-# go-import run
+# move-to-go run
 #
 # Good luck.
 
@@ -25,7 +25,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -34,7 +34,7 @@ FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
 
 class Converter
     def to_go()
-        rootmodel = GoImport::RootModel.new
+        rootmodel = MoveToGo::RootModel.new
 
         # *** TODO:
         #

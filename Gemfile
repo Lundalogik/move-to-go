@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gemspec :name => 'go_import'
+gemspec :name => 'move-to-go'
 
 gem 'global_phone', '1.0.1'
 gem 'sixarm_ruby_email_address_validation', '~>2.0.0'

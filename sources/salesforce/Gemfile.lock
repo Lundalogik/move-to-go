@@ -3,7 +3,7 @@ GEM
   specs:
     diff-lcs (1.2.5)
     global_phone (1.0.1)
-    go_import (3.0.18)
+    move-to-go (3.0.18)
       bundler
       global_phone
       iso_country_codes
@@ -42,7 +42,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
-  go_import
+  move-to-go
   rspec
   rubyzip
   thor

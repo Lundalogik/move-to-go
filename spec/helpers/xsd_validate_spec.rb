@@ -1,22 +1,22 @@
 require 'spec_helper'
-require 'go_import'
+require 'move-to-go'
 require 'nokogiri'
-describe GoImport::SerializeHelper do
+describe MoveToGo::SerializeHelper do
     describe "Validate according to xsd" do
         let(:validate_result) {
-            rootmodel = GoImport::RootModel.new
+            rootmodel = MoveToGo::RootModel.new
             rootmodel.settings.with_organization do |s|
                 s.set_custom_field({:integration_id => "2", :title => "cf title"})
                 s.set_custom_field({:integration_id => "3", :title => "cf title2"})
             end
-            coworker = GoImport::Coworker.new({
+            coworker = MoveToGo::Coworker.new({
                                                   :integration_id => "123",
                                                   :first_name => "Kalle",
                                                   :last_name => "Anka",
                                                   :email => "kalle.anka@vonanka.com"
                                               })
             rootmodel.add_coworker(coworker)
-            organization = GoImport::Organization.new
+            organization = MoveToGo::Organization.new
             organization.name = "Ankeborgs bibliotek"
             organization.with_source do |source|
                 source.par_se('122345')
@@ -33,10 +33,10 @@ describe GoImport::SerializeHelper do
             organization.with_visit_address do |addr|
                 addr.city = "Gaaseborg"
             end
-            coworker = GoImport::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
+            coworker = MoveToGo::Coworker.new({:integration_id => "1", :first_name => "Vincent", :last_name => "Vega"})
             organization.responsible_coworker = coworker
 
-            emp = GoImport::Person.new
+            emp = MoveToGo::Person.new
             emp.integration_id = "1"
             emp.first_name = "Kalle"
             emp.last_name = "Anka"
@@ -46,7 +46,7 @@ describe GoImport::SerializeHelper do
             xsd_file = File.join(File.dirname(__FILE__), '..', 'sample_data', 'schema0.xsd')
 
             xsd = Nokogiri::XML::Schema(File.read(xsd_file))
-            doc = Nokogiri::XML(GoImport::SerializeHelper::serialize(rootmodel, -1))
+            doc = Nokogiri::XML(MoveToGo::SerializeHelper::serialize(rootmodel, -1))
             xsd.validate(doc)
         }
 

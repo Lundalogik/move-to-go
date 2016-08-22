@@ -1,14 +1,14 @@
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "Documents" do
     let(:documents) {
-        GoImport::Documents.new
+        MoveToGo::Documents.new
     }
 
     it "can add a new link" do
         # given
-        link = GoImport::Link.new
+        link = MoveToGo::Link.new
         link.integration_id = "123key"
         link.url = "http://dropbox.com/files/readme.txt"
 
@@ -28,14 +28,14 @@ describe "Documents" do
         # when, then
         expect {
             documents.add_link({ :integration_id => "123", :url => "http://drive.google.com" })
-        }.to raise_error(GoImport::AlreadyAddedError)
+        }.to raise_error(MoveToGo::AlreadyAddedError)
         documents.links.length.should eq 1
         documents.find_link_by_integration_id("123").url.should eq "http://dropbox.com"
     end
 
     it "can add a new file" do
         # given
-        file = GoImport::File.new
+        file = MoveToGo::File.new
         file.integration_id = "123key"
         file.path = "k:\kontakt\databas\dokument"
 
@@ -55,7 +55,7 @@ describe "Documents" do
         # when, then
         expect {
             documents.add_file({ :integration_id => "123", :path => "c:\file-2.doc"})
-        }.to raise_error(GoImport::AlreadyAddedError)
+        }.to raise_error(MoveToGo::AlreadyAddedError)
         documents.files.length.should eq 1
         documents.find_file_by_integration_id("123").path.should eq "c:\file-1.doc"
     end

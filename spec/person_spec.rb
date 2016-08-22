@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "Person" do
     let(:person) {
-        GoImport::Person.new
+        MoveToGo::Person.new
     }
 
     it "should have import tag as default" do
@@ -75,13 +75,13 @@ describe "Person" do
 
     it "should auto convert org to org.ref during assignment" do
         # given
-        org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+        org = MoveToGo::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
         # when
         person.set_organization_reference = org
 
         # then
-        person.organization.is_a?(GoImport::OrganizationReference).should eq true
+        person.organization.is_a?(MoveToGo::OrganizationReference).should eq true
     end
 
     # *** TODO:
@@ -89,8 +89,8 @@ describe "Person" do
 
     # it "should be immutable when added to an organization" do
     #     # given
-    #     org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
-    #     person = GoImport::Person.new({:integration_id => "456", :first_name => "vincent"})
+    #     org = MoveToGo::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+    #     person = MoveToGo::Person.new({:integration_id => "456", :first_name => "vincent"})
 
     #     # when
     #     org.add_employee person

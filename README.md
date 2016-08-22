@@ -1,27 +1,27 @@
-﻿# go_import
+﻿# move-to-go
 
-## What is go_import?
-go_import is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
+## What is move-to-go?
+move-to-go is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
 These files can then easily be imported to LIME Go by Lundalogik. During an import an automatic matching against all base data will be performed.
 
 Organizations, Persons, Deals, Histories, Coworkers and Documents can be imported to LIME Go.
 
-go_import is a [ruby gem](https://rubygems.org/gems/go_import). Install with
+move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 
 ```shell
-gem install go_import
+gem install move-to-go
 ```
 
 Before starting, during and after an import, please use [this checklist](Checklist.md)
 
 ## Working with sources
 
-To help you get started a couple of different sources are included in go-import. These sources contains basic code and a folder structure for a specific import.
+To help you get started a couple of different sources are included in move-to-go. These sources contains basic code and a folder structure for a specific import.
 
 You can list the available sources with
 
 ```shell
-go-import list-sources
+move-to-go list-sources
 ```
 ###Current sources
 
@@ -35,7 +35,7 @@ go-import list-sources
 To create a new project with
 
 ```shell
-go-import new excel-migration excel
+move-to-go new excel-migration excel
 ```
 
 This will create a folder named excel-migration from the source excel. It is good practice to name the project after the customer that you are doing the migration for.
@@ -45,7 +45,7 @@ In the project folder you have a file called converter.rb. It is now your job to
 To create the zip-file that should be sent to LIME Go use
 
 ```shell
-go-import run
+move-to-go run
 ```
 
 This will create a go.zip file. If the file already exists it will be replaced.
@@ -88,7 +88,7 @@ Helpfull rootmodel code:
 
 # create a brand new rootmodel. Usually only done once for an import
 
-rootmodel = GoImport::RootModel.new
+rootmodel = MoveToGo::RootModel.new
 
 
 # Settings. The rootmodel is capable of storing how a brand new
@@ -102,21 +102,21 @@ end
 
 rootmodel.settings.with_deal do |deal|
     deal.add_status( {:label => '1. Kvalificering' })
-    deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
-    deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+    deal.add_status( {:label => '2. Deal closed', :assessment => MoveToGo::DealState::PositiveEndState })
+    deal.add_status( {:label => '4. Deal lost', :assessment => MoveToGo::DealState::NegativeEndState })
 end
 
 
 # Once a object, such as an organisation is created and mapped to import data
 # it should be added to the rootmodel
 
-organisation = GoImport::Organisation.new()
+organisation = MoveToGo::Organisation.new()
 # Add data to your new fancy organisation…
 rootmodel.add_organization(organisation)
 
 # As imported persons belong to an imported organisation, they must be mapped
 # together. The rootmodel will help you with this:
-person = GoImport::Person.new()
+person = MoveToGo::Person.new()
 #Add data to your fancy new person…
 id = import_data_row['id']
 organisation = rootmodel.find_organization_by_integration_id(id)
@@ -125,7 +125,7 @@ organisation.add_employee(person)
 # The same goes for deals and histories, however, the syntax differs slightly.
 # A deal or a history has relations to both organisations and persons
 
-deal = GoImport::Deal.new()
+deal = MoveToGo::Deal.new()
 #Add data to your fancy new deal…
 org_id = deal_import_data_row['organisation_id']
 person_id = deal_import_data_row['person_id']
@@ -139,7 +139,7 @@ deal.customer_contact = rootmodel.find_person_by_integration_id(org_id)
 # - TalkedTo: This is a general comment regarding a talk we had with someone at the client.
 # - TriedToReach: We tried to reach someone but failed.
 # - ClientVisit: We had a meeting at the client's site.
-comment = GoImport::Comment.new()
+comment = MoveToGo::Comment.new()
 comment.integration_id = ...
 comment.text = ...
 comment.created_by = rootmodel.find_coworker_by_integration_id(...)
@@ -148,19 +148,19 @@ comment.person = rootmodel.find_person_by_integration_id(...)             # if r
 comment.organization = rootmodel.find_organization_by_integration_id(...) # if related to organization
 rootmodel.add_comment(comment)
 
-salesCall = GoImport::SalesCall.new()
+salesCall = MoveToGo::SalesCall.new()
 # Set properties...
 rootmodel.add_sales_call(salesCall)
 
-talkedTo = GoImport::TalkedTo.new()
+talkedTo = MoveToGo::TalkedTo.new()
 # Set properties...
 rootmodel.add_talked_to(talkedTo)
 
-triedToReach = GoImport::TriedToReach.new()
+triedToReach = MoveToGo::TriedToReach.new()
 # Set properties...
 rootmodel.add_tried_to_reach(triedToReach)
 
-clientVisit = GoImport::clientVisit.new()
+clientVisit = MoveToGo::clientVisit.new()
 # Set properties...
 rootmodel.add_client_visit(clientVisit)
 
@@ -174,15 +174,15 @@ A core concept in the LIME Go import is a organisation. A organisation. When imp
 An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`.
 
 ```ruby
-organisation = GoImport::Organisation.new()
+organisation = MoveToGo::Organisation.new()
 organisation.name = row['name']
 organization.organization_number = row['orgnr']
 organization.web_site = row['website']
 bisnode_id = row['Bisnode-id']
 
 # It's not uncommon that e-mail addresses are miss formed from a import source.
-# GoImport supplies a helper function for this
-if GoImport::EmailHelper.is_valid?(row['e-mail'])
+# MoveToGo supplies a helper function for this
+if MoveToGo::EmailHelper.is_valid?(row['e-mail'])
     organization.email = row['e-mail']
 end
 
@@ -213,18 +213,18 @@ organization.set_custom_value(”customer_number”, row['cust_no'])
 # The following is an example of assigning relations to a organisation
 if row['Customer relation'] == 'Customer'
     # We have made a deal with this organization.
-    organization.relation = GoImport::Relation::IsACustomer
+    organization.relation = MoveToGo::Relation::IsACustomer
 elsif row['Customer relation'] == 'Prospect'
     # Something is happening with this organization, we might have
   # booked a meeting with them or created a deal, etc.
-    organization.relation = GoImport::Relations::WorkingOnIt
+    organization.relation = MoveToGo::Relations::WorkingOnIt
 elsif row['Customer relation'] == 'Lost customer'
     # We had something going with this organization but we
     # couldn't close the deal and we don't think they will be a
     # customer to us in the foreseeable future.
-    organization.relation = GoImport::Relation::WasACustomer
+    organization.relation = MoveToGo::Relation::WasACustomer
 else
-    organization.relation = GoImport::Relation::BeenInTouch
+    organization.relation = MoveToGo::Relation::BeenInTouch
 end
 
 ```
@@ -234,22 +234,22 @@ Persons are employees of the organizations in LIME Go. Just as with the organisa
 matched against the source data in LIME Go.
 
 ```ruby
-person = GoImport::Person.new()
+person = MoveToGo::Person.new()
 
 person.first_name = "Kalle"
 person.last_name = "Kula"
 # It is common that the persons name in the imported data isn't in seperate
-# fields, but as a single string. GoImport supplies a helper function
+# fields, but as a single string. MoveToGo supplies a helper function
 person.parse_name_to_firstname_lastname_se(row['name'])
 # or
 
 # Validate email:
-if GoImport::EmailHelper.is_valid?(row['Email'])
+if MoveToGo::EmailHelper.is_valid?(row['Email'])
         person.email = row['Email']
 end
 
 # If the phone number data is a mess
-person.mobile_phone_number, person.direct_phone_number = GoImport::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
+person.mobile_phone_number, person.direct_phone_number = MoveToGo::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
 # or if it is very well formed
 person.direct_phone_number = row['direct number']
 person.mobile_phone_number = row['mobile']
@@ -274,17 +274,17 @@ person.parse_name_to_firstname_lastname_se(name, when_missing = '')
 ### Parse a phone number
 ```ruby
 
-number = GoImport::PhoneHelper.parse_numbers("046 - 270 48 00")
+number = MoveToGo::PhoneHelper.parse_numbers("046 - 270 48 00")
 
 # In the case there are multiple numbers in the same string
 source = "046 - 270 48 00/ 031-712 44 00"
-number1, number2 = GoImport::PhoneHelper.parse_numbers(source, '/')
+number1, number2 = MoveToGo::PhoneHelper.parse_numbers(source, '/')
 
 #If you are pick about only getting valid phone number you can use a strict mode.
 # Parses the specifed number_string and returns only valid numbers.
-GoImport::PhoneHelper.parse_numbers_strict(number_string, delimiters = ',')
+MoveToGo::PhoneHelper.parse_numbers_strict(number_string, delimiters = ',')
 
-GoImport::PhoneHelper.set_country_code(country_code)
+MoveToGo::PhoneHelper.set_country_code(country_code)
 # Sets the country code used during parsning. The default is Swedish (:se) and
 # if you are parsing Swedish numbers you don't need to set the country code.
 
@@ -292,14 +292,14 @@ GoImport::PhoneHelper.set_country_code(country_code)
 
 ### Validate an email address
 ```ruby
-GoImport::EmailHelper.is_valid?("kalle.kula@lundalogik.se") => True
+MoveToGo::EmailHelper.is_valid?("kalle.kula@lundalogik.se") => True
 
-GoImport::EmailHelper.is_valid?("kalle@.kula @lundalogik.se") => False
+MoveToGo::EmailHelper.is_valid?("kalle@.kula @lundalogik.se") => False
 ```
 
 ## Runtime configuration
 
-By default go-import will set a deal's responsible to the import coworker if no one specified. You can override this to allow no coworker by adding the following to your converter.rb
+By default move-to-go will set a deal's responsible to the import coworker if no one specified. You can override this to allow no coworker by adding the following to your converter.rb
 
 ```ruby
 ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
@@ -312,27 +312,27 @@ LIME Go will *not* overwrite data on existing organizations. This means that if 
 The reasoning behind this that the import is a way to load an initial state into LIME Go. It is not a way to build long running integrations. We are building a REST API for integrations.
 
 ## Development of core lib
-It's possible to execute projects without to install go_import
+It's possible to execute projects without to install move-to-go
 
 ```
 Example from git root:
   Create project
-  > ruby bin/go-import new my-test base-crm
+  > ruby bin/move-to-go new my-test base-crm
   As the above command also install you have to uninstall
-  > gem uninstall go_import
+  > gem uninstall move-to-go
 
   Project adaption, change imports to relative:
-  require 'go_import' <<-- Remove 
-  require_relative('../../lib/go_import') <<-- File .go_import/runner.rb
-  require_relative('../lib/go_import') <<-- File .go_import/converter.rb
+  require 'move-to-go' <<-- Remove 
+  require_relative('../../lib/move-to-go') <<-- File .move-to-go/runner.rb
+  require_relative('../lib/move-to-go') <<-- File .move-to-go/converter.rb
   
   > cd <your project folder>
-  > ruby ../bin/go-import run
+  > ruby ../bin/move-to-go run
 ```
 
 ## Help
 
-You can find generated documentation on [rubydoc](http://rubydoc.info/gems/go_import/frames)
+You can find generated documentation on [rubydoc](http://rubydoc.info/gems/move-to-go/frames)
 
 ## Legal
 

@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "Deal" do
     let(:deal){
-        GoImport::Deal.new
+        MoveToGo::Deal.new
     }
 
     it "should have import tag as default" do
@@ -14,38 +14,38 @@ describe "Deal" do
 
     it "will set customer ref when customer is assigned" do
         # given
-        org = GoImport::Organization.new({:integration_id => "123", :name => "Lundalogik"})
+        org = MoveToGo::Organization.new({:integration_id => "123", :name => "Lundalogik"})
 
         # when
         deal.customer = org
 
         # then
-        deal.customer.is_a?(GoImport::Organization).should eq true
-        deal.instance_variable_get(:@customer_reference).is_a?(GoImport::OrganizationReference).should eq true
+        deal.customer.is_a?(MoveToGo::Organization).should eq true
+        deal.instance_variable_get(:@customer_reference).is_a?(MoveToGo::OrganizationReference).should eq true
     end
 
     it "will set coworker ref when coworker is assigned" do
         # given
-        coworker = GoImport::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
+        coworker = MoveToGo::Coworker.new({:integration_id => "456", :first_name => "Billy", :last_name => "Bob"})
 
         # when
         deal.responsible_coworker = coworker
 
         # then
-        deal.responsible_coworker.is_a?(GoImport::Coworker).should eq true
-        deal.instance_variable_get(:@responsible_coworker_reference).is_a?(GoImport::CoworkerReference).should eq true
+        deal.responsible_coworker.is_a?(MoveToGo::Coworker).should eq true
+        deal.instance_variable_get(:@responsible_coworker_reference).is_a?(MoveToGo::CoworkerReference).should eq true
     end
 
     it "will set person ref when person is assigned" do
         # given
-        person = GoImport::Person.new({:integration_id => "123"})
+        person = MoveToGo::Person.new({:integration_id => "123"})
 
         # when
         deal.customer_contact = person
 
         # then
-        deal.customer_contact.is_a?(GoImport::Person).should eq true
-        deal.instance_variable_get(:@customer_contact_reference).is_a?(GoImport::PersonReference).should eq true
+        deal.customer_contact.is_a?(MoveToGo::Person).should eq true
+        deal.instance_variable_get(:@customer_contact_reference).is_a?(MoveToGo::PersonReference).should eq true
     end
 
     it "will fail on validation if name is empty" do
@@ -130,7 +130,7 @@ describe "Deal" do
         # when, then
         expect {
             deal.value = "Im not a number"
-        }.to raise_error(GoImport::InvalidValueError)
+        }.to raise_error(MoveToGo::InvalidValueError)
     end
 
     it "should set value if value is an integer" do
@@ -182,14 +182,14 @@ describe "Deal" do
 
         # given
         deal.name = "Deal with status from deal_status_setting"
-        deal_status_setting = GoImport::DealStatusSetting.new({:integration_id => "123", :label => "Driv"})
+        deal_status_setting = MoveToGo::DealStatusSetting.new({:integration_id => "123", :label => "Driv"})
 
         # when
         deal.status = deal_status_setting
 
         # then
-        deal.status.is_a?(GoImport::DealStatus).should eq true
-        deal.status.status_reference.is_a?(GoImport::DealStatusReference).should eq true
+        deal.status.is_a?(MoveToGo::DealStatus).should eq true
+        deal.status.status_reference.is_a?(MoveToGo::DealStatusReference).should eq true
         deal.status.status_reference.label.should eq "Driv"
         deal.status.status_reference.integration_id.should eq "123"
     end
@@ -205,8 +205,8 @@ describe "Deal" do
         deal.status = "Driv"
 
         # then
-        deal.status.is_a?(GoImport::DealStatus).should eq true
-        deal.status.status_reference.is_a?(GoImport::DealStatusReference).should eq true
+        deal.status.is_a?(MoveToGo::DealStatus).should eq true
+        deal.status.status_reference.is_a?(MoveToGo::DealStatusReference).should eq true
         deal.status.status_reference.label.should eq "Driv"
         deal.status.status_reference.integration_id.should eq "Driv"
     end
@@ -217,8 +217,8 @@ describe "Deal" do
 
         # when, then
         expect {
-            deal.status = GoImport::DealStatus.new({:id => 123})
-        }.to raise_error(GoImport::InvalidDealStatusError)
+            deal.status = MoveToGo::DealStatus.new({:id => 123})
+        }.to raise_error(MoveToGo::InvalidDealStatusError)
     end
 
     it "will warn on validation if status is unknown" do

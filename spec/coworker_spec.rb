@@ -1,10 +1,10 @@
 # encoding: utf-8
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "Coworker" do
     let(:coworker) {
-        GoImport::Coworker.new
+        MoveToGo::Coworker.new
     }
 
     describe "parse_name_to_firstname_lastname_se" do

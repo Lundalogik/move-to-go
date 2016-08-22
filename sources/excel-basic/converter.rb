@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'go_import'
+require 'move-to-go'
 require 'roo'
 
 # This Converter will convert an Excel file to a XML file that can be
@@ -21,7 +21,7 @@ HISTORY_SHEET = "Anteckningar"
 
 # To generate the xml-file that should be sent to LIME Go with the
 # command:
-# go-import run
+# move-to-go run
 
 class Converter
     def configure(rootmodel)
@@ -52,7 +52,7 @@ class Converter
     end
 
     def to_coworker(row)
-        coworker = GoImport::Coworker.new()
+        coworker = MoveToGo::Coworker.new()
 
         # *** TODO:
         #
@@ -60,7 +60,7 @@ class Converter
 
         coworker.parse_name_to_firstname_lastname_se row['Namn/Titel']
         coworker.integration_id = row['Namn/Titel']
-        if GoImport::EmailHelper.is_valid?(row['Email'])
+        if MoveToGo::EmailHelper.is_valid?(row['Email'])
             coworker.email = row['Email']
         end
 
@@ -68,7 +68,7 @@ class Converter
     end
 
     def to_organization(row, rootmodel)
-        organization = GoImport::Organization.new()
+        organization = MoveToGo::Organization.new()
 
         # Integrationid is typically the id in the system that we are
         # getting the csv from. Must be set to be able to import the
@@ -76,8 +76,8 @@ class Converter
         organization.integration_id = row['Kundnummer/FöretagsID']
 
         # Sets the organization's relation. Relation must be a value
-        # from GoImport::Relation.
-        organization.relation = GoImport::Relation::IsACustomer
+        # from MoveToGo::Relation.
+        organization.relation = MoveToGo::Relation::IsACustomer
 
         # *** TODO:
         #
@@ -120,33 +120,33 @@ class Converter
 
         if row['Relation'] == 'Kund'
         # We have made a deal with this organization.
-             organization.relation = GoImport::Relation::IsACustomer
+             organization.relation = MoveToGo::Relation::IsACustomer
         elsif row['Relation'] == 'Prospekt'
         # Something is happening with this organization, we might have
         # booked a meeting with them or created a deal, etc.
-             organization.relation = GoImport::Relation::WorkingOnIt
+             organization.relation = MoveToGo::Relation::WorkingOnIt
         elsif row['Relation'] == 'Tidigare kund'
-             organization.relation = GoImport::Relation::WasACustomer
+             organization.relation = MoveToGo::Relation::WasACustomer
         # We had something going with this organization but we
         # couldn't close the deal and we don't think they will be a
         # customer to us in the foreseeable future.
-        #     organization.relation = GoImport::Relation::BeenInTouch
+        #     organization.relation = MoveToGo::Relation::BeenInTouch
         else
-             organization.relation = GoImport::Relation::NoRelation
+             organization.relation = MoveToGo::Relation::NoRelation
         end 
 
         return organization
     end
 
     def to_person(row, rootmodel)
-        person = GoImport::Person.new()
+        person = MoveToGo::Person.new()
 
         # *** TODO:
         #
         # Set person properties from the row.
 
         person.parse_name_to_firstname_lastname_se(row['Namn'])
-        if GoImport::EmailHelper.is_valid?(row['Email'])
+        if MoveToGo::EmailHelper.is_valid?(row['Email'])
             person.email = row['Email']
         end
 
@@ -159,7 +159,7 @@ class Converter
     end
 
     def to_history(row, rootmodel)
-        history = GoImport::History.new()
+        history = MoveToGo::History.new()
 
         # *** TODO:
         #
