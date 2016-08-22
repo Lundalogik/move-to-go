@@ -1,10 +1,10 @@
 ﻿# move-to-go
 
 ## What is move-to-go?
-move-to-go is a ruby-based import tool for [LIME Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
-These files can then easily be imported to LIME Go by Lundalogik. During an import an automatic matching against all base data will be performed.
+move-to-go is a ruby-based import tool for [Lime Go](http://www.lime-go.com/). It can take virtually any data source as input and generate a zip file that LIME Go likes.
+These files can then easily be imported to Lime Go by Lundalogik. During an import an automatic matching against all base data will be performed.
 
-Organizations, Persons, Deals, Histories, Coworkers and Documents can be imported to LIME Go.
+Organizations, Persons, Deals, Histories, Coworkers and Documents can be imported to Lime Go.
 
 move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 
@@ -26,7 +26,7 @@ move-to-go list-sources
 ###Current sources
 
 - Import from CSV-files
-- Import from LIME Easy
+- Import from Lime Easy
 - Import from a Excel-file
 - Import from VISMA Administration 2000
 - Import from Salesforce
@@ -42,7 +42,7 @@ This will create a folder named excel-migration from the source excel. It is goo
 
 In the project folder you have a file called converter.rb. It is now your job to customize this script to do the data-mapping and adding tags. Follow the instructions in converter.rb to do the data-mapping.
 
-To create the zip-file that should be sent to LIME Go use
+To create the zip-file that should be sent to Lime Go use
 
 ```shell
 move-to-go run
@@ -50,17 +50,17 @@ move-to-go run
 
 This will create a go.zip file. If the file already exists it will be replaced.
 
-## What happens in LIME Go during import?
+## What happens when you move to Lime Go?
 
-Since LIME Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an import not an import in the traditional sense. What you really do when importing organizations is to tell LIME Go that these organizations are my customers.
+Since Lime Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an import not an import in the traditional sense. What you really do when importing organizations is to tell Lime Go that these organizations are my customers.
 
-When organizations (and persons) are imported LIME Go will try to match your organizations with organizations in our database. LIME Go will try to match organizations by organization number, name, address, etc. If the import contains more data about each organization then the probability that LIME Go will find a match increase.
+When organizations (and persons) are imported Lime Go will try to match your organizations with organizations in our database. Lime Go will try to match organizations by organization number, name, address, etc. If the import contains more data about each organization then the probability that Lime Go will find a match increase.
 
-If an organization is found it will get the relation set in the import (default is Customer), responsible coworker, integration id, tags and custom fields. If a match is found LIME Go will *not* import fields such as address, phone number, website, etc since we believe that our data is more up to date than your data. Your data is only used for matching in this case.
+If an organization is found it will get the relation set in the import (default is Customer), responsible coworker, integration id, tags and custom fields. If a match is found Lime Go will *not* import fields such as address, phone number, website, etc since we believe that our data is more up to date than your data. Your data is only used for matching in this case.
 
-If a match is not found, LIME Go will create a new organization with all data from the import file. The organization will be tagged with "FailedToMatch". This means that for these organizations address, phone number, etc will be imported.
+If a match is not found, Lime Go will create a new organization with all data from the import file. The organization will be tagged with "FailedToMatch". This means that for these organizations address, phone number, etc will be imported.
 
-If more than one organization in the import file refers to the same organization LIME Go the imported organizations will be tagged with "PossibleDuplicate". Fields such as address, phone number, etc will *not* be imported.
+If more than one organization in the import file refers to the same organization Lime Go the imported organizations will be tagged with "PossibleDuplicate". Fields such as address, phone number, etc will *not* be imported.
 
 All imported organizations will be tagged "Import".
 
@@ -68,7 +68,7 @@ Coworkers, deals and histories are *always* imported as is. These objects are li
 
 ## Integration id
 
-It is required to set integration id for all imported objects. The integration id for example used to connect deals to organizations and coworkers are deals. When importing LIME Go will try to match imported objects to existing objects by integration id.
+It is required to set integration id for all imported objects. The integration id for example used to connect deals to organizations and coworkers are deals. When importing Lime Go will try to match imported objects to existing objects by integration id.
 
 If an integration id is missing in your import file you can generate one from the row.
 
@@ -79,7 +79,7 @@ organisation.integration_id = row.to_hash
 As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data.
 
 ## Rootmodel
-The rootmodel is an object that keeps track of your imported data and turns it into a format LIME Go can read. The rootmodel helps you keep track go objects and relations between them during the import
+The rootmodel is an object that keeps track of your imported data and turns it into a format Lime Go can read. The rootmodel helps you keep track go objects and relations between them during the import
 
 Datasource -> [your code] -> rootmodel -> go.zip
 
@@ -92,7 +92,7 @@ rootmodel = MoveToGo::RootModel.new
 
 
 # Settings. The rootmodel is capable of storing how a brand new
-# LIME GO app should be set up. Most commonly; which custom fields should exist
+# Lime Go app should be set up. Most commonly; which custom fields should exist
 # and how the business statuses should be configured
 
 
@@ -169,7 +169,7 @@ Note: When history logs have been imported in go server. It's possible to make a
 
 
 ## Organisations
-A core concept in the LIME Go import is a organisation. A organisation. When importing an organisation to LIME Go, we will try to match the organisation to existing source data in LIME Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won't override our source data in LIME Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
+A core concept in the Lime Go import is a organisation. A organisation. When importing an organisation to Lime Go, we will try to match the organisation to existing source data in Lime Go. The matching is performed by fuzzy lookups on all supplied data, meaning the more and better data you supply to the import, the higher the likelihood of a positive match will be. Many of your supplied attributes will only be used for matching and won't override our source data in Lime Go, such as addresses. Attributes, such as organisation number or Bisnode-id, are considered more important then other attributes and will greatly  improve the likelihood of a positive match.
 
 An organisation has the following attributes and functions. Assuming we have read each organisation in the source data into a hash, `row`.
 
@@ -209,7 +209,7 @@ organization.set_tag(row['customer category'])
 # First parameter is the id of the custom field and second is the desired value
 organization.set_custom_value(”customer_number”, row['cust_no'])
 
-# Relations. There are five relation types in LIME Go to pick from.
+# Relations. There are five relation types in Lime Go to pick from.
 # The following is an example of assigning relations to a organisation
 if row['Customer relation'] == 'Customer'
     # We have made a deal with this organization.
@@ -230,8 +230,8 @@ end
 ```
 
 ## Persons
-Persons are employees of the organizations in LIME Go. Just as with the organisations, the imported persons will be
-matched against the source data in LIME Go.
+Persons are employees of the organizations in Lime Go. Just as with the organisations, the imported persons will be
+matched against the source data in Lime Go.
 
 ```ruby
 person = MoveToGo::Person.new()
@@ -307,9 +307,9 @@ ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
 
 ## Running an import more than once.
 
-LIME Go will *not* overwrite data on existing organizations. This means that if you run an import twice with different data LIME Go will not get the data from the last run.
+Lime Go will *not* overwrite data on existing organizations. This means that if you run an import twice with different data Lime Go will not get the data from the last run.
 
-The reasoning behind this that the import is a way to load an initial state into LIME Go. It is not a way to build long running integrations. We are building a REST API for integrations.
+The reasoning behind this that the import is a way to load an initial state into Lime Go. It is not a way to build long running integrations. We are building a REST API for integrations.
 
 ## Development of core lib
 It's possible to execute projects without to install move-to-go
@@ -322,10 +322,10 @@ Example from git root:
   > gem uninstall move-to-go
 
   Project adaption, change imports to relative:
-  require 'move-to-go' <<-- Remove 
+  require 'move-to-go' <<-- Remove
   require_relative('../../lib/move-to-go') <<-- File .move-to-go/runner.rb
   require_relative('../lib/move-to-go') <<-- File .move-to-go/converter.rb
-  
+
   > cd <your project folder>
   > ruby ../bin/move-to-go run
 ```
