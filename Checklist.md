@@ -59,7 +59,7 @@
 
 ## Post migration
 - [ ] Turn of and delete the application from staging
-- [ ] Can the source of the mogration be used as a template for other migrations? 
+- [ ] Can the source of the migration be used as a template for other migrations? 
 - [ ] Improve documentation on GitHub
 - [ ] Improve checklist on GitHub
 
