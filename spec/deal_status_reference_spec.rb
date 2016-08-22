@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "DealStatusReference" do
     let(:deal_status_reference){
-        GoImport::DealStatusReference.new
+        MoveToGo::DealStatusReference.new
     }
 
     it "should fail on validation if name, id and integration_id is nil" do

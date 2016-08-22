@@ -1,9 +1,9 @@
 require "spec_helper"
-require 'go_import'
+require 'move-to-go'
 
 describe "ClassSettings" do
     let(:class_settings) {
-        GoImport::ClassSettings.new
+        MoveToGo::ClassSettings.new
     }
 
     it "can set custom field and if there is already an existing custom field, then it is overwritten." do

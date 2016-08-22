@@ -1,12 +1,12 @@
 # encoding: UTF-8
-require 'go_import'
+require 'move-to-go'
 
 # Customize this file to suit your input files.
 #
-# Documentation go_import can be found at
-# http://rubygems.org/gems/go_import
+# Documentation move-to-go can be found at
+# http://rubygems.org/gems/move-to-go
 #
-# go_import contains all objects in LIME Go such as organization,
+# move-to-go contains all objects in LIME Go such as organization,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 
@@ -19,19 +19,19 @@ require 'go_import'
 # Follow these steps:
 #
 # 1) Export all data from KONTAKT.mdb to a folder named Export located
-# in the folder created by go_import new. Export data using the
+# in the folder created by move-to-go new. Export data using the
 # magical tool called PowerSellMigrationExport.exe that can be found
 # in K:\Lundalogik\LIME Easy\Tillbehör\Migrationsexport.
 #
 # 2) Modify this file (the to_* methods) according to your customer's
 # KONTAKT.mdb and wishes.
 #
-# 3) Run go-import run
+# 3) Run move-to-go run
 #
 # 4) Upload go.zip to LIME Go. First test your import on staging and
 # when your customer has approved the import, run it on production.
 #
-# You will get a WARNING from 'go-import run' about FILES_FOLDER has
+# You will get a WARNING from 'move-to-go run' about FILES_FOLDER has
 # not been set. You can ignore the warning since documents are
 # exported with an absolute path from LIME Easy.
 
@@ -57,7 +57,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -66,7 +66,7 @@ FILES_FOLDER_AT_CUSTOMER = "m:\\documents\\"
 
 class Converter
     # Reads a row from the Easy exported Company.txt
-    # and ads custom fields to the go_import organization.
+    # and ads custom fields to the move-to-go organization.
         # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
     # The method includes examples of different types of
@@ -94,8 +94,8 @@ class Converter
         # rootmodel.settings.with_deal do |deal|
             # assessment is default DealState::NoEndState
         #     deal.add_status( {:label => '1. Kvalificering' })
-        #     deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
-        #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+        #     deal.add_status( {:label => '2. Deal closed', :assessment => MoveToGo::DealState::PositiveEndState })
+        #     deal.add_status( {:label => '4. Deal lost', :assessment => MoveToGo::DealState::NegativeEndState })
         # end
     end
 
@@ -175,28 +175,28 @@ class Converter
 
         # if row['Customer relation'] == '1.Customer'
         # We have made a deal with this organization.
-        #     organization.relation = GoImport::Relation::IsACustomer
+        #     organization.relation = MoveToGo::Relation::IsACustomer
         # elsif row['Customer relation'] == '3.Partner'
         # We have made a deal with this organization.
-        #     organization.relation = GoImport::Relation::IsACustomer
+        #     organization.relation = MoveToGo::Relation::IsACustomer
         # elsif row['Customer relation'] == '2.Prospect'
         # Something is happening with this organization, we might have
         # booked a meeting with them or created a deal, etc.
-        #     organization.relation = GoImport::Relation::WorkingOnIt
+        #     organization.relation = MoveToGo::Relation::WorkingOnIt
         # elsif row['Customer relation'] == '4.Lost customer'
         # We had something going with this organization but we
         # couldn't close the deal and we don't think they will be a
         # customer to us in the foreseeable future.
-        #     organization.relation = GoImport::Relation::BeenInTouch
+        #     organization.relation = MoveToGo::Relation::BeenInTouch
         # else
-        #     organization.relation = GoImport::Relation::NoRelation
+        #     organization.relation = MoveToGo::Relation::NoRelation
         # end
 
         return organization
     end
 
     # Reads a row from the Easy exported Company-Person.txt
-    # and ads custom fields to the go_import organization.
+    # and ads custom fields to the move-to-go organization.
 
     # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
@@ -252,7 +252,7 @@ class Converter
     end
 
     # Reads a row from the Easy exported Project.txt
-    # and ads custom fields to the go_import organization.
+    # and ads custom fields to the move-to-go organization.
 
     # NOTE!!! You should customize this method to include
     # and transform the fields you want to import to LIME Go.
@@ -302,18 +302,18 @@ class Converter
         # note's activity from LIME Easy is supplied as an argument
         # and this method should return a classification for the note
         # in LIME Go. The return value must be a value from the
-        # GoImport::HistoryClassification enum. If no classification is
+        # MoveToGo::HistoryClassification enum. If no classification is
         # return the note will get the default classification 'Comment'
 
         # case activity
         # when 'SalesCall' 
-        #   classification = GoImport::HistoryClassification::SalesCall
+        #   classification = MoveToGo::HistoryClassification::SalesCall
         # when 'Customer Visit'
-        # classification = GoImport::HistoryClassification::ClientVisit
+        # classification = MoveToGo::HistoryClassification::ClientVisit
         # when 'No answer'
-        #   classification = GoImport::HistoryClassification::TriedToReach
+        #   classification = MoveToGo::HistoryClassification::TriedToReach
         # else
-        #     classification = GoImport::HistoryClassification::Comment
+        #     classification = MoveToGo::HistoryClassification::Comment
         # end
         
         # return classification
@@ -325,16 +325,16 @@ class Converter
         # histories activity from LIME Easy is supplied as an argument
         # and this method should return a classification for the history
         # in LIME Go. The return value must be a value from the
-        # GoImport::HistoryClassification enum. If no classification is
+        # MoveToGo::HistoryClassification enum. If no classification is
         # return the history will get the default classification 'Comment'
         
         # case activity
         # when 'Installation' 
-        #   classification = GoImport::HistoryClassification::ClientVisit
+        #   classification = MoveToGo::HistoryClassification::ClientVisit
         # when 'No answer'
-        #   classification = GoImport::HistoryClassification::TriedToReach
+        #   classification = MoveToGo::HistoryClassification::TriedToReach
         # else
-        #     classification = GoImport::HistoryClassification::Comment
+        #     classification = MoveToGo::HistoryClassification::Comment
         # end
         
         # return classification
@@ -349,10 +349,10 @@ class Converter
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        comment = GoImport::Comment.new
+    #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
-    #        comment.created_by = rootmodel.import_coworker
+    #        comment.created_by = rootmodel.migrator_coworker
     #        rootmodel.add_comment(comment)
     #    end
     #end

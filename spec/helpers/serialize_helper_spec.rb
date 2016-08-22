@@ -1,13 +1,13 @@
 require 'spec_helper'
-require 'go_import'
+require 'move-to-go'
 
-describe GoImport::SerializeHelper do
+describe MoveToGo::SerializeHelper do
 
     describe "Serialize history" do
         let(:serialized) {
-            n = GoImport::History.new
+            n = MoveToGo::History.new
             n.text = "text"
-            GoImport::SerializeHelper::serialize(n,-1)
+            MoveToGo::SerializeHelper::serialize(n,-1)
         }
         it "should contain text" do
             serialized.should match(/<Text>[\n ]*text[\n ]*<\/Text>/)
@@ -22,9 +22,9 @@ describe GoImport::SerializeHelper do
 
     describe "Serialize history with xml inside" do
         let(:serialized) {
-            n = GoImport::History.new
+            n = MoveToGo::History.new
             n.text = "<text>"
-            GoImport::SerializeHelper::serialize(n,-1)
+            MoveToGo::SerializeHelper::serialize(n,-1)
         }
         it "should contain encoded text" do
             serialized.should match(/<Text>[\n ]*&lt;text&gt;[\n ]*<\/Text>/)
@@ -33,11 +33,11 @@ describe GoImport::SerializeHelper do
 
     describe "Serialize custom value with xml inside" do
         let(:serialized) {
-            v = GoImport::CustomValue.new
+            v = MoveToGo::CustomValue.new
             v.value = "<text>"
-            v.field = GoImport::CustomFieldReference.new()
+            v.field = MoveToGo::CustomFieldReference.new()
             v.field.integration_id = "1"
-            GoImport::SerializeHelper::serialize(v,-1)
+            MoveToGo::SerializeHelper::serialize(v,-1)
         }
         it "should contain encoded text" do
             serialized.should match(/<Value>[\n ]*&lt;text&gt;[\n ]*<\/Value>/)
@@ -47,8 +47,8 @@ describe GoImport::SerializeHelper do
 
     describe "Serialize without data" do
         let(:serialized) {
-            p = GoImport::Person.new
-            GoImport::SerializeHelper::serialize(p,-1)
+            p = MoveToGo::Person.new
+            MoveToGo::SerializeHelper::serialize(p,-1)
         }
         it "should not contain fields that are not set" do
             serialized.should_not match(/<Email>/)
@@ -63,7 +63,7 @@ describe GoImport::SerializeHelper do
 
     describe "Serialize person" do
         let(:serialized) {
-            p = GoImport::Person.new
+            p = MoveToGo::Person.new
             p.id = "1"
             p.first_name = "Kalle"
             p.last_name = "Anka"
@@ -84,7 +84,7 @@ describe GoImport::SerializeHelper do
             p.set_custom_value("2", "cf value")
             p.set_custom_value("3", "cf Bj\u{00F6}rk")
             p.set_custom_value("4", "cf <Bj\u{00F6}rk>")
-            GoImport::SerializeHelper::serialize(p,-1)
+            MoveToGo::SerializeHelper::serialize(p,-1)
         }
         it "should contain first and last name" do
             serialized.should match(/<FirstName>[\n ]*Kalle[\n ]*<\/FirstName>/)
@@ -123,7 +123,7 @@ describe GoImport::SerializeHelper do
     end
     describe "Serialize organization" do
         let(:serialized) {
-            organization = GoImport::Organization.new
+            organization = MoveToGo::Organization.new
             organization.name = "Ankeborgs bibliotek"
             organization.with_source do |source|
                 source.par_se('122345')
@@ -144,7 +144,7 @@ describe GoImport::SerializeHelper do
                 :first_name => "Kalle",
                 :last_name => "Anka"
             })
-            GoImport::SerializeHelper::serialize(organization, -1)
+            MoveToGo::SerializeHelper::serialize(organization, -1)
         }
 
         it "should contain name" do
@@ -179,14 +179,14 @@ describe GoImport::SerializeHelper do
         end
     end
 
-    describe "Serialize goimport" do
+    describe "Serialize MoveToGo" do
         let(:serialized) {
-            rootmodel = GoImport::RootModel.new
-            organization = GoImport::Organization.new
+            rootmodel = MoveToGo::RootModel.new
+            organization = MoveToGo::Organization.new
             organization.name = "Ankeborgs bibliotek"
             organization.integration_id = "123"
             rootmodel.add_organization organization
-            GoImport::SerializeHelper::serialize(rootmodel, -1)
+            MoveToGo::SerializeHelper::serialize(rootmodel, -1)
         }
         it "should contain name" do
             serialized.should match(/Ankeborgs bibliotek/)
@@ -200,7 +200,7 @@ describe GoImport::SerializeHelper do
     end
     describe "Get import rows" do
         describe "for person" do
-            let(:import_rows) { GoImport::Person.new.get_import_rows }
+            let(:import_rows) { MoveToGo::Person.new.get_import_rows }
             it "should contain integration id" do
                 import_rows.should include({:id => 'integration_id', :name => 'Integration id', :type => :string})
                 import_rows.should include({:id => 'id', :name => 'Go id', :type => :string})
@@ -231,7 +231,7 @@ describe GoImport::SerializeHelper do
             end
         end
         describe "for organization" do
-            let(:import_rows) { GoImport::Organization.new.get_import_rows }
+            let(:import_rows) { MoveToGo::Organization.new.get_import_rows }
             it "should contain integration id" do
                 import_rows.should include({:id => 'integration_id', :name => 'Integration id', :type => :string})
                 import_rows.should include({:id => 'id', :name => 'Go id', :type => :string})

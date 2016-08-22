@@ -1,4 +1,4 @@
-require 'go_import'
+require 'move-to-go'
 
 # This converter will convert a full export from Salesforce to LIME
 # Go. Export data according to
@@ -14,7 +14,7 @@ EXPORT_FOLDER = "export"
 # you want to import to LIME GO.
 # EXPORT_FILE = ""
 
-# go-import will NOT use any unzipped files from the EXPORT_FOLDER. It
+# move-to-go will NOT use any unzipped files from the EXPORT_FOLDER. It
 # will instead extract the zipfile to a temporary folder.
 
 
@@ -27,7 +27,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -76,7 +76,7 @@ class Converter
         # Returns the relation that converted leads should have. By
         # default leads will get the relation WorkingOnIt.
         
-        return GoImport::Relation::WorkingOnIt
+        return MoveToGo::Relation::WorkingOnIt
     end
 
     def get_tags_for_lead(lead_status)
@@ -102,10 +102,10 @@ class Converter
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        comment = GoImport::Comment.new
+    #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
-    #        comment.created_by = rootmodel.import_coworker
+    #        comment.created_by = rootmodel.migrator_coworker
     #        rootmodel.add_comment(comment)
     #    end
     #end

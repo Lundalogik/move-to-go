@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'go_import'
+require 'move-to-go'
 require 'roo'
 
 # This Converter will convert an Excel file to a XML file that can be
@@ -23,7 +23,7 @@ FILE_SHEET = "Dokument"
 
 # To generate the xml-file that should be sent to LIME Go with the
 # command:
-# go-import run
+# move-to-go run
 
 # If you are importing files then you must set the FILES_FOLDER
 # constant. FILES_FOLDER should point to the folder where the files
@@ -34,7 +34,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -59,8 +59,8 @@ class Converter
         # rootmodel.settings.with_deal do |deal|
         # assessment is default DealState::NoEndState
         #     deal.add_status( {:label => '1. Kvalificering' })
-        #     deal.add_status( {:label => '2. Deal closed', :assessment => GoImport::DealState::PositiveEndState })
-        #     deal.add_status( {:label => '4. Deal lost', :assessment => GoImport::DealState::NegativeEndState })
+        #     deal.add_status( {:label => '2. Deal closed', :assessment => MoveToGo::DealState::PositiveEndState })
+        #     deal.add_status( {:label => '4. Deal lost', :assessment => MoveToGo::DealState::NegativeEndState })
         # end
     end
 
@@ -74,7 +74,7 @@ class Converter
     end
 
     def to_coworker(row)
-        coworker = GoImport::Coworker.new()
+        coworker = MoveToGo::Coworker.new()
 
         # *** TODO:
         #
@@ -82,7 +82,7 @@ class Converter
 
         coworker.parse_name_to_firstname_lastname_se row['Namn/Titel']
         coworker.integration_id = row['Namn/Titel']
-        if GoImport::EmailHelper.is_valid?(row['Email'])
+        if MoveToGo::EmailHelper.is_valid?(row['Email'])
             coworker.email = row['Email']
         end
 
@@ -90,7 +90,7 @@ class Converter
     end
 
     def to_deal(row, rootmodel)
-        deal = GoImport::Deal.new()
+        deal = MoveToGo::Deal.new()
 
         # *** TODO:
         #
@@ -100,7 +100,7 @@ class Converter
     end
 
     def to_organization(row, rootmodel)
-        organization = GoImport::Organization.new()
+        organization = MoveToGo::Organization.new()
 
         # Integrationid is typically the id in the system that we are
         # getting the csv from. Must be set to be able to import the
@@ -108,8 +108,8 @@ class Converter
         organization.integration_id = row['ID']
 
         # Sets the organization's relation. Relation must be a value
-        # from GoImport::Relation.
-        organization.relation = GoImport::Relation::IsACustomer
+        # from MoveToGo::Relation.
+        organization.relation = MoveToGo::Relation::IsACustomer
 
         # *** TODO:
         #
@@ -127,24 +127,24 @@ class Converter
     end
 
     def to_person(row, rootmodel)
-        person = GoImport::Person.new()
+        person = MoveToGo::Person.new()
 
         # *** TODO:
         #
         # Set person properties from the row.
 
         person.parse_name_to_firstname_lastname_se(row['Namn'])
-        if GoImport::EmailHelper.is_valid?(row['Email'])
+        if MoveToGo::EmailHelper.is_valid?(row['Email'])
             person.email = row['Email']
         end
         person.mobile_phone_number, person.direct_phone_number =
-            GoImport::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
+            MoveToGo::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
 
         return person
     end
 
     def to_history(row, rootmodel)
-        history = GoImport::History.new()
+        history = MoveToGo::History.new()
 
         # *** TODO:
         #
@@ -159,7 +159,7 @@ class Converter
     end
 
     def to_file(row, rootmodel)
-        file = GoImport::File.new()
+        file = MoveToGo::File.new()
 
         file.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
         file.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
@@ -177,10 +177,10 @@ class Converter
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        comment = GoImport::Comment.new
+    #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
-    #        comment.created_by = rootmodel.import_coworker
+    #        comment.created_by = rootmodel.migrator_coworker
     #        rootmodel.add_comment(comment)
     #    end
     #end

@@ -1,4 +1,4 @@
-﻿require 'go_import'
+﻿require 'move-to-go'
 require 'dbf'
 
 # Customize this file to suit your input for a 
@@ -6,15 +6,15 @@ require 'dbf'
 #
 # You must put KUND.DBS and KONTAKTER.DBS in the database folder.
 #
-# Documentation go_import can be found at
-# http://rubygems.org/gems/go_import
+# Documentation move-to-go can be found at
+# http://rubygems.org/gems/move-to-go
 #
-# go_import contains all objects in LIME Go such as organizations,
+# move-to-go contains all objects in LIME Go such as organizations,
 # people, deals, etc. What properties each object has is described in
 # the documentation.
 #
 # Generate the xml-file that should be sent to LIME Go with the command:
-# go-import run
+# move-to-go run
 
 # If you are importing files then you must set the FILES_FOLDER
 # constant. FILES_FOLDER should point to the folder where the files
@@ -25,7 +25,7 @@ FILES_FOLDER = "./files"
 
 # If you are importing files with an absolute path (eg
 # m:\documents\readme.doc) then you probably wont have files at that
-# location on the computer where "go-import run" is executed. Set
+# location on the computer where "move-to-go run" is executed. Set
 # FILES_FOLDER_AT_CUSTOMER to the folder where documents are stored at
 # the customers site. Ie, in this example m:\documents.
 # Note that you need to escape \ with a \ so in order to write \ use
@@ -54,7 +54,7 @@ class Converter
     end
 
     def to_organization(row, rootmodel)
-        organization = GoImport::Organization.new()
+        organization = MoveToGo::Organization.new()
 
         #Add tags:
         organization.set_tag "Kund"
@@ -76,8 +76,8 @@ class Converter
         organization.central_phone_number = row['TEL']
 
         # Sets the organization's relation. Relation must be a value
-        # from GoImport::Relation.
-        organization.relation = GoImport::Relation::IsACustomer
+        # from MoveToGo::Relation.
+        organization.relation = MoveToGo::Relation::IsACustomer
 
         #Fill data to custom fields
         organization.set_custom_value("ackoms", row["ACKOMS"])
@@ -86,18 +86,18 @@ class Converter
     end
 
     def to_person(row, rootmodel)
-        person = GoImport::Person.new()
+        person = MoveToGo::Person.new()
 
         # *** TODO:
         #
         # Set person properties from the row.
 
         person.parse_name_to_firstname_lastname_se(row['NAMN'])
-        if GoImport::EmailHelper.is_valid?(row['EPOST'])
+        if MoveToGo::EmailHelper.is_valid?(row['EPOST'])
             person.email = row['EPOST']
         end
-        person.mobile_phone_number = GoImport::PhoneHelper.parse_numbers(row['MBTEL'], [",", "/", "\\"])
-        person.direct_phone_number = GoImport::PhoneHelper.parse_numbers(row['TEL'], [",", "/", "\\"])
+        person.mobile_phone_number = MoveToGo::PhoneHelper.parse_numbers(row['MBTEL'], [",", "/", "\\"])
+        person.direct_phone_number = MoveToGo::PhoneHelper.parse_numbers(row['TEL'], [",", "/", "\\"])
 
         return person
     end
@@ -109,10 +109,10 @@ class Converter
     # an organization if a field has a specific value
     #def organization_hook(row, organization, rootmodel)
     #    if not row['fieldname'].empty?
-    #        comment = GoImport::Comment.new
+    #        comment = MoveToGo::Comment.new
     #        comment.text = row['fieldname']
     #        comment.organization = organization
-    #        comment.created_by = rootmodel.import_coworker
+    #        comment.created_by = rootmodel.migrator_coworker
     #        rootmodel.add_history(comment)
     #    end
     #end
