@@ -51,7 +51,9 @@ To create the zip-file that should be sent to Lime Go use
 move-to-go run
 ```
 
-This will create a go.zip file. If the file already exists it will be replaced.
+This will create a go_0.zip file. If the file already exists it will be replaced. 
+
+If the migration contains lots of data, the result will be split into several zip files.
 
 ## What happens when you move to Lime Go?
 
