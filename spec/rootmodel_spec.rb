@@ -6,8 +6,8 @@ describe "RootModel" do
         MoveToGo::RootModel.new
     }
 
-    it "will contain import coworker by default" do
-        rootmodel.find_coworker_by_integration_id("import").first_name.should eq "Import"
+    it "will contain migration coworker by default" do
+        rootmodel.find_coworker_by_integration_id("migrator").first_name.should eq "Migrator"
         rootmodel.coworkers.length.should eq 1
     end
 
@@ -464,7 +464,7 @@ describe "RootModel" do
         rootmodel.add_coworker(nil)
 
         # then
-        # 1 since we always have the import coworker
+        # 1 since we always have the migrator coworker
         rootmodel.coworkers.length.should eq 1
     end
 

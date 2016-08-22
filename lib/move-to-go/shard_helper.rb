@@ -12,7 +12,7 @@ module MoveToGo
                 @current_shard.settings = model.settings
 
                 model.coworkers.each{ |key, coworker|
-                    if coworker.integration_id != "import"
+                    if coworker.integration_id != "migrator"
                         add_coworker(coworker)
                     end
                 }
