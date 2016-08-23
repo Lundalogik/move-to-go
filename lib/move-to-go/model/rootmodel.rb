@@ -5,7 +5,7 @@ require 'securerandom'
 require "progress"
 
 module MoveToGo
-    # The root model for Go import. This class is the container for everything else.
+    # The root model for Move To Go. This class is the container for everything else.
     class RootModel
         # the migrator_coworker is a special coworker that is set as
         # responsible for objects that requires a coworker, eg a history.
@@ -48,6 +48,7 @@ module MoveToGo
             @migrator_coworker = Coworker.new
             @migrator_coworker.integration_id = "migrator"
             @migrator_coworker.first_name = "Migrator"
+            @migrator_coworker.email = "noreply-migrator@lime-go.com"
             @coworkers[@migrator_coworker.integration_id] = @migrator_coworker
             @deals = {}
             @histories = {}
@@ -474,6 +475,14 @@ module MoveToGo
             errors = String.new
             warnings = String.new
 
+            @coworkers.each do |key, coworker|
+                validation_mesage = coworker.validate
+
+                if !validation_mesage.empty?
+                    errors = "#{errors}\n#{validation_mesage}"
+                end
+            end
+            
             @organizations.each do |k, o|
                 validation_message = o.validate()
 
@@ -481,7 +490,7 @@ module MoveToGo
                     errors = "#{errors}\n#{validation_message}"
                 end
             end
-
+            
             converter_deal_statuses = @settings.deal.statuses.map {|status| status.label} if @settings.deal != nil
             @deals.each do |key, deal|
                 error, warning = deal.validate converter_deal_statuses

@@ -11,6 +11,10 @@ describe "RootModel" do
         rootmodel.coworkers.length.should eq 1
     end
 
+    it "will contain a migration coworker with email" do
+        rootmodel.find_coworker_by_integration_id("migrator").email.length.should > 1 
+    end
+
     it "can add a coworker from a new coworker" do
         # given
         coworker = MoveToGo::Coworker.new
