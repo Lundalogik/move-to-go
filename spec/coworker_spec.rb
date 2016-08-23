@@ -1,4 +1,3 @@
-# encoding: utf-8
 require "spec_helper"
 require 'move-to-go'
 
@@ -7,6 +6,42 @@ describe "Coworker" do
         MoveToGo::Coworker.new
     }
 
+    describe "coworker" do
+        it "must have a first name and email" do
+            # given
+            coworker.first_name = "billy"
+            coworker.email = "billy@movetogo.com"
+
+            # when, then
+            coworker.validate.should eq ""
+        end
+
+        it "must have a last name and email" do
+            # given
+            coworker.first_name = "bob"
+            coworker.email = "billy@movetogo.com"
+
+            # when, then
+            coworker.validate.should eq ""
+        end
+        
+        it "must have either first or last name and email" do
+            # given
+            coworker.email = "billy@movetogo.com"
+
+            # when, then
+            coworker.validate.length.should > 1 
+        end      
+
+          it "must have email" do
+            # given
+            coworker.first_name = "billy"
+            
+            # when, then
+            coworker.validate.length.should > 1 
+        end         
+    end
+    
     describe "parse_name_to_firstname_lastname_se" do
         it "can parse 'Kalle Nilsson' into firstname 'Kalle' and lastname 'Nilsson'" do
             coworker.parse_name_to_firstname_lastname_se 'Kalle Nilsson'

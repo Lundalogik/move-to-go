@@ -1,4 +1,3 @@
-# encoding: utf-8
 module MoveToGo
     class Coworker < CanBecomeImmutable
         include SerializeHelper
@@ -76,6 +75,21 @@ module MoveToGo
             firstname = to_email_chars @first_name.downcase
             lastname = to_email_chars @last_name.downcase
             return "#{firstname}.#{lastname}@#{domain}"
+        end
+
+        def validate
+            error = String.new
+
+            if (@first_name.nil? || @first_name.empty?) &&
+               (@last_name.nil? || @last_name.empty?)
+                error = "A firstname or lastname is required for coworker.\n#{serialize()}"
+            end
+
+            if @email.nil? || @email.empty?
+                error = "#{error}\nAn email is required for coworker.\n"
+            end
+            
+            return error
         end
 
     end
