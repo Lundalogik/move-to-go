@@ -79,7 +79,7 @@ It is required to set integration id for all migrated objects. The integration i
 If an integration id is missing in your migration file you can generate one from the row.
 
 ```ruby
-organisation.integration_id = row.to_hash
+organization.integration_id = row.to_hash
 ```
 
 As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data.
