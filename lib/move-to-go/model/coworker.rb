@@ -84,13 +84,8 @@ module MoveToGo
                (@last_name.nil? || @last_name.empty?)
                 error = "A firstname or lastname is required for coworker.\n#{serialize()}"
             end
-
-            if @email.nil? || @email.empty?
-                error = "#{error}\nAn email is required for coworker.\n"
-            end
             
             return error
         end
-
     end
 end
