@@ -9,7 +9,7 @@
 8.	Enter the folder
 9.	Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :) 
 10.	Now that you are done with your mapping. You enter the command 
-“cd MigrationFolder”
+`cd MigrationFolder`
 11.	Enter the command `move-to-go run`
 a.	Now Ruby maps the source-file data with the converter file you edited. Wich results in a XML file that contains the fetched data and that Go can read
 12.	When it says “Source has been converted into ‘go_0.zip’.” You go ahead and log on to https://admin.staging.lime-go.com. 
