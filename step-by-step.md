@@ -18,7 +18,7 @@ a.	Now Ruby maps the source-file data with the converter file you edited. Wich r
 15.	Now you press the button “Add an account” which is the one you’ll use when you enter the staging account. 
 16.	Under “Actions” you got some options, click on the link “Import data” to make a test migration. 
 17.	Just upload the .zip file and wait until the job has been finished (may take a while).
-18.	When the job is done, enter the account at https://go.stagin.lime-go.com with the credentials you created in step 15.
+18.	When the job is done, enter the account at https://go.staging.lime-go.com with the credentials you created in step 15.
 19.	Check the data, is it how it should be?
 20.	If yes, create an account (like at step 15) to the customer where they can look at the data aswell and give you a go to do the migration in the sharp environment. 
 
