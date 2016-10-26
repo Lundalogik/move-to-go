@@ -212,7 +212,6 @@ describe MoveToGo::SerializeHelper do
                     {:id => 'zip_code',:name => 'Zip code', :type => :string},
                     {:id => 'city',:name => 'City', :type => :string},
                     {:id => 'country_code',:name => 'Country code', :type => :string},
-                    {:id => 'location',:name => 'Location', :type => :string},
                     {:id => 'country_name',:name => 'Country name', :type => :string},
                 ]}
                 import_rows.should include(expected)
@@ -243,7 +242,6 @@ describe MoveToGo::SerializeHelper do
                         {:id => 'zip_code',:name => 'Zip code', :type => :string},
                         {:id => 'city',:name => 'City', :type => :string},
                         {:id => 'country_code',:name => 'Country code', :type => :string},
-                        {:id => 'location',:name => 'Location', :type => :string},
                         {:id => 'country_name',:name => 'Country name', :type => :string},
                     ]}
                 import_rows.should include(expected)
