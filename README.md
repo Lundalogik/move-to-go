@@ -199,7 +199,6 @@ organization.with_postal_address do |address|
     address.street = row['street']
     address.zip_code = row['zip']
     address.city = row['city']
-    address.location = row['location'] # Country
 end
 
 organization.with_visit_address do |addr|

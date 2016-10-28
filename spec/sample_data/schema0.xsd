@@ -96,7 +96,6 @@
       <xs:element minOccurs="0" maxOccurs="1" name="ZipCode" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="City" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="CountryCode" type="xs:string" />
-      <xs:element minOccurs="0" maxOccurs="1" name="Location" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ArrayOfPerson">
