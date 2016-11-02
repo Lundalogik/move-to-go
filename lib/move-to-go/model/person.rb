@@ -31,18 +31,44 @@ module MoveToGo
     class Person < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
+        ##
+        # :attr_accessor: id
         immutable_accessor :id
+        ##
+        # :attr_accessor: integration_id
         immutable_accessor :integration_id
+        ##
+        # :attr_accessor: first_name
         immutable_accessor :first_name
+        ##
+        # :attr_accessor: last_name
         immutable_accessor :last_name
+        ##
+        # :attr_accessor: direct_phone_number
         immutable_accessor :direct_phone_number
+        ##
+        # :attr_accessor: fax_phone_number
         immutable_accessor :fax_phone_number
+        ##
+        # :attr_accessor: mobile_phone_number
         immutable_accessor :mobile_phone_number
+        ##
+        # :attr_accessor: home_phone_number
         immutable_accessor :home_phone_number
+        ##
+        # :attr_accessor: position
         immutable_accessor :position
+        ##
+        # :attr_accessor: email
         immutable_accessor :email
+        ##
+        # :attr_accessor: alternative_email
         immutable_accessor :alternative_email
+        ##
+        # :attr_accessor: postal_address
         immutable_accessor :postal_address
+        ##
+        # :attr_accessor: currently_employed
         immutable_accessor :currently_employed
 
         # you add custom values by using {#set_custom_value}
