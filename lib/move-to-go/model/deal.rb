@@ -37,16 +37,33 @@ module MoveToGo
     class Deal < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
+        ##
+        # :attr_accessor: status
         # Get/set the deal's status. Statuses must be configured in
         # LIME Go before the import.
         immutable_accessor :status
 
+        ##
+        # :attr_accessor: id
         immutable_accessor :id
+        ##
+        # :attr_accessor: integration_id
         immutable_accessor :integration_id
+        ##
+        # :attr_accessor: name
         immutable_accessor :name
+        ##
+        # :attr_accessor: description
         immutable_accessor :description
+        ##
+        # :attr_accessor: probability
         immutable_accessor :probability
+        ##
+        # :attr_accessor: order_date
         immutable_accessor :order_date
+        ##
+        # :attr_accessor: offer_date
+        immutable_accessor :offer_date
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
@@ -54,7 +71,7 @@ module MoveToGo
         attr_reader :customer, :responsible_coworker, :customer_contact, :value
 
         def serialize_variables
-            [ :id, :integration_id, :name, :description, :probability, :value, :order_date ].map {
+            [ :id, :integration_id, :name, :description, :probability, :value, :order_date, :offer_date ].map {
                 |p| {
                     :id => p,
                     :type => :string
@@ -102,6 +119,10 @@ module MoveToGo
 
             if @name.nil? || @name.empty?
                 error = "A name is required for deal.\n}"
+            end
+
+            if !@value.nil? && @value < 0 
+                error = "The value must be possitive for deal.\n}"
             end
 
             if !@status.nil? && @status.status_reference.nil?
