@@ -4,7 +4,7 @@
 3.	Enter this command `gem install move-to-go`
 4.	Wait
 5.	`Cd` (Change direction) to folder where you whant to put the migration folder.
-6.	Enter this command `move-to-go MigrationFolder excel` (or other list-source)
+6.	Enter this command `move-to-go new MigrationFolder excel` (or other list-source)
 7.	Now a folder named “MigrationFolder” is created
 8.	Enter the folder
 9.	Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :) 
