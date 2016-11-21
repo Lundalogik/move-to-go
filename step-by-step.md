@@ -1,11 +1,11 @@
 # Move-to-go step by step.
 
 ##MIGRATION
-1.	Go get Ruby... (should be 2.1, 64-bits).
+1.	Go get Ruby... (should be 2.1.X, 64-bits).
 2.	Open “Start Command Prompt with Ruby”.
 3.	Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
 4.	Wait.
-5.	`Cd` (Change direction) to folder where you whant to put the migration folder.
+5.	`Cd` (Change direction) to folder where you want to put the migration folder.
 6.	Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 7.	Now a folder named “MigrationFolder” is created.
 8.	Enter the folder.
@@ -21,7 +21,10 @@
 16.	Under “Actions” you got some options, click on the link “Import data” to make a test migration. 
 17.	Just upload the .zip file and wait until the job has been finished (may take a while).
 18.	When the job is done, enter the account at https://go.staging.lime-go.com with the credentials you created in step 15.
-19.	Check the data, is it how it should be? If you have imported any external IDs, check them so they are correct. It's important to be abel to rerun the migration or add additional inormation at a later state. 
+19.	Check the data.
+	a. Is it how it should be?
+	b. Is there many "Failed to match" tags? If yes you might have a problem with the identifications.
+	c. If you have imported any external IDs, check them so they are correct. It's important to be abel to rerun the migration or add additional inormation at a later state. 
 20.	If yes, create an account (like at step 15) to the customer where they can look at the data aswell and give you a go to do the migration in the sharp environment. 
 
 21.	When the customer has approved of the test-migration you need a account for https://admin.lime-go.com/ to being able to do the migration in the production environment.
@@ -39,4 +42,3 @@
 ##Questions? 
 Easiest way to get in contact with the Lime Go development team is through the slack channel consultans.
 
-Done! Whoop whoop!
