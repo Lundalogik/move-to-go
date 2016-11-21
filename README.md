@@ -14,9 +14,9 @@ move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 gem install move-to-go
 ```
 
-Before starting, during and after an migration, please use [this checklist](Checklist.md)
+###Before starting please use [this checklist](Checklist.md)
 
-For a simple step by step guide [check this out](step-by-step.md)
+###For a simple step by step guide [check this out](step-by-step.md)
 
 ## Working with sources
 
