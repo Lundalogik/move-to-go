@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Test migration",
+            "type": "Ruby",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "program": "C:/tools/Ruby21/bin/move-to-go",
+            "args":[
+                "run"
+            ]
+        }
+    ]
+}
