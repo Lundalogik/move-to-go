@@ -229,4 +229,22 @@ describe "Deal" do
         # when, then
         deal.validate[1].length.should be > 0
     end
+
+    it "will not validate negative values" do
+        # given
+        deal.name = "Deal"
+        deal.value = -1000
+
+        # when, then
+        deal.validate[0].length.should be > 0
+    end
+
+    it "will validate positive values" do
+        # given
+        deal.name = "Deal"
+        deal.value = "1000"
+
+        # when, then
+        deal.validate[0].length.should be == 0
+    end
 end
