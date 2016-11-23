@@ -118,11 +118,11 @@ module MoveToGo
             warnings = String.new
 
             if @name.nil? || @name.empty?
-                error = "A name is required for deal.\n}"
+                error = "A name is required for deal.\n"
             end
 
             if is_integer?(@value) && @value.to_i < 0
-                error = "The value must be positive for deal.\n}"
+                error = "The value must be positive for deal.\n"
             end
 
             if !@status.nil? && @status.status_reference.nil?
