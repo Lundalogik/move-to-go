@@ -121,8 +121,8 @@ module MoveToGo
                 error = "A name is required for deal.\n}"
             end
 
-            if !@value.nil? && @value < 0 
-                error = "The value must be possitive for deal.\n}"
+            if is_integer?(@value) && @value.to_i < 0
+                error = "The value must be positive for deal.\n}"
             end
 
             if !@status.nil? && @status.status_reference.nil?
@@ -143,7 +143,6 @@ module MoveToGo
 
             return [error, warnings]
         end
-
 
         def with_status
             @status = DealStatus.new if @status.nil?
