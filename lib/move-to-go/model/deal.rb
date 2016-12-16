@@ -114,34 +114,41 @@ module MoveToGo
         end
 
         def validate(labels = nil)
-            error = String.new
-            warnings = String.new
+            errors = []
+            warnings = []
 
             if @name.nil? || @name.empty?
-                error = "A name is required for deal.\n"
+                errors.push("A name is required for deal.")
             end
 
             if is_integer?(@value) && @value.to_i < 0
-                error = "The value must be positive for deal.\n"
+                errors.push("The value must be positive for deal.")
             end
 
             if !@status.nil? && @status.status_reference.nil?
-                error = "#{error}\nStatus must have a status reference."
+                errors.push("Status must have a status reference.")
             end
 
             if !@status.nil? && !@status.status_reference.nil? && @status.status_reference.validate.length > 0
-                error = "#{error}\n#{@status.status_reference.validate}"
+                val = @status.status_reference.validate
+                if val.kength > 0
+                    errors.push(val)
+                end
             end
 
             if !@status.nil? && !@status.status_reference.nil? && (labels.nil? || (!labels.nil? && !labels.include?(@status.status_reference.label)))
-                warnings = "Deal status '#{@status.status_reference.label}' missing, add to settings"
+                warnings.push("Deal status '#{@status.status_reference.label}' missing, add to settings")
             end
 
-            if error.length > 0
-                error = "#{error}\n#{serialize()}"
+            if @status == nil
+                warnings.push("No status set on deal (#{@integration_id}) '#{@name}', will be set to default status at import")
             end
 
-            return [error, warnings]
+            if errors.length > 0
+                errors.push(serialize())
+            end
+
+            return [errors.join('\n'), warnings.join('\n')]
         end
 
         def with_status
