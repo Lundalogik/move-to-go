@@ -331,9 +331,16 @@ Example from git root:
   > gem uninstall move-to-go
 
   Project adaption, change imports to relative:
-  require 'move-to-go' <<-- Remove
-  require_relative('../../lib/move-to-go') <<-- File .move-to-go/runner.rb
-  require_relative('../lib/move-to-go') <<-- File .move-to-go/converter.rb
+
+  In file 'converter.rb', replace:
+    require 'move-to-go'
+  with:
+    require_relative('../lib/move-to-go')
+
+  In file 'move-to-go/runner.rb', replace:
+    require 'move-to-go'
+  with:
+    require_relative('../../lib/move-to-go')
 
   > cd <your project folder>
   > ruby ../bin/move-to-go run
