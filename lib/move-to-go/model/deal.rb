@@ -131,7 +131,7 @@ module MoveToGo
 
             if !@status.nil? && !@status.status_reference.nil? && @status.status_reference.validate.length > 0
                 val = @status.status_reference.validate
-                if val.kength > 0
+                if val.length > 0
                     errors.push(val)
                 end
             end
