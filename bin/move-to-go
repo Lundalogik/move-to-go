@@ -106,6 +106,10 @@ class MoveToGoCommandLine < Thor
             end
             model.report_rootmodel_status()
 
+            puts "Checking for duplicate organizations..."
+            possible_duplicates = model.organizations.find_duplicates_by(:name, :organization_number)
+            puts "Found #{possible_duplicates.length} organization duplicate sets in rootmodel, based on name and organization number"
+                
             puts "Starting sharding of model..."
             sharder = MoveToGo::ShardHelper.new(options.shard_size)
             models_to_serialize = sharder.shard_model(model)

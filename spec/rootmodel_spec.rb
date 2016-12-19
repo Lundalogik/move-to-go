@@ -994,4 +994,97 @@ describe "RootModel" do
         # then
         result.should eq []
     end
+
+    it "should delete an organization and its linked objects" do
+        # given
+        org = MoveToGo::Organization.new
+        org.name = "Lundalogik"
+        org.integration_id = "1"
+        person = MoveToGo::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+        person.position = "Chief"
+        org.add_employee(person)
+        rootmodel.add_organization(org)
+
+
+        deal = MoveToGo::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        deal.customer = org
+        rootmodel.add_deal deal
+
+
+        note = MoveToGo::History.new
+        note.text = "Hello"
+        note.organization = org
+        note.deal = deal
+        rootmodel.add_history(note)
+
+        rootmodel.remove_organization(org)
+
+        # when
+        result = rootmodel.organizations.length + rootmodel.deals.length + rootmodel.histories.length
+
+        # then
+        result.should eq 0
+    end
+
+    it "should only delete what it needs to delete when deleting an organization and its linked objects" do
+        # given
+        org = MoveToGo::Organization.new
+        org.name = "Lundalogik"
+        org.integration_id = "1"
+        person = MoveToGo::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+        person.position = "Chief"
+        org.add_employee(person)
+        rootmodel.add_organization(org)
+
+        deal = MoveToGo::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "1"
+        deal.customer = org
+        rootmodel.add_deal deal
+
+        note = MoveToGo::History.new
+        note.text = "Hello"
+        note.organization = org
+        note.deal = deal
+        rootmodel.add_history(note)
+
+        org = MoveToGo::Organization.new
+        org.name = "Lundalogik Stockholm"
+        org.integration_id = "2"
+        person = MoveToGo::Person.new
+        person.first_name = "Kalle"
+        person.email = "kalle@kula.se"
+        person.position = "Chief"
+        org.add_employee(person)
+        rootmodel.add_organization(org)
+
+        deal = MoveToGo::Deal.new
+        deal.name = "Bigger Deal"
+        deal.value = 1234
+        deal.integration_id = "2"
+        deal.customer = org
+        rootmodel.add_deal deal
+
+        note = MoveToGo::History.new
+        note.text = "Hello"
+        note.organization = org
+        note.deal = deal
+        rootmodel.add_history(note)
+
+        rootmodel.remove_organization(org)
+
+        # when
+        result = rootmodel.organizations.length + rootmodel.deals.length + rootmodel.histories.length
+
+        # then
+        result.should eq 3
+    end
 end

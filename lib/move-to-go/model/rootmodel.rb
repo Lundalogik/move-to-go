@@ -43,7 +43,7 @@ module MoveToGo
 
         def initialize()
             @settings = Settings.new
-            @organizations = {}
+            @organizations = Organizations.new self
             @coworkers = {}
             @migrator_coworker = Coworker.new
             @migrator_coworker.integration_id = "migrator"
@@ -118,9 +118,39 @@ module MoveToGo
             end
 
             @organizations[organization.integration_id] = organization
+            organization.rootmodel = self
             organization.set_is_immutable
 
             return organization
+        end
+
+        def remove_organization(organization)
+            if organization.nil?
+                return nil
+            end
+
+            if !organization.is_a?(Organization)
+                raise ArgumentError.new("Expected an organization")
+            end
+
+            if organization.integration_id.nil? || organization.integration_id.length == 0
+                raise IntegrationIdIsRequiredError, "An integration id is required to remove an organization"
+            end
+
+            find_deals_for_organization(organization)
+                .each{|deal| @deals.delete(deal.integration_id)}
+
+            select_histories{|history| history.organization == organization}
+                .each{|history| @histories.delete(history.integration_id)}
+
+            select_documents(:file){|file| file.organization == organization}
+                .each{|file| @documents.files.delete(file.integration_id)}
+
+            select_documents(:link){|history| history.organization == organization}
+                .each{|history| @documents.links.delete(history.integration_id)}
+
+            @organizations.delete(organization.integration_id)
+
         end
 
         # Adds the specifed deal object to the model.
@@ -421,6 +451,16 @@ module MoveToGo
           return result
         end
 
+        # Finds a history based on one of its property.
+        # Returns all found matching history
+        # @example Finds a history on its name
+        #      rm.select_history {|history| history.text == "hello!" }
+        def select_histories(report_result=!!configuration[:report_result], &block)
+          result = select(@histories.values.flatten, &block)
+          report_failed_to_find_object("history") if result.nil? and report_result
+          return result
+        end
+
         # Finds a document based on one of its property.
         # Returns the first found matching document
         # @example Finds a document on its name
@@ -428,6 +468,17 @@ module MoveToGo
         def find_document(type, report_result=!!configuration[:report_result], &block)
           result = find(@documents.files, &block) if type == :file
           result = find(@documents.links, &block) if type == :link
+          report_failed_to_find_object("document") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a document based on one of its property.
+        # Returns all found matching document
+        # @example Finds a document on its name
+        #      rm.find_document(:file) {|document| document.name == "Important Tender" }
+        def select_documents(type, report_result=!!configuration[:report_result], &block)
+          result = select(@documents.files, &block) if type == :file
+          result = select(@documents.links, &block) if type == :link
           report_failed_to_find_object("document") if result.nil? and report_result
           return result
         end
@@ -622,6 +673,14 @@ module MoveToGo
           " Deals:         #{@deals.length}\n" \
           " History logs:  #{@histories.length}\n" \
           " Documents:     #{nbr_of_documents}"
+        end
+
+        # Maps organization duplicates from the rootmodel, only returned 
+        def map_organization_duplicates!(fields_to_check=[:name], &block)
+            dc = MoveToGo::DuplicateChecker.new(fields_to_check, self)
+            dc.map_organization_duplicates! do |duplicate_set| 
+                yield duplicate_set 
+            end
         end
 
         private
