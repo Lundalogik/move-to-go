@@ -71,6 +71,7 @@ module MoveToGo
         ##
         # :attr_accessor: source_data
         immutable_accessor :source_data
+        attr_accessor :rootmodel
 
         # Sets/gets the date when this organization's relation was
         # changed. Default is Now.
@@ -80,7 +81,11 @@ module MoveToGo
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
 
+        # You can read linked objects
+        attr_reader :deals, :histories, :documents
+
         def initialize(opt = nil)
+            @employees = []
             if !opt.nil?
                 serialize_variables.each do |myattr|
                     val = opt[myattr[:id]]
@@ -180,6 +185,18 @@ module MoveToGo
             end
         end
 
+        def deals
+            @rootmodel.find_deals_for_organization(self)
+        end
+
+        def histories
+            @rootmodel.select_histories{|history| history.organization == self}
+        end
+
+        def documents(type)
+            @rootmodel.select_documents(type){|doc| doc.organization == self}
+        end
+
         # Sets the organization's relation to the specified value. The
         # relation must be a valid value from the Relation module
         # otherwise an InvalidRelationError error will be thrown.
@@ -265,6 +282,65 @@ module MoveToGo
             end
 
             return error
+        end
+
+        # Moves all data from an organization to this organization. The pillaged
+        # org is still kept as a empty shell of itself in the rootmodel 
+        def move_data_from(org)
+            flat_instance_variables_to_copy = [:@name, :@organization_number, :@email, :@web_site, :@central_phone_number]
+            class_instance_variables_to_copy = [:@visiting_address, :@postal_address, :@source_data]
+            org.instance_variables.each{ |variable|
+                
+                # Only change the value if it is empty
+                if flat_instance_variables_to_copy.include? variable
+                    if !self.instance_variable_get(variable)
+                        self.instance_variable_set(variable, org.instance_variable_get(variable))
+                    end
+
+                # Some of the instances variabels are classes
+                
+                elsif class_instance_variables_to_copy.include? variable
+                  
+                    class_instance = org.instance_variable_get(variable)
+                    class_instance.instance_variables.each { |sub_variable|
+                       
+                        #If there is no class, create one 
+                        if !self.instance_variable_get(variable)
+                            case variable
+                            when :@visit_address, :@postal_address
+                                klass = MoveToGo::Address.new
+                            when :@source_data
+                                klass = MoveToGo::SourceData.new
+                            end
+                            self.instance_variable_set(variable, klass)
+                        end
+                        if !self.instance_variable_get(variable).instance_variable_get(sub_variable)
+                            self.instance_variable_get(variable).instance_variable_set(
+                                sub_variable, class_instance.instance_variable_get(sub_variable)
+                            )
+                        end
+                    }
+                elsif variable == :@custom_values
+                    org.custom_values.each{ |custom_value|
+                        self.set_custom_value(custom_value.field, custom_value.value)
+                    }
+                end
+            }
+
+            self.with_postal_address do
+
+            end
+            
+            org.employees.each{ |person| self.add_employee(person)}
+    
+            org.deals.each{ |deal| deal.instance_variable_set("@customer", self)} # Object is "immutable" if using "="
+
+            org.histories.each{|history| history.instance_variable_set("@organization", self)}
+
+            org.documents(:file).each{|file| file.instance_variable_set("@organization", self)}
+
+            org.documents(:link).each{|history| history.instance_variable_set("@organization", self)}
+
         end
     end
 end

@@ -237,6 +237,44 @@ end
 
 ```
 
+### Organization duplicates
+Organization duplicates can be a problem when doing migrations. In best case they will just end up as possible duplicates in Lime Go.
+In worst case they will cause the migration to fail.
+You can find, handle and remove duplicates in Move-to-go, by:
+
+```ruby
+rootmodel.organizations
+    .find_duplicates_by(:name,:organization_number, "visiting_address.city")
+    .map_duplicates { |duplicate_set| # Handle each duplicate set ([org1, org2, ...])
+        duplicate_set.merge_all! # Move all data in the set to one of the organizations. Returns the empty organizations
+    }
+    .each { |org|
+        rootmodel.remove_organization(org) #Remove the empty organizations from the rootmodel
+    }
+```
+
+Instead of using `merge_all!` you can handle your mergeing manualy by
+
+```ruby
+rootmodel.organizations
+    .find_duplicates_by(:name)
+    .map_duplicates { |duplicate_set| # Handle each  
+        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value" }
+        duplicate_set.each{|org|
+            if org != org_to_keep
+                org_to_keep.move_data_from(org)
+            end
+        }
+        duplicate_set.remove(org_to_keep)
+        duplicate_set # Return the organizations to be removed
+    }
+    .each { |org|
+        rootmodel.remove_organization(org)
+    }
+```
+
+
+
 ## Persons
 Persons are employees of the organizations in Lime Go. Just as with the organisations, the migrated persons will be
 matched against the source data in Lime Go.
