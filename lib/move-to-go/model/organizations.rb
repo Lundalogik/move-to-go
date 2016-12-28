@@ -43,27 +43,27 @@ module MoveToGo
             # map fields to instance variable name or to class. For example :name
             # or "visiting_address.city" => [:visiting_address, :city]
             fields_to_check = raw_fields_to_check.map{ |field|
-            fields = field.to_s.split(".")
-            case fields.length
-                when 1 then :"@#{field}"
-                when 2 then [:"@#{fields[0]}",:"@#{fields[1]}"]
-                else raise
-            end
+                fields = field.to_s.split(".")
+                case fields.length
+                    when 1 then :"@#{field}"
+                    when 2 then [:"@#{fields[0]}",:"@#{fields[1]}"]
+                    else raise
+                end
             } 
             # Find all posible duplicates and collect them to sets.
             possible_duplicate_sets = self
-            .values
-            .group_by{ |org|
-                fields_to_check.map{ |field|
-                case field # Some fields (Address) are accually class objects, check what we are dealing with
-                    when Symbol then val = org.instance_variable_get(field)
-                    when Array then val = org.instance_variable_get(field[0]).instance_variable_get(field[1])
-                end
-                val.downcase.strip
+                .values
+                .group_by{ |org|
+                    fields_to_check.map{ |field|
+                    case field # Some fields (Address) are accually class objects, check what we are dealing with
+                        when Symbol then val = org.instance_variable_get(field)
+                        when Array then val = org.instance_variable_get(field[0]).instance_variable_get(field[1])
+                    end
+                    val.downcase.strip
+                    }
                 }
-            }
-            .select { |k, v| v.size > 1 }
-            .values
+                .select { |k, v| v.size > 1 }
+                .values
 
             return DuplicateSetArray.new(@rootmodel, possible_duplicate_sets)
         end

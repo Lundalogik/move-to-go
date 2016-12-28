@@ -244,7 +244,7 @@ You can find, handle and remove duplicates in Move-to-go, by:
 ```ruby
 rootmodel.organizations
     .find_duplicates_by(:name,:organization_number, "visiting_address.city")
-    .map_duplicates { |duplicate_set| # Handel each duplicate set ([org1, org2, ...])
+    .map_duplicates { |duplicate_set| # Handle each duplicate set ([org1, org2, ...])
         duplicate_set.merge_all! # Move all data in the set to one of the organizations. Returns the empty organizations
     }
     .each { |org|
@@ -258,7 +258,7 @@ Instead of using `merge_all!` you can handle your mergeing manualy by
 rootmodel.organizations
     .find_duplicates_by(:name)
     .map_duplicates { |duplicate_set| # Handle each  
-        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value"}
+        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value" }
         duplicate_set.each{|org|
             if org != org_to_keep
                 org_to_keep.move_data_from(org)
