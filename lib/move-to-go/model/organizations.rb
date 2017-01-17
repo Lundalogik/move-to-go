@@ -52,15 +52,14 @@ module MoveToGo
             } 
             # Find all posible duplicates and collect them to sets.
             possible_duplicate_sets = self
-                .values
-                .group_by{ |org|
-                    fields_to_check.map{ |field|
-                    case field # Some fields (Address) are accually class objects, check what we are dealing with
-                        when Symbol then val = org.instance_variable_get(field)
-                        when Array then val = org.instance_variable_get(field[0]).instance_variable_get(field[1])
-                    end
-                    val.downcase.strip
-                    }
+            .values
+            .group_by{ |org|
+                fields_to_check.map{ |field|
+                case field # Some fields (Address) are accually class objects, check what we are dealing with
+                    when Symbol then val = org.instance_variable_get(field)
+                    when Array then val = org.instance_variable_get(field[0]).instance_variable_get(field[1])
+                end
+                val != nil ? val.downcase.strip : val = ''
                 }
                 .select { |k, v| v.size > 1 }
                 .values

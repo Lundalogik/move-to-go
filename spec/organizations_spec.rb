@@ -205,4 +205,30 @@ describe MoveToGo::Organizations do
         org.custom_values.first.value.should eq "https"
     end
 
+    it "should handle if the value of a field is Nil" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = nil
+        organization.integration_id = "1337"
+        model.add_organization(organization)
+
+        (1..3).each do |n|
+            organization = MoveToGo::Organization.new
+            organization.name = "Ankeborgs bibliotek"
+            organization.integration_id = n.to_s
+            model.add_organization(organization)
+        end
+
+        set_to_check = []
+        model.organizations
+            .find_duplicates_by(:name)
+            .each do |duplicate_set|
+                set_to_check = duplicate_set
+            end
+        # when, the
+        set_to_check.length.should eq 3
+    end
+
 end
