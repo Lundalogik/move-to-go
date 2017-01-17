@@ -1,9 +1,9 @@
 require 'iso_country_codes'
 module MoveToGo
     class Address 
-        attr_accessor :street, :zip_code, :city, :country_code, :location
+        attr_accessor :street, :zip_code, :city, :country_code
         def serialize_variables
-            [ :street, :zip_code, :city, :country_code, :location].map {|p| {:id=>p,:type=>:string} }
+            [ :street, :zip_code, :city, :country_code].map {|p| {:id=>p,:type=>:string} }
         end
         include SerializeHelper
         def initialize()

@@ -157,7 +157,6 @@ class Converter
         #         address.street = row['potstaladdress1']
         #         address.zip_code = row['postalzipcode']
         #         address.city = row['postalcity']
-        #         address.location = row['country']
         #     end
 
         #     # Same as visting address

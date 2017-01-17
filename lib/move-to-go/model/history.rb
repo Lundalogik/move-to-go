@@ -1,8 +1,14 @@
 module MoveToGo
     class History < CanBecomeImmutable
         include SerializeHelper
+        ##
+        # :attr_accessor: id
         immutable_accessor :id
+        ##
+        # :attr_accessor: integration_id
         immutable_accessor :integration_id
+        ##
+        # :attr_accessor: date
         immutable_accessor :date
 
         attr_reader :text

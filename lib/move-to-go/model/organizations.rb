@@ -43,12 +43,12 @@ module MoveToGo
             # map fields to instance variable name or to class. For example :name
             # or "visiting_address.city" => [:visiting_address, :city]
             fields_to_check = raw_fields_to_check.map{ |field|
-            fields = field.to_s.split(".")
-            case fields.length
-                when 1 then :"@#{field}"
-                when 2 then [:"@#{fields[0]}",:"@#{fields[1]}"]
-                else raise
-            end
+                fields = field.to_s.split(".")
+                case fields.length
+                    when 1 then :"@#{field}"
+                    when 2 then [:"@#{fields[0]}",:"@#{fields[1]}"]
+                    else raise
+                end
             } 
             # Find all posible duplicates and collect them to sets.
             possible_duplicate_sets = self
@@ -61,9 +61,8 @@ module MoveToGo
                 end
                 val != nil ? val.downcase.strip : val = ''
                 }
-            }
-            .select { |k, v| v.size > 1 }
-            .values
+                .select { |k, v| v.size > 1 }
+                .values
 
             return DuplicateSetArray.new(@rootmodel, possible_duplicate_sets)
         end

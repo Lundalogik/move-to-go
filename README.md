@@ -14,7 +14,9 @@ move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 gem install move-to-go
 ```
 
-Before starting, during and after an migration, please use [this checklist](Checklist.md)
+###Before starting please use [this checklist](Checklist.md)
+
+###For a simple step by step guide [check this out](step-by-step.md)
 
 ## Working with sources
 
@@ -197,7 +199,6 @@ organization.with_postal_address do |address|
     address.street = row['street']
     address.zip_code = row['zip']
     address.city = row['city']
-    address.location = row['location'] # Country
 end
 
 organization.with_visit_address do |addr|
@@ -244,7 +245,7 @@ You can find, handle and remove duplicates in Move-to-go, by:
 ```ruby
 rootmodel.organizations
     .find_duplicates_by(:name,:organization_number, "visiting_address.city")
-    .map_duplicates { |duplicate_set| # Handel each duplicate set ([org1, org2, ...])
+    .map_duplicates { |duplicate_set| # Handle each duplicate set ([org1, org2, ...])
         duplicate_set.merge_all! # Move all data in the set to one of the organizations. Returns the empty organizations
     }
     .each { |org|
@@ -258,7 +259,7 @@ Instead of using `merge_all!` you can handle your mergeing manualy by
 rootmodel.organizations
     .find_duplicates_by(:name)
     .map_duplicates { |duplicate_set| # Handle each  
-        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value"}
+        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value" }
         duplicate_set.each{|org|
             if org != org_to_keep
                 org_to_keep.move_data_from(org)
@@ -368,9 +369,16 @@ Example from git root:
   > gem uninstall move-to-go
 
   Project adaption, change imports to relative:
-  require 'move-to-go' <<-- Remove
-  require_relative('../../lib/move-to-go') <<-- File .move-to-go/runner.rb
-  require_relative('../lib/move-to-go') <<-- File .move-to-go/converter.rb
+
+  In file 'converter.rb', replace:
+    require 'move-to-go'
+  with:
+    require_relative('../lib/move-to-go')
+
+  In file 'move-to-go/runner.rb', replace:
+    require 'move-to-go'
+  with:
+    require_relative('../../lib/move-to-go')
 
   > cd <your project folder>
   > ruby ../bin/move-to-go run

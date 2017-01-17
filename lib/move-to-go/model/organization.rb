@@ -41,15 +41,35 @@ module MoveToGo
     class Organization < CanBecomeImmutable
         include SerializeHelper, ModelHasCustomFields, ModelHasTags
 
+        ##
+        # :attr_accessor: id
         immutable_accessor :id
+        ##
+        # :attr_accessor: integration_id
         immutable_accessor :integration_id
+        ##
+        # :attr_accessor: name
         immutable_accessor :name
+        ##
+        # :attr_accessor: organization_number
         immutable_accessor :organization_number
+        ##
+        # :attr_accessor: email
         immutable_accessor :email
+        ##
+        # :attr_accessor: web_site
         immutable_accessor :web_site
+        ##
+        # :attr_accessor: postal_address
         immutable_accessor :postal_address
+        ##
+        # :attr_accessor: visit_address
         immutable_accessor :visit_address
+        ##
+        # :attr_accessor: central_phone_number
         immutable_accessor :central_phone_number
+        ##
+        # :attr_accessor: source_data
         immutable_accessor :source_data
         attr_accessor :rootmodel
 
