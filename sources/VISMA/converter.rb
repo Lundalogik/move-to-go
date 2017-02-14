@@ -41,7 +41,7 @@ class Converter
 
         #Creates a custom field to add invoicing data
         rootmodel.settings.with_organization do |org|
-            org.set_custom_field( { :integrationid => 'ackoms', :title => 'Fakturerat', :type => :String } )
+            org.set_custom_field( { :integration_id => 'ackoms', :title => 'Fakturerat', :type => :String } )
         end
     end
 
