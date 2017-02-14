@@ -32,6 +32,7 @@ class MoveToGoCommandLine < Thor
 
     desc "about <SOURCE>", "Prints information about the specifed source"
     def about(source)
+
         sources = MoveToGo::Sources.new(source_path)
 
         sources.about_source(source)
@@ -211,4 +212,5 @@ class MoveToGoCommandLine < Thor
     end
 end
 
+puts "Version: #{Gem.loaded_specs["move-to-go"].version}"
 MoveToGoCommandLine.start(ARGV)
