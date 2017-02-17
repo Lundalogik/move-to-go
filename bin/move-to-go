@@ -3,6 +3,8 @@
 require "thor"
 require_relative '../lib/move-to-go'
 require 'progress'
+require 'net/http'
+require 'json'
 
 
 RUNNER_DIR = ".move-to-go"
@@ -32,14 +34,21 @@ class MoveToGoCommandLine < Thor
 
     desc "about <SOURCE>", "Prints information about the specifed source"
     def about(source)
-
         sources = MoveToGo::Sources.new(source_path)
 
         sources.about_source(source)
     end
 
     desc "new <PROJECT> <SOURCE>", "Creates a new migration project with a specifed name and source"
+    option(:ignore_version,
+           :desc => "Ignore version check",
+           :type => :boolean,
+           :required => false)
     def new(project, source)
+        if options.ignore_version.nil?
+            verify_version()
+        end
+
         sources = MoveToGo::Sources.new(source_path)
 
         if sources.create_project_from_source(project, source)
@@ -74,7 +83,15 @@ class MoveToGoCommandLine < Thor
            :desc => "Large imports are sharded into several zip-files. This property sets how many objects each zip-file should contain. Default is 25 000",
            :type => :numeric,
            :required => false)
+    option(:ignore_version,
+           :desc => "Ignore version check",
+           :type => :boolean,
+           :required => false)
     def run_import()
+        if options.ignore_version.nil?
+            verify_version()
+        end
+
         if !options.log_to_file.nil?
             $stdout = File.new(options.log_to_file == "log_to_file" ? "move-to-go.log" : options.log_to_file, 'w')
             $stdout.sync = true
@@ -210,7 +227,28 @@ class MoveToGoCommandLine < Thor
     def source_path()
         File.expand_path("../sources", File.dirname(__FILE__))
     end
+
+    private
+    def verify_version()
+        uri = URI('https://rubygems.org/api/v1/versions/move-to-go/latest.json')
+
+        Net::HTTP.start(uri.host, uri.port,
+        :verify_mode => OpenSSL::SSL::VERIFY_NONE,
+        :use_ssl => true) do |http|
+
+            request = Net::HTTP::Get.new uri
+            response = http.request request
+
+            latest_version = Gem::Version.new(JSON.parse(response.body)['version'])
+            current_version = Gem.loaded_specs["move-to-go"].version
+            outdated = latest_version > current_version
+
+            if outdated
+                puts "You are running an old version of move-to-go (#{current_version})\r\nPlease upgrade by running 'gem install move-to-go'"
+                exit
+            end
+        end
+    end
 end
 
-puts "Version: #{Gem.loaded_specs["move-to-go"].version}"
 MoveToGoCommandLine.start(ARGV)
