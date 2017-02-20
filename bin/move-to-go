@@ -13,6 +13,7 @@ class MoveToGoCommandLine < Thor
 
     desc "about", "About move-to-go"
     def about()
+        display_current_version()
         puts "move-to-go is an migration tool for LIME Go. It can take virtually any input source and create import data files that LIME Go likes." 
         puts "move-to-go has some predefined sources that will make it easy for you to migrate your data."
         puts ""
@@ -20,6 +21,8 @@ class MoveToGoCommandLine < Thor
 
     desc "list-sources", "Lists the available sources"
     def list_sources()
+        display_current_version()
+
         puts "The following sources are available:"
         puts
 
@@ -34,20 +37,24 @@ class MoveToGoCommandLine < Thor
 
     desc "about <SOURCE>", "Prints information about the specifed source"
     def about(source)
+        display_current_version()
+
         sources = MoveToGo::Sources.new(source_path)
 
         sources.about_source(source)
     end
 
     desc "new <PROJECT> <SOURCE>", "Creates a new migration project with a specifed name and source"
-    option(:ignore_version,
-           :desc => "Ignore version check",
+    option(:force_current_version,
+           :desc => "Set this if you have an outdated version of move-to-go and still want to create a new migration. Old versions of move-to-go will not work with the current version of LIME Go.",
            :type => :boolean,
            :required => false)
     def new(project, source)
-        if options.ignore_version.nil?
-            verify_version()
+        if options.force_current_version.nil?
+            check_current_version()
         end
+
+        display_current_version()
 
         sources = MoveToGo::Sources.new(source_path)
 
@@ -83,14 +90,16 @@ class MoveToGoCommandLine < Thor
            :desc => "Large imports are sharded into several zip-files. This property sets how many objects each zip-file should contain. Default is 25 000",
            :type => :numeric,
            :required => false)
-    option(:ignore_version,
-           :desc => "Ignore version check",
+    option(:force_current_version,
+           :desc => "Set this if you have an outdated version of move-to-go and still want to run the migration. Old versions of move-to-go will not work with the current version of LIME Go.",
            :type => :boolean,
            :required => false)
     def run_import()
-        if options.ignore_version.nil?
-            verify_version()
+        if options.force_current_version.nil?
+            check_current_version()
         end
+
+        display_current_version()
 
         if !options.log_to_file.nil?
             $stdout = File.new(options.log_to_file == "log_to_file" ? "move-to-go.log" : options.log_to_file, 'w')
@@ -229,7 +238,7 @@ class MoveToGoCommandLine < Thor
     end
 
     private
-    def verify_version()
+    def check_current_version()
         uri = URI('https://rubygems.org/api/v1/versions/move-to-go/latest.json')
 
         Net::HTTP.start(uri.host, uri.port,
@@ -242,12 +251,19 @@ class MoveToGoCommandLine < Thor
             latest_version = Gem::Version.new(JSON.parse(response.body)['version'])
             current_version = Gem.loaded_specs["move-to-go"].version
             outdated = latest_version > current_version
-
+            
             if outdated
-                puts "You are running an old version of move-to-go (#{current_version})\r\nPlease upgrade by running 'gem install move-to-go'"
+                puts "You are running an old version of move-to-go (#{current_version})"
+                puts "Please upgrade by running 'gem install move-to-go'"
                 exit
             end
         end
+    end
+
+    private
+    def display_current_version()
+        puts "Version: #{Gem.loaded_specs["move-to-go"].version}"
+        puts 
     end
 end
 
