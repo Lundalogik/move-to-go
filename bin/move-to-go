@@ -16,7 +16,7 @@ class MoveToGoCommandLine < Thor
         display_current_version()
         puts "move-to-go is an migration tool for Lime Go. It can take virtually any input source and create import data files that Lime Go likes." 
         puts "move-to-go has some predefined sources that will make it easy for you to migrate your data."
-        puts ""
+        puts
     end
 
     desc "list-sources", "Lists the available sources"
@@ -31,7 +31,8 @@ class MoveToGoCommandLine < Thor
             puts "\t#{s}"
         end
 
-        puts "\nCreate a new project with 'move-to-go new <PROJECT> <SOURCE>' with one of these sources."
+        puts
+        puts "Create a new project with 'move-to-go new <PROJECT> <SOURCE>' with one of these sources."
         puts "Use 'move-to-go about <SOURCE>' for more information about a specific source."
     end
 
@@ -59,7 +60,8 @@ class MoveToGoCommandLine < Thor
         sources = MoveToGo::Sources.new(source_path)
 
         if sources.create_project_from_source(project, source)
-            puts "\nProject '#{project}' created from source '#{source}'."
+            puts
+            puts "Project '#{project}' created from source '#{source}'."
             puts "Modify the #{project}/converter.rb script to suit your source."
             puts "Use 'move-to-go run' from the project directory to create the zip file for Lime Go."
         end
