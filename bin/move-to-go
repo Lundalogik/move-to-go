@@ -3,6 +3,8 @@
 require "thor"
 require_relative '../lib/move-to-go'
 require 'progress'
+require 'net/http'
+require 'json'
 
 
 RUNNER_DIR = ".move-to-go"
@@ -11,13 +13,16 @@ class MoveToGoCommandLine < Thor
 
     desc "about", "About move-to-go"
     def about()
-        puts "move-to-go is an migration tool for LIME Go. It can take virtually any input source and create import data files that LIME Go likes." 
+        display_current_version()
+        puts "move-to-go is an migration tool for Lime Go. It can take virtually any input source and create import data files that Lime Go likes." 
         puts "move-to-go has some predefined sources that will make it easy for you to migrate your data."
-        puts ""
+        puts
     end
 
     desc "list-sources", "Lists the available sources"
     def list_sources()
+        display_current_version()
+
         puts "The following sources are available:"
         puts
 
@@ -26,31 +31,45 @@ class MoveToGoCommandLine < Thor
             puts "\t#{s}"
         end
 
-        puts "\nCreate a new project with 'move-to-go new <PROJECT> <SOURCE>' with one of these sources."
+        puts
+        puts "Create a new project with 'move-to-go new <PROJECT> <SOURCE>' with one of these sources."
         puts "Use 'move-to-go about <SOURCE>' for more information about a specific source."
     end
 
     desc "about <SOURCE>", "Prints information about the specifed source"
     def about(source)
+        display_current_version()
+
         sources = MoveToGo::Sources.new(source_path)
 
         sources.about_source(source)
     end
 
     desc "new <PROJECT> <SOURCE>", "Creates a new migration project with a specifed name and source"
+    option(:force_current_version,
+           :desc => "Set this if you have an outdated version of move-to-go and still want to create a new migration. Old versions of move-to-go will not work with the current version of Lime Go.",
+           :type => :boolean,
+           :required => false)
     def new(project, source)
+        if options.force_current_version.nil?
+            check_current_version()
+        end
+
+        display_current_version()
+
         sources = MoveToGo::Sources.new(source_path)
 
         if sources.create_project_from_source(project, source)
-            puts "\nProject '#{project}' created from source '#{source}'."
+            puts
+            puts "Project '#{project}' created from source '#{source}'."
             puts "Modify the #{project}/converter.rb script to suit your source."
-            puts "Use 'move-to-go run' from the project directory to create the zip file for LIME Go."
+            puts "Use 'move-to-go run' from the project directory to create the zip file for Lime Go."
         end
     end
 
     desc "run", "Executes the current project and create a go.zip file with data and files. Existing go.zip will be overwritten, use --output to specify a different filename."
     option(:output,
-           :desc => "Name of the file where the converted source will be saved. This file should be sent to LIME Go. If the file already exist it will be replaced.",
+           :desc => "Name of the file where the converted source will be saved. This file should be sent to Lime Go. If the file already exist it will be replaced.",
            :type => :string,
            :required => false)
     option(:ignore_invalid_files,
@@ -73,7 +92,17 @@ class MoveToGoCommandLine < Thor
            :desc => "Large imports are sharded into several zip-files. This property sets how many objects each zip-file should contain. Default is 25 000",
            :type => :numeric,
            :required => false)
+    option(:force_current_version,
+           :desc => "Set this if you have an outdated version of move-to-go and still want to run the migration. Old versions of move-to-go will not work with the current version of Lime Go.",
+           :type => :boolean,
+           :required => false)
     def run_import()
+        if options.force_current_version.nil?
+            check_current_version()
+        end
+
+        display_current_version()
+
         if !options.log_to_file.nil?
             $stdout = File.new(options.log_to_file == "log_to_file" ? "move-to-go.log" : options.log_to_file, 'w')
             $stdout.sync = true
@@ -208,6 +237,35 @@ class MoveToGoCommandLine < Thor
     private
     def source_path()
         File.expand_path("../sources", File.dirname(__FILE__))
+    end
+
+    private
+    def check_current_version()
+        uri = URI('https://rubygems.org/api/v1/versions/move-to-go/latest.json')
+
+        Net::HTTP.start(uri.host, uri.port,
+        :verify_mode => OpenSSL::SSL::VERIFY_NONE,
+        :use_ssl => true) do |http|
+
+            request = Net::HTTP::Get.new uri
+            response = http.request request
+
+            latest_version = Gem::Version.new(JSON.parse(response.body)['version'])
+            current_version = Gem.loaded_specs["move-to-go"].version
+            outdated = latest_version > current_version
+            
+            if outdated
+                puts "You are running an old version of move-to-go (#{current_version})"
+                puts "Please upgrade by running 'gem install move-to-go'"
+                exit
+            end
+        end
+    end
+
+    private
+    def display_current_version()
+        puts "Version: #{Gem.loaded_specs["move-to-go"].version}"
+        puts 
     end
 end
 

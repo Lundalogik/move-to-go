@@ -46,7 +46,7 @@ class Converter
         # :String and :Link. If no type is specified :String is used
         # as default.
         rootmodel.settings.with_organization do |organization|
-            organization.set_custom_field( { :integrationid => 'external_url', :title => 'Link to external system', :type => :Link } )
+            organization.set_custom_field( { :integration_id => 'external_url', :title => 'Link to external system', :type => :Link } )
         end
 
         rootmodel.settings.with_deal do |deal|
