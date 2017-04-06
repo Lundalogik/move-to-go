@@ -56,7 +56,7 @@ describe "Organization" do
         organization.validate.should eq ""
     end
 
-    it "will fail on validateion if it has a source with no sourceid" do
+    it "will fail on validation if it has a source with no sourceid" do
         # given
         organization.name =  "Lundalogik"
 
@@ -67,6 +67,72 @@ describe "Organization" do
 
         # then
         organization.validate.length.should be > 0
+    end
+
+    it "will fail on source validation, only numbers" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se('11234')
+        end
+
+        # then
+        organization.validate.length.should be > 0
+    end
+
+
+    it "will fail on source validation, begins with :" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se(':11234')
+        end
+
+        # then
+        organization.validate.length.should be > 0
+    end
+
+    it "will fail on source validation, ends with :" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se('11234:')
+        end
+
+        # then
+        organization.validate.length.should be > 0
+    end
+
+    it "will not fail on source validation, pattern 1" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se('1:1234')
+        end
+
+        # then
+        organization.validate.length.should be == 0
+    end
+
+    it "will not fail on source validation, pattern 2" do
+        # given
+        organization.name =  "Lundalogik"
+
+        # when
+        organization.with_source do |source|
+            source.par_se('113:234')
+        end
+
+        # then
+        organization.validate.length.should be == 0
     end
 
     it "will fail on validation if no name is specified" do
