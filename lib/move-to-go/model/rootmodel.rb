@@ -31,7 +31,7 @@ module MoveToGo
              {:id => :organizations, :type => :organizations},
              {:id => :deals, :type => :deals},
              {:id => :histories, :type => :histories},
-             {:id => :documents, :type => :documents},
+             {:id => :documents, :type => :documents}
             ]
         end
 

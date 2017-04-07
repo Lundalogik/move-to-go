@@ -35,7 +35,6 @@ def convert_source
     if defined?(ORGANIZATION_SHEET)
         if excel_workbook.has_sheet?(ORGANIZATION_SHEET)
             organization_rows = excel_workbook.rows_for_sheet ORGANIZATION_SHEET
-            converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
         else
             puts "WARNING: can't find sheet '#{ORGANIZATION_SHEET}'"
         end
@@ -97,6 +96,7 @@ def convert_source
         organization_rows.each do |row|
             organization = converter.to_organization(row, rootmodel)
             rootmodel.add_organization(organization)
+            converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
         end
     end
 
