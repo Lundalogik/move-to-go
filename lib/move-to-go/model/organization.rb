@@ -270,7 +270,7 @@ module MoveToGo
                 if @source.id.nil? || @source.id == ""
                     error = "#{error}\nReference to source must have an id"
                 elsif @source.id !~ /^\d{1}\d*:{1}\d{1}\d*$/
-                    error = "#{error}\nInvalid source id '%{id}, must have one ':' and only digits allowed, example '1:200010'" % { :id => @source.id }
+                    error = "#{error}\nInvalid source id '#{@source.id}', must have one ':' and only digits allowed, example '1:200010'"
                 end
             end
 
