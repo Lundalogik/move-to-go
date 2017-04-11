@@ -69,6 +69,9 @@ module MoveToGo
         # :attr_accessor: central_phone_number
         immutable_accessor :central_phone_number
         ##
+        # :attr_accessor: source
+        immutable_accessor :source
+        ##
         # :attr_accessor: source_data
         immutable_accessor :source_data
         attr_accessor :rootmodel

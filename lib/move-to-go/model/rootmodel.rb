@@ -117,6 +117,12 @@ module MoveToGo
                 raise AlreadyAddedError, "Already added an organization with integration_id #{organization.integration_id}"
             end
 
+            if !organization.source.nil?
+                if !@organizations.find{|key,value| value.source.id == organization.source.id if !value.source.nil?}.nil?
+                    raise AlreadyAddedError, "Source id already exists, sourceId: #{organization.source.id}"
+                end
+            end
+
             @organizations[organization.integration_id] = organization
             organization.rootmodel = self
             organization.set_is_immutable

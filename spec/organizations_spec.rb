@@ -287,10 +287,11 @@ describe MoveToGo::Organizations do
         organization.with_source do |source|
             source.par_se('1111')
         end
-        model.add_organization(organization)
 
         # when, then
-        model.organizations.find_duplicates_by("source.id").length.should be > 0
+        assert_raise(MoveToGo::AlreadyAddedError) {
+            model.add_organization(organization)
+        }
     end
 
     it "should allow different source ids" do
@@ -311,10 +312,33 @@ describe MoveToGo::Organizations do
         organization.with_source do |source|
             source.par_se('1112')
         end
-        model.add_organization(organization)
 
         # when, then
-        model.organizations.find_duplicates_by("source.id").length.should be == 0
+        assert_nothing_raised(MoveToGo::AlreadyAddedError) {
+            model.add_organization(organization)
+        }
+    end
+
+    it "Not all organization have source id" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name1"
+        organization.integration_id = "1337"
+        model.add_organization(organization)
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name2"
+        organization.integration_id = "1338"
+        organization.with_source do |source|
+            source.par_se('1112')
+        end
+
+        # when, then
+        assert_nothing_raised(MoveToGo::AlreadyAddedError) {
+            model.add_organization(organization)
+        }
     end
 
 end
