@@ -1,5 +1,7 @@
 require 'spec_helper'
 require 'move-to-go'
+require 'test/unit'
+include Test::Unit::Assertions
 
 describe MoveToGo::Organizations do
     it "should find duplicates based on name of the organizations" do
@@ -229,6 +231,90 @@ describe MoveToGo::Organizations do
             end
         # when, the
         set_to_check.length.should eq 3
+    end
+
+    it "should not allow duplicated integration ids" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name1"
+        organization.integration_id = "1337"
+        model.add_organization(organization)
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name2"
+        organization.integration_id = "1337"
+
+        assert_raise(MoveToGo::AlreadyAddedError) {
+            model.add_organization(organization)
+        }
+    end
+
+    it "should allow different integration ids" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name1"
+        organization.integration_id = "1337"
+        model.add_organization(organization)
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name2"
+        organization.integration_id = "1338"
+
+        assert_nothing_raised(MoveToGo::AlreadyAddedError) {
+            model.add_organization(organization)
+        }
+    end
+
+    it "should not allow duplicated source ids" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name1"
+        organization.integration_id = "1337"
+        organization.with_source do |source|
+            source.par_se('1111')
+        end
+        model.add_organization(organization)
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name2"
+        organization.integration_id = "1338"
+        organization.with_source do |source|
+            source.par_se('1111')
+        end
+        model.add_organization(organization)
+
+        # when, then
+        model.organizations.find_duplicates_by("source.id").length.should be > 0
+    end
+
+    it "should allow different source ids" do
+        # given
+        model =  MoveToGo::RootModel.new
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name1"
+        organization.integration_id = "1337"
+        organization.with_source do |source|
+            source.par_se('1111')
+        end
+        model.add_organization(organization)
+
+        organization = MoveToGo::Organization.new
+        organization.name = "name2"
+        organization.integration_id = "1338"
+        organization.with_source do |source|
+            source.par_se('1112')
+        end
+        model.add_organization(organization)
+
+        # when, then
+        model.organizations.find_duplicates_by("source.id").length.should be == 0
     end
 
 end
