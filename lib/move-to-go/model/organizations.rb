@@ -59,7 +59,7 @@ module MoveToGo
                     when Symbol then val = org.instance_variable_get(field)
                     when Array then val = org.instance_variable_get(field[0]).instance_variable_get(field[1])
                 end
-                val != nil ? val.downcase.strip : val = ''
+                val != nil ? val.to_s.downcase.strip : val = ''
                 }
             }
             .select { |k, v| v.size > 1 }

@@ -69,6 +69,9 @@ module MoveToGo
         # :attr_accessor: central_phone_number
         immutable_accessor :central_phone_number
         ##
+        # :attr_accessor: source
+        immutable_accessor :source
+        ##
         # :attr_accessor: source_data
         immutable_accessor :source_data
         attr_accessor :rootmodel
@@ -269,6 +272,8 @@ module MoveToGo
             if !@source.nil?
                 if @source.id.nil? || @source.id == ""
                     error = "#{error}\nReference to source must have an id"
+                elsif @source.id !~ /^\d{1}\d*:{1}\d{1}\d*$/
+                    error = "#{error}\nInvalid source id '#{@source.id}', must have one ':' and only digits allowed, example '1:200010'"
                 end
             end
 
