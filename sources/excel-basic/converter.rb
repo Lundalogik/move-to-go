@@ -64,6 +64,10 @@ class Converter
             coworker.email = row['Email']
         end
 
+        coworker.direct_phone_number = row['DirectPhoneNumber']
+        coworker.mobile_phone_number = row['MobilePhoneNumber']
+        coworker.home_phone_number = row['HomePhoneNumber']
+
         return coworker
     end
 
