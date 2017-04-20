@@ -64,9 +64,9 @@ class Converter
             coworker.email = row['Email']
         end
 
-        coworker.direct_phone_number = row['DirectPhoneNumber']
-        coworker.mobile_phone_number = row['MobilePhoneNumber']
-        coworker.home_phone_number = row['HomePhoneNumber']
+        ccoworker.direct_phone_number = MoveToGo::PhoneHelper.parse_numbers_strict(row['DirectPhoneNumber'])
+        coworker.mobile_phone_number = MoveToGo::PhoneHelper.parse_numbers_strict(row['MobilePhoneNumber'])
+        coworker.home_phone_number = MoveToGo::PhoneHelper.parse_numbers_strict(row['HomePhoneNumber'])
 
         return coworker
     end
