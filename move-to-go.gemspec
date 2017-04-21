@@ -2,9 +2,9 @@
 
 Gem::Specification.new do |s|
     s.name        = 'move-to-go'
-    s.version     = '5.0.9'
+    s.version     = '5.0.10'
     s.platform    = Gem::Platform::RUBY
-    s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game', 'Rickard Helldin']
+    s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game', 'Rickard Helldin', 'Mikael Davidsson']
     s.email       = 'support@lundalogik.se'
     s.summary     = 'Tool to generate Lime Go zip import files'
     s.description = <<-EOF
