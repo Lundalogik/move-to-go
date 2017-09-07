@@ -1,7 +1,7 @@
 # Move-to-go step by step.
 
 ##MIGRATION
-1.	Go get Ruby... (should be 2.3.1, 64-bits at https://rubyinstaller.org/downloads/archives/).
+1.	Go get Ruby... (should be 2.4.1, 64-bits at https://rubyinstaller.org/downloads/).
 2.	When installing, tick in the checkboxes to install toolkit and add Ruby executables to your PATH.
 3.	Open “Start Command Prompt with Ruby”.
 4.	Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
