@@ -84,7 +84,7 @@ If an integration id is missing in your migration file you can generate one from
 organization.integration_id = row.to_hash
 ```
 
-As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data.
+As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data. Do not use organization name as integration id. 
 
 ## Rootmodel
 The rootmodel is an object that keeps track of your migrated data and turns it into a format Lime Go can read. The rootmodel helps you keep track go objects and relations between them during the migration
