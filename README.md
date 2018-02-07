@@ -1,4 +1,4 @@
-﻿# move-to-go
+# move-to-go
 
 ## What is move-to-go?
 move-to-go is a ruby-based migration tool for [Lime Go](http://www.lime-go.com/). 
@@ -14,9 +14,8 @@ move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 gem install move-to-go
 ```
 
-###Before starting please use [this checklist](Checklist.md)
-
-###For a simple step by step guide [check this out](step-by-step.md)
+## Getting started:
+You can find a simple step by steg guide for preforming a migration [here](step-by-step.md)
 
 ## Working with sources
 
@@ -28,7 +27,7 @@ You can list the available sources with
 ```shell
 move-to-go list-sources
 ```
-###Current sources
+### Current sources
 
 - Migrate from CSV-files
 - Migrate from Lime Easy
