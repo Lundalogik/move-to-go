@@ -1,12 +1,11 @@
 # Move-to-go step by step.
 
-##MIGRATION
 1.	Go get Ruby... (should be 2.4.1, 64-bits at https://rubyinstaller.org/downloads/).
 2.	When installing, tick in the checkboxes to install toolkit and add Ruby executables to your PATH.
 3.	Open “Start Command Prompt with Ruby”.
 4.	Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
 5.	Wait.
-6.	`Cd` (Change direction) to folder where you want to put the migration folder.
+6.	`cd` (Change direction) to folder where you want to put the migration folder.
 7.	Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 8.	Now a folder named “MigrationFolder” is created.
 9.	Enter the folder.
@@ -31,15 +30,13 @@
 22.	When the customer has approved of the test-migration you need a account for https://admin.lime-go.com/ to being able to do the migration in the production environment.
 23.	When you get in, search for an existing Application for the company. If it does, use it. 
 24.	Do step 16-19 but now in the production environment. 
-25. Remove the application (from step 13) and migration job (step 16) from https://admin.staging.lime-go.com.
-26. Remove the migration job from https//admin.lime-go.com. DO NOT REMOVE THE APPLICATION.
+25. 	Remove the application (from step 13) and migration job (step 16) from https://admin.staging.lime-go.com.
+26. 	Remove the migration job from https//admin.lime-go.com. DO NOT REMOVE THE APPLICATION.
 
-#POST MIGRATION
-27. Create a product folder for the migration on a share volume so cooperation is possible.
-28. Can the source of the migration be used as a template for other migrations? 
-29. Improve documentation on GitHub.
-30. Improve checklist on GitHub.
-
-##Questions? 
-Easiest way to get in contact with the Lime Go development team is through the slack channel consultans.
+# POST MIGRATION
+If you want to go the extra mile and make it easier for yourself and your collegues the next time, follow these steps:
+1. Create a product folder for the migration on a share volume so cooperation is possible.
+2. Can the source of the migration be used as a template for other migrations? 
+3. Improve documentation on GitHub.
+4. Improve [the checklist](Checklist.md) on GitHub.
 
