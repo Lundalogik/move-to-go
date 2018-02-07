@@ -1,6 +1,6 @@
 # Move-to-go step by step.
 
-**0. Before you start please check out [this checklist](Checklist.md)**
+0. **Before you start please check out [this checklist](Checklist.md)**
 1. Go get Ruby... (should be 2.4.1, 64-bits at https://rubyinstaller.org/downloads/).
 2. When installing, tick in the checkboxes to install toolkit and add Ruby executables to your PATH.
 3. Open "Start Command Prompt with Ruby".
