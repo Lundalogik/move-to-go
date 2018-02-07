@@ -14,8 +14,8 @@ move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 gem install move-to-go
 ```
 
-## Getting started:
-You can find a simple step by steg guide for preforming a migration [here](step-by-step.md)
+## Getting started
+[We have put together a simple step by step guide for preforming a migrations](step-by-step.md)
 
 ## Working with sources
 
