@@ -1,6 +1,5 @@
-# Migration Checklist (should be used before project). 
+# Migration Checklist (should be used before starting). 
 
-## Pre migration
 - [ ] Check how many records will be migrated. 10 000+ is considered large and might take more time
 - [ ] Check what will be migrated 
 	- [ ] Organisations
