@@ -38,6 +38,7 @@
 If you want to go the extra mile and make it easier for yourself and your collegues the next time, follow these steps:
 1. Create a product folder for the migration on a share volume so cooperation is possible.
 2. Can the source of the migration be used as a template for other migrations? 
-3. Improve documentation on GitHub.
-4. Improve [the checklist](Checklist.md) on GitHub.
+3. Improve the [documentation](readme.md) and this guide on GitHub.
+4. If you've learned some new trick that others may benifit from, consider adding it to [the tips and trix.](tips-and-trix.md)
+5. Improve [the checklist](Checklist.md) on GitHub.
 
