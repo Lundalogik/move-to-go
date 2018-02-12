@@ -10,7 +10,7 @@
 7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 8. Now a folder named “MigrationFolder” is created.
 9. Enter the folder.
-10. Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :).
+10. Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :). [For some extra tips and tricks check this out.](tips-and-trix.md)
 11. Now that you are done with your mapping. You enter the command `cd MigrationFolder`.
 
 12. Enter the command `move-to-go run`.
