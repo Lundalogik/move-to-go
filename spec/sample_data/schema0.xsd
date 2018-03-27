@@ -121,6 +121,7 @@
       <xs:element minOccurs="0" maxOccurs="1" name="PostalAddress" type="Address" />
       <xs:element minOccurs="1" maxOccurs="1" name="CurrentlyEmployed" type="xs:boolean" />
       <xs:element minOccurs="0" maxOccurs="1" name="CustomValues" type="ArrayOfCustomValue" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="ArrayOfString">
@@ -162,13 +163,13 @@
       <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
-      <xs:element minOccurs="1" maxOccurs="1" name="OfferDate" nillable="true" type="xs:dateTime" />
-      <xs:element minOccurs="1" maxOccurs="1" name="OrderDate" nillable="true" type="xs:dateTime" />
-      <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="OrganizationReference" />
-      <xs:element minOccurs="0" maxOccurs="1" name="Status" type="Status" />
       <xs:element minOccurs="0" maxOccurs="1" name="Description" type="xs:string" />
       <xs:element minOccurs="1" maxOccurs="1" name="Probability" type="xs:int" />
       <xs:element minOccurs="1" maxOccurs="1" name="Value" type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" name="OrderDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="1" maxOccurs="1" name="OfferDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Customer" type="OrganizationReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Status" type="Status" />
       <xs:element minOccurs="0" maxOccurs="1" name="CustomerContact" type="PersonReference" />
       <xs:element minOccurs="0" maxOccurs="1" name="ResponsibleCoworker" type="CoworkerReference" />
       <xs:element minOccurs="0" maxOccurs="1" name="Tags" type="ArrayOfString" />
@@ -236,11 +237,12 @@
       <xs:sequence>
           <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
-          <xs:element minOccurs="0" maxOccurs="1" name="Url" type="xs:string" />
+          <xs:element minOccurs="1" maxOccurs="1" name="Url" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string" />
-          <xs:element minOccurs="0" maxOccurs="1" name="Descriptio" type="xs:string" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Description" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
           <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Person" type="PersonReference" />
           <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
       </xs:sequence>
   </xs:complexType>
@@ -258,6 +260,7 @@
           <xs:element minOccurs="0" maxOccurs="1" name="Descriptio" type="xs:string" />
           <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
           <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+          <xs:element minOccurs="0" maxOccurs="1" name="Person" type="PersonReference" />
           <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
       </xs:sequence>
   </xs:complexType>

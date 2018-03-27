@@ -27,6 +27,19 @@ describe "File" do
         file.validate.should eq ""
     end
 
+    it "is valid when it has name, path, created_by, deal, person and organization" do
+        # given
+        file.name = "Offert"
+        file.path = "spec/sample_data/offert.docx"
+        file.created_by = MoveToGo::CoworkerReference.new( { :integration_id => "123" } )
+        file.deal = MoveToGo::DealReference.new( { :integration_id => "456" } )
+        file.person = MoveToGo::PersonReference.new( { :integration_id => "456" } )
+        file.organization = MoveToGo::OrganizationReference.new( { :integration_id => "456" } )
+
+        # when, then
+        file.validate.should eq ""
+    end
+
     it "is valid when it has name, invalid path, created_by and deal but ignores the path" do
         # given
         file.name = "Offert"
@@ -136,6 +149,20 @@ describe "File" do
         # then
         file.deal.is_a?(MoveToGo::Deal).should eq true
         file.instance_variable_get(:@deal_reference).is_a?(MoveToGo::DealReference).should eq true
+    end
+
+    it "will set person ref when person is assigned" do
+        # given
+        person = MoveToGo::Person.new({:integration_id => "123" })
+        person.first_name = "The"
+        person.last_name = "Limer"
+
+        # when
+        file.person = person
+
+        # then
+        file.person.is_a?(MoveToGo::Person).should eq true
+        file.instance_variable_get(:@person_reference).is_a?(MoveToGo::PersonReference).should eq true
     end
 
     it "will set coworker ref when coworker is assinged" do

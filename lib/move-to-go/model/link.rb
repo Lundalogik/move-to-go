@@ -3,7 +3,7 @@ module MoveToGo
         include SerializeHelper
         attr_accessor :id, :integration_id, :url, :name, :description
 
-        attr_reader :organization, :created_by, :deal
+        attr_reader :organization, :created_by, :deal, :person
 
         def initialize(opt = nil)
             if !opt.nil?
@@ -28,6 +28,7 @@ module MoveToGo
                 [
                  { :id => :created_by_reference, :type => :coworker_reference, :element_name => :created_by },
                  { :id => :organization_reference, :type => :organization_reference, :element_name => :organization },
+                 { :id => :person_reference, :type => :person_reference, :element_name => :person },
                  { :id => :deal_reference, :type => :deal_reference, :element_name => :deal }
                 ]
         end
@@ -37,6 +38,14 @@ module MoveToGo
 
             if org.is_a?(Organization)
                 @organization = org
+            end
+        end
+
+        def person=(person)
+            @person_reference = PersonReference.from_person(person)
+
+            if person.is_a?(Person)
+                @person = person
             end
         end
 
@@ -67,12 +76,8 @@ module MoveToGo
                 error = "#{error}Created_by is required for link\n"
             end
 
-            if @organization_reference.nil? && @deal_reference.nil?
-                error = "#{error}A link must have either an organization or a deal\n"
-            end
-
-            if !@organization_reference.nil? && !@deal_reference.nil?
-                error = "#{error}A link can't be attached to both an organization and a deal"
+            if @organization_reference.nil? && @deal_reference.nil? && @person_reference.nil?
+                error = "#{error}A link must have either an organization, person or a deal\n"
             end
 
             return error
