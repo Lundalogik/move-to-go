@@ -32,4 +32,7 @@ EOF
     s.test_files    = Dir.glob('spec/**/*.rb')
     s.executables   = ['move-to-go']
     s.require_paths = ['lib']
+    s.metadata = {
+        "changelog_uri"     => "https://github.com/Lundalogik/move-to-go/blob/master/CHANGELOG.md"
+    }
 end

@@ -3,7 +3,7 @@
 ## What is move-to-go?
 move-to-go is a ruby-based migration tool for [Lime Go](http://www.lime-go.com/). 
 It can take virtually any data source as input and generate a zip file that LIME Go likes.
-These files can then easily be migrated to Lime Go by Lundalogik. 
+These files can then easily be migrated to Lime Go by Lime Technologies. 
 During an migration an automatic matching against all base data will be performed.
 
 Organizations, Persons, Deals, Histories, Coworkers and Documents can be migrated to Lime Go.
@@ -393,4 +393,4 @@ You can find generated documentation on [rubydoc](http://rubydoc.info/gems/move-
 [Mozilla Public License, version 2.0](LICENSE)
 
 ### Copyright
-Copyright Lundalogik AB
+Copyright Lime Technologies AB

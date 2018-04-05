@@ -368,7 +368,7 @@ module MoveToGo
         # Returns the first found matching organization
         # Method is much slower then using find_organization_by_integration_id
         # @example Finds a organization on its name
-        #      rm.find_organization {|org| org.name == "Lundalogik" }
+        #      rm.find_organization {|org| org.name == "Lime Technologies" }
         def find_organization(report_result=!!configuration[:report_result], &block)
           result = find(@organizations.values.flatten, &block)
           report_failed_to_find_object("organization") if result.nil? and report_result
@@ -378,7 +378,7 @@ module MoveToGo
         # Finds organizations based on one of their property.
         # Returns all matching organizations
         # @example Selects organizations on their names
-        #      rm.select_organizations {|org| org.name == "Lundalogik" }
+        #      rm.select_organizations {|org| org.name == "Lime Technologies" }
         def select_organizations(report_result=!!configuration[:report_result], &block)
           result = select(@organizations.values.flatten, &block)
           report_failed_to_find_object("organization") if result.empty? and report_result
