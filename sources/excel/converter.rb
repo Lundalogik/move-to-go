@@ -17,6 +17,7 @@ PERSON_SHEET = "Kontaktperson"
 DEAL_SHEET = "Affär"
 HISTORY_SHEET = "Anteckningar"
 FILE_SHEET = "Dokument"
+LINK_SHEET = "Links"
 
 # Then you need to modify the script below according to the TODO
 # comments.
@@ -162,12 +163,28 @@ class Converter
         file = MoveToGo::File.new()
 
         file.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
+        file.person = rootmodel.find_person_by_integration_id(row['Person'])
+        file.deal = rootmodel.find_deal_by_integration_id(row['Affär'])
         file.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
         file.name = row['Namn']
         file.description = row['Kommentar']
         file.path = row['Path']
 
         return file
+    end
+
+    def to_link(row, rootmodel)
+        link = MoveToGo::Link.new()
+        
+        link.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
+        link.person = rootmodel.find_person_by_integration_id(row['Person'])
+        link.deal = rootmodel.find_deal_by_integration_id(row['Affär'])
+        link.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
+        link.name = row['Namn']
+        link.description = row['Kommentar']
+        link.path = row['URL']
+
+        return link
     end
 
     # HOOKS

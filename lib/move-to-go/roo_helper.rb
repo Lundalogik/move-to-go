@@ -34,7 +34,9 @@ module MoveToGo
         def rows_for_sheet(sheet)
             column_headers = {}
             1.upto(@data.last_column(sheet)) do |col|
-                column_headers[col] = @data.cell(1, col, sheet).encode('UTF-8')
+                header = @data.cell(1, col, sheet)
+                raise "Missing header in row 1, col #{col} in sheet '#{sheet}'" if header == nil
+                column_headers[col] = header.encode('UTF-8')
             end
 
             rs = []

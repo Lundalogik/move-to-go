@@ -2,10 +2,10 @@
 
 Gem::Specification.new do |s|
     s.name        = 'move-to-go'
-    s.version     = '5.0.11'
+    s.version     = '5.1.0'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game', 'Rickard Helldin', 'Mikael Davidsson']
-    s.email       = 'support@lundalogik.se'
+    s.email       = 'support@lime.tech'
     s.summary     = 'Tool to generate Lime Go zip import files'
     s.description = <<-EOF
   move-to-go is an migration tool for Lime Go. It can take virtually any input source and create zip-files that LIME Go likes. 

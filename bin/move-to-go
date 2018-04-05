@@ -241,6 +241,10 @@ class MoveToGoCommandLine < Thor
 
     private
     def check_current_version()
+        if Gem.loaded_specs["move-to-go"] == nil 
+            puts "Running source version, no version check"
+            return
+        end
         uri = URI('https://rubygems.org/api/v1/versions/move-to-go/latest.json')
 
         Net::HTTP.start(uri.host, uri.port,
@@ -264,7 +268,13 @@ class MoveToGoCommandLine < Thor
 
     private
     def display_current_version()
-        puts "Version: #{Gem.loaded_specs["move-to-go"].version}"
+        if Gem.loaded_specs["move-to-go"] == nil
+            current_version = "source"
+        else
+            current_version = Gem.loaded_specs["move-to-go"].version
+        end
+
+        puts "Version: #{current_version}"
         puts 
     end
 end

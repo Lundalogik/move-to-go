@@ -73,6 +73,14 @@ def convert_source
         end
     end
 
+    if defined?(LINK_SHEET)
+        if excel_workbook.has_sheet?(LINK_SHEET)
+            link_rows = excel_workbook.rows_for_sheet LINK_SHEET
+        else
+            puts "WARNING: can't find sheet '#{LINK_SHEET}'"
+        end
+    end
+
     # Then we create a rootmodel that will contain all data that
     # should be exported to LIME Go.
     rootmodel = MoveToGo::RootModel.new
@@ -135,6 +143,12 @@ def convert_source
         end
     end
 
+    if defined?(link_rows) && !link_rows.nil?
+        puts "Trying to convert links..."
+        link_rows.with_progress().each do |row|
+            rootmodel.add_link(converter.to_link(row, rootmodel))
+        end
+    end
     return rootmodel
 end
 
