@@ -18,6 +18,8 @@ DEAL_SHEET = "Affär"
 HISTORY_SHEET = "Anteckningar"
 FILE_SHEET = "Dokument"
 LINK_SHEET = "Links"
+TODO_SHEET = "Att göra"
+MEETING_SHEET = "Möten"
 
 # Then you need to modify the script below according to the TODO
 # comments.
@@ -161,7 +163,6 @@ class Converter
 
     def to_file(row, rootmodel)
         file = MoveToGo::File.new()
-
         file.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
         file.person = rootmodel.find_person_by_integration_id(row['Person'])
         file.deal = rootmodel.find_deal_by_integration_id(row['Affär'])
@@ -182,9 +183,49 @@ class Converter
         link.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
         link.name = row['Namn']
         link.description = row['Kommentar']
-        link.path = row['URL']
+        link.url = row['URL']
 
         return link
+    end
+
+    def to_todo(row, rootmodel)
+        todo = MoveToGo::Todo.new()
+        
+        todo.text = row['Text']
+        todo.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
+        todo.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
+        todo.person = rootmodel.find_person_by_integration_id(row['Person'])
+        todo.deal = rootmodel.find_deal_by_integration_id(row['Affär'])
+        todo.assigned_coworker = rootmodel.find_coworker_by_integration_id(row['Delegerad till'])
+        todo.date_checked = row['Avbockad']
+
+        if (row['Tid'].nil? || row['Tid'] == "")
+            todo.date_start = row['Datum']
+            todo.date_start_has_time = false
+        else
+            todo.date_start = "#{row['Datum']} #{row['Tid']}"
+            todo.date_start_has_time = true
+        end
+
+        return todo
+    end
+
+    def to_meeting(row, rootmodel)
+        meeting = MoveToGo::Meeting.new()
+        
+        meeting.heading = row['Rubrik']
+        meeting.text = row['Text']
+        meeting.created_by = rootmodel.find_coworker_by_integration_id(row['Skapad Av'])
+        meeting.organization = rootmodel.find_organization_by_integration_id(row['Företag'])
+        meeting.person = rootmodel.find_person_by_integration_id(row['Person'])
+        meeting.deal = rootmodel.find_deal_by_integration_id(row['Affär'])
+        meeting.assigned_coworker = rootmodel.find_coworker_by_integration_id(row['Delegerad till'])
+
+        meeting.date_start = "#{row['Datum']} #{row['Tid']}"
+        meeting.date_start_has_time = true
+        meeting.date_stop = "#{row['Datum']} #{row['SlutTid']}"
+
+        return meeting
     end
 
     # HOOKS
