@@ -75,7 +75,9 @@ module MoveToGo
         private
         def copy_source_to_folder(source_name, project_name)
             puts "Trying to create project '#{project_name}' from source '#{source_name}'..."
+
             FileUtils.cp_r ::File.expand_path(source_name, @path), project_name
+            puts 'ok'
         end
 
         private

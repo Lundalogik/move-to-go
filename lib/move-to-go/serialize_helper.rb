@@ -119,6 +119,20 @@ module MoveToGo
                     :type => p[:type],
                     :models => SerializeHelper.get_import_rows(:history)
                 }
+            when :todos then
+                {
+                    :id => p[:id].to_s,
+                    :name => symbol_to_name(p[:id]),
+                    :type => p[:type],
+                    :models => SerializeHelper.get_import_rows(:todo)
+                }
+            when :meetings then
+                {
+                    :id => p[:id].to_s,
+                    :name => symbol_to_name(p[:id]),
+                    :type => p[:type],
+                    :models => SerializeHelper.get_import_rows(:meeting)
+                }
             when :tags then
                 {
                     :id => p[:id].to_s,
@@ -173,6 +187,10 @@ module MoveToGo
                 ReferenceToSource.new
             when :history then
                 History.new
+            when :todo then
+                Todo.new
+            when :meeting then
+                Meeting.new
             when :address then
                 Address.new
             when :organization then

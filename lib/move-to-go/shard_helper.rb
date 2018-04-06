@@ -19,6 +19,8 @@ module MoveToGo
                 model.organizations.each{|key, org| add_organization(org)}
                 model.deals.each{|key, deal| add_deal(deal)}
                 model.histories.each{|key, history| add_history(history)}
+                model.todos.each{|key, todo| add_todo(todo)}
+                model.meetings.each{|key, meeting| add_meeting(meeting)}
                 add_documents(model.documents)
 
                 return_value = @shards
@@ -37,6 +39,20 @@ module MoveToGo
             def add_history(history)
                 check_or_create_new_chard()
                 @current_shard.add_history(history)
+                @current_shard_count += 1
+            end
+
+            private
+            def add_todo(todo)
+                check_or_create_new_chard()
+                @current_shard.add_todo(todo)
+                @current_shard_count += 1
+            end
+
+            private
+            def add_meeting(meeting)
+                check_or_create_new_chard()
+                @current_shard.add_meeting(meeting)
                 @current_shard_count += 1
             end
 

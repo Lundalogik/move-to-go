@@ -1,3 +1,9 @@
+## 5.2.0 (2018-04-06)
+
+Features:
+
+ - It is now possible to Import Todos and Meetings! (The excel source has examples)
+
 ## 5.1.0 (2018-04-05)
 
 Features:
