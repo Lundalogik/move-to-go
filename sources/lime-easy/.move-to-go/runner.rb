@@ -4,15 +4,17 @@ require 'move-to-go'
 require 'progress'
 require_relative("../converter")
 
-EXPORT_FOLDER = 'export'
+EXPORT_FOLDER = 'Export'
 COWORKER_FILE = "#{EXPORT_FOLDER}/User.txt"
 ORGANIZATION_FILE = "#{EXPORT_FOLDER}/Company.txt"
 ORGANIZATION_HISTORY_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
+ORGANIZATION_TODO_FILE = "#{EXPORT_FOLDER}/Company-To do.txt"
 ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
 PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
 INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
 DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
 DEAL_HISTORY_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
+DEAL_TODO_FILE = "#{EXPORT_FOLDER}/Project-To do.txt"
 PROJECT_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Project-Document.txt"
 
 def convert_source
@@ -35,9 +37,12 @@ def convert_source
     # coworkers
     # start with these since they are referenced
     # from everywhere....
-    
-    process_rows(" - Reading Coworkers '#{COWORKER_FILE}'", COWORKER_FILE) do |row|
-        rootmodel.add_coworker(to_coworker(row))
+    if(File.exists?(COWORKER_FILE))
+        process_rows(" - Reading Coworkers '#{COWORKER_FILE}'", COWORKER_FILE) do |row|
+            rootmodel.add_coworker(to_coworker(row))
+        end
+    else
+        puts "WARNING: can't find coworker file '#{COWORKER_FILE}'"
     end
 
     # organizations
@@ -57,9 +62,23 @@ def convert_source
     end
 
     # organization histories
-    process_rows(" - Reading Organization History '#{ORGANIZATION_HISTORY_FILE}'", ORGANIZATION_HISTORY_FILE) do |row|
-        # adds itself if applicable
-        rootmodel.add_history(to_organization_history(converter, row, rootmodel))
+    if(File.exists?(ORGANIZATION_HISTORY_FILE))
+        process_rows(" - Reading Organization History '#{ORGANIZATION_HISTORY_FILE}'", ORGANIZATION_HISTORY_FILE) do |row|
+            # adds itself if applicable
+            rootmodel.add_history(to_organization_history(converter, row, rootmodel))
+        end
+    else
+        puts "WARNING: can't find organization history file '#{ORGANIZATION_HISTORY_FILE}'"
+    end
+
+    # organization todos
+    if(File.exists?(ORGANIZATION_TODO_FILE))
+        process_rows(" - Reading Organization Todos '#{ORGANIZATION_TODO_FILE}'", ORGANIZATION_TODO_FILE) do |row|
+            # adds itself if applicable
+            rootmodel.add_todo(to_organization_todo(converter, row, rootmodel))
+        end
+    else
+        puts "WARNING: can't find organization history file '#{ORGANIZATION_TODO_FILE}'"
     end
 
     # Organization - Deal connection
@@ -78,19 +97,41 @@ def convert_source
     end
 
     # deal histories
-    process_rows(" - Reading Deal Histories '#{DEAL_HISTORY_FILE}'", DEAL_HISTORY_FILE) do |row|
-        # adds itself if applicable
-        rootmodel.add_history(to_deal_history(converter, row, rootmodel))
+    if(File.exists?(DEAL_HISTORY_FILE))
+        process_rows(" - Reading Deal Histories '#{DEAL_HISTORY_FILE}'", DEAL_HISTORY_FILE) do |row|
+            # adds itself if applicable
+            rootmodel.add_history(to_deal_history(converter, row, rootmodel))
+        end
+    else
+        puts "WARNING: can't find deal history file '#{DEAL_HISTORY_FILE}'"
+    end
+
+    # deal todos
+    if(File.exists?(DEAL_TODO_FILE))
+        process_rows(" - Reading Deal Todos '#{DEAL_TODO_FILE}'", DEAL_TODO_FILE) do |row|
+            # adds itself if applicable
+            rootmodel.add_todo(to_deal_todo(converter, row, rootmodel))
+        end
+    else
+        puts "WARNING: can't find deal history file '#{DEAL_TODO_FILE}'"
     end
 
     # documents
     if defined?(IMPORT_DOCUMENTS) && !IMPORT_DOCUMENTS.nil? && IMPORT_DOCUMENTS
-        process_rows(" - Reading Organization Documents", ORGANIZATION_DOCUMENT_FILE) do |row|
-            rootmodel.add_file(to_organization_document(row, rootmodel))
+        if(File.exists?(ORGANIZATION_DOCUMENT_FILE))
+            process_rows(" - Reading Organization Documents", ORGANIZATION_DOCUMENT_FILE) do |row|
+                rootmodel.add_file(to_organization_document(row, rootmodel))
+            end
+        else
+            puts "WARNING: can't find company documents file '#{ORGANIZATION_DOCUMENT_FILE}'"
         end
 
-        process_rows(" - Reading Project Documents", PROJECT_DOCUMENT_FILE) do |row|
-            rootmodel.add_file(to_deal_document(row, rootmodel))
+        if(File.exists?(PROJECT_DOCUMENT_FILE))
+            process_rows(" - Reading Project Documents", PROJECT_DOCUMENT_FILE) do |row|
+                rootmodel.add_file(to_deal_document(row, rootmodel))
+            end
+        else
+            puts "WARNING: can't find project documents file '#{PROJECT_DOCUMENT_FILE}'"
         end
     end
 
@@ -183,6 +224,35 @@ def to_organization_history(converter, row, rootmodel)
         end
 
         return history.text.empty? ? nil : history
+    end
+
+    return nil
+end
+
+# Turns a row from the Easy exported Company-To do.txt file into
+# a move-to-go model that is used to generate xml.
+def to_organization_todo(converter, row, rootmodel)
+    organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
+    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
+
+    if organization && coworker
+        todo = MoveToGo::Todo.new()
+        todo.organization = organization
+        todo.created_by = coworker
+        todo.assigned_coworker = coworker
+        todo.person = organization.find_employee_by_integration_id(row['idPerson'])
+        if row['Start time'] != ''
+            todo.date_start = "#{row['Start date']} #{row['Start time']}"
+            todo.date_start_has_time = true
+        else
+            todo.date_start = row['Start date'] != '' ? row['Start date'] : Date.today.to_s
+            todo.date_start_has_time = false
+        end
+        
+        todo.date_checked = DateTime.now if row['Done'] == 1
+        todo.text = row['Description']
+        
+        return todo.text.empty? ? nil : todo
     end
 
     return nil
@@ -299,6 +369,35 @@ def to_deal_history(converter, row, rootmodel)
     return nil
 end
 
+# Turns a row from the Easy exported Project-To do.txt file into
+# a move-to-go model that is used to generate xml.
+def to_deal_todo(converter, row, rootmodel)
+    deal = rootmodel.find_deal_by_integration_id(row['idProject'])
+    coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
+
+    if deal && coworker
+        todo = MoveToGo::Todo.new()
+        todo.deal = deal
+        todo.organization = deal.customer
+        todo.created_by = coworker
+        todo.assigned_coworker = coworker
+        todo.person = todo.organization.find_employee_by_integration_id(row['idPerson'])
+        if row['Start time'] != ''
+            todo.date_start = "#{row['Start date']} #{row['Start time']}"
+            todo.date_start_has_time = true
+        else
+            todo.date_start = row['Start date'] != '' ? row['Start date'] : Date.today.to_s
+            todo.date_start_has_time = false
+        end
+        
+        todo.date_checked = DateTime.now if row['Done'] == 1
+        todo.text = row['Description']
+        
+        return todo.text.empty? ? nil : todo
+    end
+
+    return nil
+end
 
 def validate_constants()
     if !defined?(ORGANIZATION_RESPONSIBLE_FIELD)
@@ -336,13 +435,8 @@ def process_rows(description, file_name)
 end
 
 def make_sure_database_has_been_exported()
-    return File.exists?(COWORKER_FILE) &&
-        File.exists?(ORGANIZATION_FILE) &&
-        File.exists?(ORGANIZATION_HISTORY_FILE) &&
-        File.exists?(ORGANIZATION_DOCUMENT_FILE) &&
+    return File.exists?(ORGANIZATION_FILE) &&
         File.exists?(PERSON_FILE) &&
-        File.exists?(INCLUDE_FILE) &&
-        File.exists?(DEAL_FILE) &&
-        File.exists?(DEAL_HISTORY_FILE) &&
-        File.exists?(PROJECT_DOCUMENT_FILE)
+#        File.exists?(INCLUDE_FILE) &&
+        File.exists?(DEAL_FILE) 
 end

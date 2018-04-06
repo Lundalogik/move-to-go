@@ -123,7 +123,12 @@ module MoveToGo
         end
 
         def date_start=(datetime)
-            @date_start = DateTime.parse(datetime)
+            begin
+                @date_start = DateTime.parse(datetime)
+            rescue 
+                puts "\nParsed datetime '#{datetime}' but got error"
+                raise
+            end
         end
 
         def date_start_has_time=(bool)
