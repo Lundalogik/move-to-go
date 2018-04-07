@@ -39,6 +39,10 @@ require 'move-to-go'
 ## Constants
 # Edit these constants to fit your needs
 
+# Valid Consents strings for setting E-mail consent
+# VALID_EMAIL_CONSENTS = ['Ok för nyhetsbrev', 'Ok för produktnyheter']
+VALID_EMAIL_CONSENTS = []
+
 # determines if documents should be imported.
 # IMPORT_DOCUMENTS = true
 

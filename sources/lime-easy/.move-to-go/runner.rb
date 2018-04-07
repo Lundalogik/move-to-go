@@ -11,6 +11,7 @@ ORGANIZATION_HISTORY_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
 ORGANIZATION_TODO_FILE = "#{EXPORT_FOLDER}/Company-To do.txt"
 ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
 PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
+PERSON_CONSENT_FILE = "#{EXPORT_FOLDER}/Company-Person-Consent.txt"
 INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
 DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
 DEAL_HISTORY_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
@@ -53,11 +54,25 @@ def convert_source
         converter.organization_hook(row, organization, rootmodel) if defined? converter.organization_hook
     end
 
+    # Person - Consent connection
+    # Reads the file and creats a hash
+    # that connect persons to consents 
+    if(File.exists?(PERSON_CONSENT_FILE)) 
+        if (defined?(VALID_EMAIL_CONSENTS) && VALID_EMAIL_CONSENTS.size > 0)
+            consent = Hash.new
+            process_rows(" - Reading Person Consents '#{PERSON_CONSENT_FILE}'", PERSON_CONSENT_FILE) do |row|
+                consent[row['idPerson']] = VALID_EMAIL_CONSENTS.include? row['String']
+            end
+        else
+            puts "WARNING: Person consent file exists but VALID_EMAIL_CONSENTS is not set."
+        end
+    end
+
     # persons
     # depends on organizations
     process_rows(" - Reading Persons '#{PERSON_FILE}'", PERSON_FILE) do |row|
         # init method also adds the person to the employer
-        person = init_person(row, rootmodel)
+        person = init_person(row, rootmodel, consent)
         converter.to_person(person, row)
     end
 
@@ -170,7 +185,7 @@ def init_organization(row, rootmodel)
     return organization
 end
 
-def init_person(row, rootmodel)
+def init_person(row, rootmodel, consent)
     person = MoveToGo::Person.new
 
     # Easy standard fields created in configure method Easy
@@ -181,7 +196,9 @@ def init_person(row, rootmodel)
     person.integration_id = row['idPerson']
     person.first_name = row['First name']
     person.last_name = row['Last name']
-
+    if (!consent.nil?)
+        person.has_mail_consent = !!consent[row['idPerson']]
+    end
     # set employer connection
     employer = rootmodel.find_organization_by_integration_id(row['idCompany'])
     if employer
@@ -419,6 +436,13 @@ def validate_constants()
         If that is your intention then you can ignore this warning.
         Otherwise you should define 'IMPORT_DOCUMENTS' in converter.rb
         with the value 'true'."
+    end
+
+    if !defined?(VALID_EMAIL_CONSENTS) || VALID_EMAIL_CONSENTS.empty?
+        puts "WARNING: You havce not defined any valid email consents.
+        No person will now have the 'Email consent given' set.
+        To set the valid email consents, define 'VALID_EMAIL_CONSENTS' with 
+        the strings from Company-Person-Consent.txt that are valid for email."
     end
 end
 

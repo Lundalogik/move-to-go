@@ -76,6 +76,9 @@ module MoveToGo
         ##
         # :attr_accessor: currently_employed
         immutable_accessor :currently_employed
+        ##
+        # :attr_accessor: has_mail_consent
+        immutable_accessor :has_mail_consent
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values, :organization
@@ -147,6 +150,7 @@ module MoveToGo
              {:id => :postal_address, :type => :address},
              {:id => :custom_values, :type => :custom_values},
              {:id => :currently_employed, :type => :bool},
+             {:id => :has_mail_consent, :type => :bool},
              {:id => :organization, :type => :organization_reference},
 
             ]
