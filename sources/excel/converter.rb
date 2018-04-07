@@ -143,6 +143,8 @@ class Converter
         person.mobile_phone_number, person.direct_phone_number =
             MoveToGo::PhoneHelper.parse_numbers(row['Telefon'], [",", "/", "\\"])
 
+        person.has_mail_consent = row['MailConsent'] == "Ja"
+
         return person
     end
 
