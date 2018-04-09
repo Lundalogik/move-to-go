@@ -196,6 +196,14 @@ module MoveToGo
             @rootmodel.select_histories{|history| history.organization == self}
         end
 
+        def todos
+            @rootmodel.select_todos{|todo| todo.organization == self}
+        end
+
+        def meetings
+            @rootmodel.select_meetings{|meeting| meeting.organization == self}
+        end
+
         def documents(type)
             @rootmodel.select_documents(type){|doc| doc.organization == self}
         end
@@ -227,7 +235,7 @@ module MoveToGo
         end
 
         def find_employee_by_integration_id(integration_id)
-            return nil if @employees.nil?
+            return nil if @employees.nil? || integration_id.nil?
             return @employees.find do |e|
                 e.integration_id == integration_id
             end

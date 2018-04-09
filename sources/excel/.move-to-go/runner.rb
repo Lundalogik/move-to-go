@@ -65,6 +65,22 @@ def convert_source
         end
     end
 
+    if defined?(TODO_SHEET)
+        if excel_workbook.has_sheet?(TODO_SHEET)
+            todo_rows = excel_workbook.rows_for_sheet TODO_SHEET
+        else
+            puts "WARNING: can't find sheet '#{TODO_SHEET}'"
+        end
+    end
+
+    if defined?(MEETING_SHEET)
+        if excel_workbook.has_sheet?(MEETING_SHEET)
+            meeting_rows = excel_workbook.rows_for_sheet MEETING_SHEET
+        else
+            puts "WARNING: can't find sheet '#{MEETING_SHEET}'"
+        end
+    end
+
     if defined?(FILE_SHEET)
         if excel_workbook.has_sheet?(FILE_SHEET)
             file_rows = excel_workbook.rows_for_sheet FILE_SHEET
@@ -133,6 +149,24 @@ def convert_source
         puts "Trying to convert histories..."
         history_rows.with_progress().each do |row|
             rootmodel.add_history(converter.to_history(row, rootmodel))
+        end
+    end
+
+    # Todo must be owned by a coworker and the be added to
+    # organizations 
+    if defined?(todo_rows) && !todo_rows.nil?
+        puts "Trying to convert todos..."
+        todo_rows.with_progress().each do |row|
+            rootmodel.add_todo(converter.to_todo(row, rootmodel))
+        end
+    end
+
+    # Meeting must be owned by a coworker and the be added to
+    # organizations 
+    if defined?(meeting_rows) && !meeting_rows.nil?
+        puts "Trying to convert meetings..."
+        meeting_rows.with_progress().each do |row|
+            rootmodel.add_meeting(converter.to_meeting(row, rootmodel))
         end
     end
 

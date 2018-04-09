@@ -1,4 +1,7 @@
 require "csv"
+require "roo"
+include Roo::Formatters::Base
+
 module MoveToGo
     # @example transform xlsx file into rows
     #     organizations_path = File.join(File.dirname(__FILE__), 'organizations.xlsx') # same path as this file
@@ -70,7 +73,7 @@ module MoveToGo
                 when :date, :datetime
                     onecell.to_s
                 when :time
-                    Roo::Base.integer_to_timestring(onecell)
+                    integer_to_timestring(onecell)
                 when :formula
                     onecell.to_s
                 when :link

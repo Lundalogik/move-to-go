@@ -11,7 +11,7 @@ module MoveToGo
         # responsible for objects that requires a coworker, eg a history.
         attr_accessor :migrator_coworker
 
-        attr_accessor :settings, :organizations, :coworkers, :deals, :histories
+        attr_accessor :settings, :organizations, :coworkers, :deals, :histories, :todos, :meetings
 
         # The configuration is used to set run-time properties for
         # move-to-go. This should not be confused with the model's
@@ -31,6 +31,8 @@ module MoveToGo
              {:id => :organizations, :type => :organizations},
              {:id => :deals, :type => :deals},
              {:id => :histories, :type => :histories},
+             {:id => :todos, :type => :todos},
+             {:id => :meetings, :type => :meetings},
              {:id => :documents, :type => :documents}
             ]
         end
@@ -52,6 +54,8 @@ module MoveToGo
             @coworkers[@migrator_coworker.integration_id] = @migrator_coworker
             @deals = {}
             @histories = {}
+            @todos = {}
+            @meetings = {}
             @documents = Documents.new
             @configuration = {}
 
@@ -149,11 +153,17 @@ module MoveToGo
             select_histories{|history| history.organization == organization}
                 .each{|history| @histories.delete(history.integration_id)}
 
+            select_todos{|todo| todo.organization == organization}
+                .each{|todo| @todo.delete(todo.integration_id)}
+
+            select_meetings{|meeting| meeting.organization == organization}
+                .each{|meeting| @meeting.delete(meeting.integration_id)}
+
             select_documents(:file){|file| file.organization == organization}
                 .each{|file| @documents.files.delete(file.integration_id)}
 
-            select_documents(:link){|history| history.organization == organization}
-                .each{|history| @documents.links.delete(history.integration_id)}
+            select_documents(:link){|doc| doc.organization == organization}
+                .each{|doc| @documents.links.delete(doc.integration_id)}
 
             @organizations.delete(organization.integration_id)
 
@@ -295,6 +305,60 @@ module MoveToGo
             return history
         end
 
+        def add_todo(todo)
+            if todo.nil?
+                return nil
+            end
+
+            if !todo.is_a?(Todo)
+                raise ArgumentError.new("Expected an todo")
+            end
+
+            if todo.integration_id.nil? || todo.integration_id.length == 0
+                todo.integration_id = "todo_#{@todos.length}"
+            end
+
+            if find_todo_by_integration_id(todo.integration_id, false) != nil
+                raise AlreadyAddedError, "Already added a todo with integration_id #{todo.integration_id}"
+            end
+
+            if todo.created_by.nil?
+                todo.created_by = @migrator_coworker
+            end
+
+            @todos[todo.integration_id] = todo
+            todo.set_is_immutable
+
+            return todo
+        end
+
+        def add_meeting(meeting)
+            if meeting.nil?
+                return nil
+            end
+
+            if !meeting.is_a?(Meeting)
+                raise ArgumentError.new("Expected an meeting")
+            end
+
+            if meeting.integration_id.nil? || meeting.integration_id.length == 0
+                meeting.integration_id = "meeting_#{@meetings.length}"
+            end
+
+            if find_meeting_by_integration_id(meeting.integration_id, false) != nil
+                raise AlreadyAddedError, "Already added a meeting with integration_id #{meeting.integration_id}"
+            end
+
+            if meeting.created_by.nil?
+                meeting.created_by = @migrator_coworker
+            end
+
+            @meetings[meeting.integration_id] = meeting
+            meeting.set_is_immutable
+
+            return meeting
+        end
+
         def add_link(link)
             @documents = Documents.new if @documents == nil
 
@@ -341,6 +405,24 @@ module MoveToGo
                 return @histories[integration_id]
             else
                 report_failed_to_find_object("history", ":#{integration_id}") if report_result
+                return nil
+            end
+        end
+
+        def find_todo_by_integration_id(integration_id, report_result=!!configuration[:report_result])
+            if @todos.has_key?(integration_id)
+                return @todos[integration_id]
+            else
+                report_failed_to_find_object("todo", ":#{integration_id}") if report_result
+                return nil
+            end
+        end
+
+        def find_meeting_by_integration_id(integration_id, report_result=!!configuration[:report_result])
+            if @meetings.has_key?(integration_id)
+                return @meetings[integration_id]
+            else
+                report_failed_to_find_object("meeting", ":#{integration_id}") if report_result
                 return nil
             end
         end
@@ -467,6 +549,46 @@ module MoveToGo
           return result
         end
 
+        # Finds a todo based on one of its property.
+        # Returns the first found matching todo
+        # @example Finds a todo on its name
+        #      rm.find_todo {|todo| todo.text == "hello!" }
+        def find_todo(report_result=!!configuration[:report_result], &block)
+          result = find(@todos.values.flatten, &block)
+          report_failed_to_find_object("todo") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a todo based on one of its property.
+        # Returns all found matching todo
+        # @example Finds a todo on its name
+        #      rm.select_todo {|todo| todo.text == "hello!" }
+        def select_todos(report_result=!!configuration[:report_result], &block)
+          result = select(@todos.values.flatten, &block)
+          report_failed_to_find_object("todo") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a meeting based on one of its property.
+        # Returns the first found matching meeting
+        # @example Finds a meeting on its name
+        #      rm.find_meeting {|meeting| meeting.text == "hello!" }
+        def find_meeting(report_result=!!configuration[:report_result], &block)
+          result = find(@meetings.values.flatten, &block)
+          report_failed_to_find_object("meeting") if result.nil? and report_result
+          return result
+        end
+
+        # Finds a meeting based on one of its property.
+        # Returns all found matching meeting
+        # @example Finds a meeting on its name
+        #      rm.select_meeting {|meeting| meeting.text == "hello!" }
+        def select_meetings(report_result=!!configuration[:report_result], &block)
+          result = select(@meetings.values.flatten, &block)
+          report_failed_to_find_object("meeting") if result.nil? and report_result
+          return result
+        end
+
         # Finds a document based on one of its property.
         # Returns the first found matching document
         # @example Finds a document on its name
@@ -568,6 +690,22 @@ module MoveToGo
                 end
             end
 
+            @todos.each do |key, todo|
+                validation_message = todo.validate
+
+                if !validation_message.empty?
+                    errors = "#{errors}\n#{validation_message}"
+                end
+            end
+
+            @meetings.each do |key, meeting|
+                validation_message = meeting.validate
+
+                if !validation_message.empty?
+                    errors = "#{errors}\n#{validation_message}"
+                end
+            end
+
             @documents.links.each do |link|
                 validation_message = link.validate
                 if !validation_message.empty?
@@ -619,6 +757,8 @@ module MoveToGo
                 @coworkers = []
                 @deals = []
                 @histories = []
+                @todos = []
+                @meetings = []
                 @documents = saved_documents
                 serialize_to_file(go_files_file)
 
@@ -678,6 +818,8 @@ module MoveToGo
           " Persons:       #{persons.length}\n" \
           " Deals:         #{@deals.length}\n" \
           " History logs:  #{@histories.length}\n" \
+          " Todos:         #{@todos.length}\n" \
+          " Meetings:      #{@meetings.length}\n" \
           " Documents:     #{nbr_of_documents}"
         end
 

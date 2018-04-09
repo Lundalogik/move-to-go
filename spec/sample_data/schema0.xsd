@@ -8,6 +8,8 @@
       <xs:element minOccurs="0" maxOccurs="1" name="Organizations" type="ArrayOfOrganization" />
       <xs:element minOccurs="0" maxOccurs="1" name="Deals" type="ArrayOfDeal" />
       <xs:element minOccurs="0" maxOccurs="1" name="Histories" type="ArrayOfHistory" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Todos" type="ArrayOfTodo" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Meetings" type="ArrayOfMeeting" />
       <xs:element minOccurs="0" maxOccurs="1" name="Documents" type="Documents" />
     </xs:sequence>
     <xs:attribute name="Version" type="Version" use="required" />
@@ -202,6 +204,44 @@
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="History">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Text" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Classification" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="DateCreated" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Person" type="PersonReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfTodo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Todo" nillable="true" type="Todo" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Todo">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="Date" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Text" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Classification" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="DateCreated" type="xs:dateTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="CreatedBy" type="CoworkerReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Organization" type="OrganizationReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Deal" type="DealReference" />
+      <xs:element minOccurs="0" maxOccurs="1" name="Person" type="PersonReference" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfMeeting">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Meeting" nillable="true" type="Meeting" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Meeting">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="1" name="Id" type="xs:string" />
       <xs:element minOccurs="0" maxOccurs="1" name="IntegrationId" type="xs:string" />
