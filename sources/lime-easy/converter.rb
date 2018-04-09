@@ -39,6 +39,22 @@ require 'move-to-go'
 ## Constants
 # Edit these constants to fit your needs
 
+# The export folder, it's probably called 'Export' if you haven't changed it.
+EXPORT_FOLDER = 'Export'
+
+# This file referes to the consent set super field in Lime Easy
+# where the customer have their email consents.
+PERSON_CONSENT_FILE = "#{EXPORT_FOLDER}/Company-Person-Samtycken.txt"
+
+# Valid Consents strings for setting E-mail consent.
+# Which of the set alternatives should be converted to
+# E-mail consent in Lime Go. Just name them here, and
+# move-to-go will fetch them from the file above.
+
+# VALID_EMAIL_CONSENTS = ['Ok för nyhetsbrev', 'Ok för produktnyheter']
+VALID_EMAIL_CONSENTS = ['Nyhetsbrev']
+
+
 # determines if documents should be imported.
 # IMPORT_DOCUMENTS = true
 
@@ -305,7 +321,7 @@ class Converter
         # return the note will get the default classification 'Comment'
 
         # case activity
-        # when 'SalesCall' 
+        # when 'SalesCall'
         #   classification = MoveToGo::HistoryClassification::SalesCall
         # when 'Customer Visit'
         # classification = MoveToGo::HistoryClassification::ClientVisit
@@ -314,7 +330,7 @@ class Converter
         # else
         #     classification = MoveToGo::HistoryClassification::Comment
         # end
-        
+
         # return classification
     end
 
@@ -326,20 +342,20 @@ class Converter
         # in LIME Go. The return value must be a value from the
         # MoveToGo::HistoryClassification enum. If no classification is
         # return the history will get the default classification 'Comment'
-        
+
         # case activity
-        # when 'Installation' 
+        # when 'Installation'
         #   classification = MoveToGo::HistoryClassification::ClientVisit
         # when 'No answer'
         #   classification = MoveToGo::HistoryClassification::TriedToReach
         # else
         #     classification = MoveToGo::HistoryClassification::Comment
         # end
-        
+
         # return classification
     end
 
-    
+
 
     # HOOKS
     #
@@ -355,7 +371,7 @@ class Converter
     #        rootmodel.add_comment(comment)
     #    end
     #end
-    
+
 
 end
 

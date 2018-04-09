@@ -2,7 +2,8 @@
 
 Features:
 
- - It is now possible to Import Todos and Meetings! (The excel source has examples)
+ - It is now possible to Import Todos and Meetings! (The Excel and Lime Easy sources has examples)
+ - You can now import mail concent status for a person, examples in Lime Easy and Excel
 
 ## 5.1.0 (2018-04-05)
 
