@@ -4,14 +4,12 @@ require 'move-to-go'
 require 'progress'
 require_relative("../converter")
 
-EXPORT_FOLDER = 'Export'
 COWORKER_FILE = "#{EXPORT_FOLDER}/User.txt"
 ORGANIZATION_FILE = "#{EXPORT_FOLDER}/Company.txt"
 ORGANIZATION_HISTORY_FILE = "#{EXPORT_FOLDER}/Company-History.txt"
 ORGANIZATION_TODO_FILE = "#{EXPORT_FOLDER}/Company-To do.txt"
 ORGANIZATION_DOCUMENT_FILE = "#{EXPORT_FOLDER}/Company-Document.txt"
 PERSON_FILE = "#{EXPORT_FOLDER}/Company-Person.txt"
-PERSON_CONSENT_FILE = "#{EXPORT_FOLDER}/Company-Person-Consent.txt"
 INCLUDE_FILE = "#{EXPORT_FOLDER}/Project-Included.txt"
 DEAL_FILE = "#{EXPORT_FOLDER}/Project.txt"
 DEAL_HISTORY_FILE = "#{EXPORT_FOLDER}/Project-History.txt"
@@ -56,8 +54,8 @@ def convert_source
 
     # Person - Consent connection
     # Reads the file and creats a hash
-    # that connect persons to consents 
-    if(File.exists?(PERSON_CONSENT_FILE)) 
+    # that connect persons to consents
+    if(File.exists?(PERSON_CONSENT_FILE))
         if (defined?(VALID_EMAIL_CONSENTS) && VALID_EMAIL_CONSENTS.size > 0)
             consent = Hash.new
             process_rows(" - Reading Person Consents '#{PERSON_CONSENT_FILE}'", PERSON_CONSENT_FILE) do |row|
@@ -98,14 +96,14 @@ def convert_source
 
     # Organization - Deal connection
     # Reads the includes.txt and creats a hash
-    # that connect organizations to deals 
+    # that connect organizations to deals
     process_rows(" - Reading Organization Deals '#{INCLUDE_FILE}'", INCLUDE_FILE) do |row|
         includes[row['idProject']] = row['idCompany']
     end
 
     # deals
     # deals can reference coworkers (responsible), organizations
-    # and persons (contact) 
+    # and persons (contact)
     process_rows(" - Reading Deals '#{DEAL_FILE}'", DEAL_FILE) do |row|
         deal = init_deal(row, rootmodel, includes)
         rootmodel.add_deal(converter.to_deal(deal, row))
@@ -155,7 +153,7 @@ end
 
 def to_coworker(row)
     coworker = MoveToGo::Coworker.new
-    
+
     # integration_id is typically the userId in Easy
     # Must be set to be able to import the same file more
     # than once without creating duplicates
@@ -220,7 +218,7 @@ def to_organization_history(converter, row, rootmodel)
         history.created_by = coworker
         history.person = organization.find_employee_by_integration_id(row['idPerson'])
         history.date = row['Date']
-        
+
         if converter.respond_to?(:get_history_classification_for_activity_on_company)
             # we will get an InvalidHistoryClassificationError if we are
             # setting and invalid classification. So no need to verify
@@ -231,7 +229,7 @@ def to_organization_history(converter, row, rootmodel)
             if classification.nil?
                 classification = MoveToGo::HistoryClassification::Comment
             end
-            
+
             history.classification = classification
 
             history.text = row['History']
@@ -265,10 +263,10 @@ def to_organization_todo(converter, row, rootmodel)
             todo.date_start = row['Start date'] != '' ? row['Start date'] : Date.today.to_s
             todo.date_start_has_time = false
         end
-        
+
         todo.date_checked = DateTime.now if row['Done'] == 1
         todo.text = row['Description']
-        
+
         return todo.text.empty? ? nil : todo
     end
 
@@ -371,14 +369,14 @@ def to_deal_history(converter, row, rootmodel)
             if classification.nil?
                 classification = MoveToGo::HistoryClassification::Comment
             end
-            
+
             history.classification = classification
             history.text = row['RawHistory'].to_s.sub("#{row['Category']}:", "")
         else
             history.classification = MoveToGo::HistoryClassification::Comment
             history.text = row['RawHistory']
         end
-        
+
 
         return history.text.empty? ? nil : history
     end
@@ -406,10 +404,10 @@ def to_deal_todo(converter, row, rootmodel)
             todo.date_start = row['Start date'] != '' ? row['Start date'] : Date.today.to_s
             todo.date_start_has_time = false
         end
-        
+
         todo.date_checked = DateTime.now if row['Done'] == 1
         todo.text = row['Description']
-        
+
         return todo.text.empty? ? nil : todo
     end
 
@@ -441,7 +439,7 @@ def validate_constants()
     if !defined?(VALID_EMAIL_CONSENTS) || VALID_EMAIL_CONSENTS.empty?
         puts "WARNING: You havce not defined any valid email consents.
         No person will now have the 'Email consent given' set.
-        To set the valid email consents, define 'VALID_EMAIL_CONSENTS' with 
+        To set the valid email consents, define 'VALID_EMAIL_CONSENTS' with
         the strings from Company-Person-Consent.txt that are valid for email."
     end
 end
@@ -462,5 +460,5 @@ def make_sure_database_has_been_exported()
     return File.exists?(ORGANIZATION_FILE) &&
         File.exists?(PERSON_FILE) &&
 #        File.exists?(INCLUDE_FILE) &&
-        File.exists?(DEAL_FILE) 
+        File.exists?(DEAL_FILE)
 end
