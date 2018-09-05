@@ -85,6 +85,8 @@ organization.integration_id = row.to_hash
 
 As long as your data is free from duplicates this will create a unique key, which is also recallable with the exact same input data. Do not use organization name as integration id. 
 
+The integrationid is NOT the same as Bisnode-id. See below for more info how to handle Bisnode-ids.
+
 ## Rootmodel
 The rootmodel is an object that keeps track of your migrated data and turns it into a format Lime Go can read. The rootmodel helps you keep track go objects and relations between them during the migration
 
@@ -235,6 +237,20 @@ else
 end
 
 ```
+
+### Bisnode IDs
+If the source data contains Bisnode-ids you should use them for matching. Move-to-go supports Bisnode-ids for Swedish, Norwegian and Danish organizations. If your source data have Swedish Bisnode-ids use the following in your to_organization (or similar):
+
+
+```ruby
+organization.with_source do |source|
+    source.par_se('1:2345')
+end
+```
+
+Where `1:2345` is the Bisnode-id. If the id is in the form `2345` you should prepend with `1:`.
+
+If your source has Norwegian organizations use `ecp_no` instead of `par_se`. Use `ecp_dk` for Danish.
 
 ### Organization duplicates
 Organization duplicates can be a problem when doing migrations. In best case they will just end up as possible duplicates in Lime Go.
