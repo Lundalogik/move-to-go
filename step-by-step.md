@@ -9,9 +9,9 @@
 6. `cd` (Change direction) to folder where you want to put the migration folder.
 7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 8. Now a folder named “MigrationFolder” is created.
-9. Enter the folder.
+9. Enter the folder. Enter the command `cd MigrationFolder`.
 10. Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :). [For some extra tips and tricks check this out.](tips-and-trix.md)
-11. Now that you are done with your mapping. You enter the command `cd MigrationFolder`.
+11. Now that you are done with your mapping, you want to run the conversion
 
 12. Enter the command `move-to-go run`.
 	a.	Now Ruby maps the source-file data with the converter file you edited. Wich results in a XML file that contains the fetched data and that Go can read.
@@ -31,7 +31,7 @@
 22. When the customer has approved of the test-migration you need a account for https://admin.lime-go.com/ to being able to do the migration in the production environment.
 23. When you get in, search for an existing Application for the company. If it does, use it. 
 24. Do step 16-19 but now in the production environment. 
-25. Remove the application (from step 13) and migration job (step 16) from https://admin.staging.lime-go.com.
+25. Remove the staging application (from step 15) and migration job (step 18) from https://admin.staging.lime-go.com.
 26. Remove the migration job from https//admin.lime-go.com. DO NOT REMOVE THE APPLICATION.
 
 # POST MIGRATION
