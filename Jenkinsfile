@@ -16,13 +16,11 @@ pipeline {
             }
         }
 
-        stage('Unit Testing') {
-            stage('Tools unit tests') {
-                steps {
-                    powershell '''
-                        bundle exec rake spec
-                    '''
-                }
+        stage('Tools unit tests') {
+            steps {
+                powershell '''
+                    bundle exec rake spec
+                '''
             }
         }
     }
