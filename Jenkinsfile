@@ -24,7 +24,7 @@ pipeline {
             }
         }
 
-        stage('Tools unit tests') {
+        stage('Release gem') {
             when {
                 branch 'master'
             }
