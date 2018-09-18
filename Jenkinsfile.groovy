@@ -11,7 +11,7 @@ pipeline {
         stage('Install tooling') {
             steps {
                 powershell '''
-                    bundle install
+                    bundle install 
                 '''
             }
         }
