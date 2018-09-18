@@ -23,6 +23,17 @@ pipeline {
                 '''
             }
         }
+
+        stage('Tools unit tests') {
+            when {
+                branch 'master'
+            }
+            steps {
+                powershell '''
+                    bundle exec rake release
+                '''
+            }
+        }
     }
     post {
         fixed {
