@@ -10,4 +10,5 @@ gem 'progress', '~> 3.4.0'
 group :test do
     gem 'test-unit'
     gem 'rspec'
+	gem "gem-release", "~> 2.0"
 end
