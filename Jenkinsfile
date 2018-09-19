@@ -30,7 +30,7 @@ pipeline {
             }
             steps {
                 powershell '''
-                    bundle exec rake release
+                    bundle exec gem release
                 '''
             }
         }
