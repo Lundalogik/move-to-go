@@ -29,9 +29,11 @@ pipeline {
                 branch 'master'
             }
             steps {
-                powershell '''
-                    bundle exec gem release
-                '''
+                configFileProvider([configFile(fileId: 'gem_credentials', targetLocation: 'c:\\Users\\Adminsitrator\\.gem\\credentials')]) {
+                    powershell '''
+                        bundle exec gem release
+                    '''
+                }
             }
         }
     }
