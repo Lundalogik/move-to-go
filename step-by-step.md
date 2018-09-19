@@ -19,7 +19,7 @@
 14. Add a new application by clicking on one of the nice Nordic flags (Preferably the flag that belong to the country you represent).
 15. Enter a nice name and some info and click on “Submit”.
 16. Now you press the button “Add an account” which is the one you’ll use when you enter the staging account. 
-17. Under “Actions” you got some options, click on the link “Import data” to make a test migration. 
+17. Under “Actions” you got some options, click on the link “Migrate data” to make a test migration. 
 18. Just upload the .zip file and wait until the job has been finished (may take a while).
 19. When the job is done, enter the account at https://go.staging.lime-go.com with the credentials you created in step 15.
 20. Check the data.
