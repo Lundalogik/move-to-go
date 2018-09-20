@@ -33,9 +33,9 @@ pipeline {
                     script {
                         try {
                             powershell 'bundle exec gem release'
-                        } catch (error) {
-                            echo error
+                        } catch (e) {
                             echo "Failed to release (was it a republish ignore issue)"
+                            echo 'Error: '+e.toString()
                         }
                     }
                 }
