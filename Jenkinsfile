@@ -30,9 +30,14 @@ pipeline {
             }
             steps {
                 configFileProvider([configFile(fileId: 'gem_credentials', targetLocation: 'c:\\Users\\Administrator\\.gem\\credentials')]) {
-                    powershell '''
-                        bundle exec gem release
-                    '''
+                    script {
+                        try {
+                            powershell 'bundle exec gem release'
+                        } catch (error) {
+                            echo error
+                            echo "Failed to release (was it a republish ignore issue)"
+                        }
+                    }
                 }
             }
         }
@@ -43,7 +48,8 @@ pipeline {
                 if (env.BRANCH_NAME == 'master') {
                     slackSend(message: "Job ${JOB_NAME}:${BUILD_ID} on node ${NODE_NAME} finished successfully. ${BUILD_URL}",
                               botUser: true,
-                              color: 'good')
+                              color: 'good',
+                              channel: '#go-dev')
                 } else if (env.BRANCH_NAME.startsWith('PR')) {
                     slackSend(message: "Job ${JOB_NAME}:${BUILD_ID} on node ${NODE_NAME} finished successfully. ${BUILD_URL}",
                               botUser: true,
@@ -57,7 +63,8 @@ pipeline {
                 if (env.BRANCH_NAME == 'master') {
                     slackSend(message: "Job ${JOB_NAME}:${BUILD_ID} on node ${NODE_NAME} failed. ${BUILD_URL}",
                               botUser: true,
-                              color: 'danger')
+                              color: 'danger',
+                              channel: '#go-dev')
                 } else if (env.BRANCH_NAME.startsWith('PR')) {
                     slackSend(message: "Job ${JOB_NAME}:${BUILD_ID} on node ${NODE_NAME} failed. ${BUILD_URL}",
                               botUser: true,
