@@ -34,8 +34,8 @@ pipeline {
                         try {
                             powershell 'bundle exec gem release'
                         } catch (e) {
-                            echo "Failed to release (was it a republish ignore issue)"
-                            echo 'Error: '+e.toString()
+                            echo "Failed to release (was it a republish ignore issue?)"
+                            currentBuild.result = 'UNSTABLE'
                         }
                     }
                 }
