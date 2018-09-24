@@ -19,8 +19,8 @@ module MoveToGo
         # We had a meeting at the client's site.
         ClientVisit = 'ClientVisit'
         
-        #We had Email correspondence
-        Email = 'Email'
+        # We had Email correspondence
+        MailMessage = 'MailMessage'
     end
 end
 
