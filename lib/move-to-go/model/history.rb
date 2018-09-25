@@ -98,7 +98,8 @@ module MoveToGo
             raise_if_immutable
             if classification == HistoryClassification::Comment || classification == HistoryClassification::SalesCall ||
                     classification == HistoryClassification::TalkedTo || classification == HistoryClassification::TriedToReach ||
-                    classification == HistoryClassification::ClientVisit
+                    classification == HistoryClassification::ClientVisit ||
+                    classification == HistoryClassification::MailMessage
                 @classification = classification
             else
                 raise InvalidHistoryClassificationError, classification

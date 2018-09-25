@@ -1,3 +1,13 @@
+## 5.3.0 (2018-09-25)
+
+Features:
+
+ - Support for history classification type MailMessage
+ 
+ Bugfixes:
+ 
+ - Check for defined variable PERSON_CONSENT_FILE in Lime Easy source 
+
 ## 5.2.0 (2018-04-06)
 
 Features:

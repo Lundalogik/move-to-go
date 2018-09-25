@@ -55,7 +55,8 @@ def convert_source
     # Person - Consent connection
     # Reads the file and creats a hash
     # that connect persons to consents
-    if(File.exists?(PERSON_CONSENT_FILE))
+    
+    if(defined?(PERSON_CONSENT_FILE) && File.exists?(PERSON_CONSENT_FILE))
         if (defined?(VALID_EMAIL_CONSENTS) && VALID_EMAIL_CONSENTS.size > 0)
             consent = Hash.new
             process_rows(" - Reading Person Consents '#{PERSON_CONSENT_FILE}'", PERSON_CONSENT_FILE) do |row|
