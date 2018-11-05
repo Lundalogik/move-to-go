@@ -73,6 +73,15 @@ All migrated organizations will be tagged "Import".
 
 Coworkers, deals and histories are *always* migrated as is. These objects are linked to an organization.
 
+## Running an migration more than once.
+
+Lime Go will *not* overwrite data on existing organizations. This means that if you run an migration twice with different data Lime Go will not get the data from the last run.
+
+The reasoning behind this that the migration is a way to load an initial state into Lime Go. 
+It is not a way to build long running integrations. We are building a REST API for integrations.
+
+---
+
 ## Integration id
 
 It is required to set integration id for all migrated objects. The integration id for example used to connect deals to organizations and coworkers are deals. When migrating Lime Go will try to match migrated objects to existing objects by integration id.
@@ -274,7 +283,7 @@ Instead of using `merge_all!` you can handle your mergeing manualy by
 rootmodel.organizations
     .find_duplicates_by(:name)
     .map_duplicates { |duplicate_set| # Handle each  
-        org_to_keep = duplicate_set.find{|org| org.my_propertiy_i_care_about == "My Value" }
+        org_to_keep = duplicate_set.find{|org| org.my_property_i_care_about == "My Value" }
         duplicate_set.each{|org|
             if org != org_to_keep
                 org_to_keep.move_data_from(org)
@@ -365,13 +374,6 @@ By default move-to-go will set a deal's responsible to the 'migrator' coworker i
 ```ruby
 ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
 ```
-
-## Running an migration more than once.
-
-Lime Go will *not* overwrite data on existing organizations. This means that if you run an migration twice with different data Lime Go will not get the data from the last run.
-
-The reasoning behind this that the migration is a way to load an initial state into Lime Go. 
-It is not a way to build long running integrations. We are building a REST API for integrations.
 
 ## Development of core lib
 It's possible to execute projects without to install move-to-go
