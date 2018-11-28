@@ -211,6 +211,10 @@ end
 def to_organization_history(converter, row, rootmodel)
     organization = rootmodel.find_organization_by_integration_id(row['idCompany'])
     coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
+    # Coworkers might be deleted from the Easy database
+    if coworker.nil?
+        coworker = rootmodel.find_coworker_by_integration_id('migrator')
+    end
 
     if organization && coworker
         history = MoveToGo::History.new()
@@ -349,6 +353,9 @@ def to_deal_history(converter, row, rootmodel)
     # it's not a straight forward task
     deal = rootmodel.find_deal_by_integration_id(row['idProject'])
     coworker = rootmodel.find_coworker_by_integration_id(row['idUser'])
+    if coworker.nil?
+        coworker = rootmodel.find_coworker_by_integration_id('migrator')
+    end
 
     if deal && coworker
         history = MoveToGo::History.new()
