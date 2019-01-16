@@ -6,7 +6,7 @@ It can take virtually any data source as input and generate a zip file that LIME
 These files can then easily be migrated to Lime Go by Lime Technologies. 
 During an migration an automatic matching against all base data will be performed.
 
-Organizations, Persons, Deals, Histories, Coworkers and Documents can be migrated to Lime Go.
+Organizations, Persons, Deals, Histories, Todos, Coworkers and Documents can be migrated to Lime Go.
 
 move-to-go is a [ruby gem](https://rubygems.org/gems/move-to-go). Install with
 
