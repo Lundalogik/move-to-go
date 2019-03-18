@@ -3,7 +3,7 @@
 Sometimes the data in the migration file might look good at first glance, but still have logical errors in it.
 You can add some logical validation in the mapping functions in `converter.rb` to do all kinds of different sanity checks.
 
-Example
+Example from runner.rb:
 
 ```ruby
 def to_history(row, rootmodel)
