@@ -265,7 +265,7 @@ def to_organization_todo(converter, row, rootmodel)
             todo.date_start_has_time = false
         end
 
-        todo.date_checked = DateTime.now if row['Done'] == 1
+        todo.date_checked = DateTime.now if row['Done'] == "1"
         todo.text = row['Description']
 
         return todo.text.empty? ? nil : todo
@@ -406,7 +406,7 @@ def to_deal_todo(converter, row, rootmodel)
             todo.date_start_has_time = false
         end
 
-        todo.date_checked = DateTime.now if row['Done'] == 1
+        todo.date_checked = DateTime.now if row['Done'] == "1"
         todo.text = row['Description']
 
         return todo.text.empty? ? nil : todo

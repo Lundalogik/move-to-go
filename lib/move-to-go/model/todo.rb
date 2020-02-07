@@ -126,7 +126,7 @@ module MoveToGo
             begin
                 @date_start = DateTime.parse(datetime)
             rescue 
-                puts "\nParsed datetime '#{datetime}' but got error"
+                puts "\nParsed datetime '#{datetime}' for date_start but got error"
                 raise
             end
         end
@@ -136,7 +136,17 @@ module MoveToGo
         end
 
         def date_checked=(datetime)
-            @date_checked = DateTime.parse(datetime) if datetime != ""
+            if datetime.is_a?(DateTime)
+                @date_checked = datetime
+                return 
+            end
+
+            begin 
+                @date_checked = DateTime.parse(datetime) if datetime != ""
+            rescue
+                puts "\nParsed datetime '#{datetime}' for date_checked but got error"
+                raise
+            end
         end
 
         def validate
