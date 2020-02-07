@@ -1,3 +1,12 @@
+## 5.4.0 (2020-02-07)
+
+Features:
+
+ 
+ Bugfixes:
+ 
+ - Todos marked as Done in Lime Easy are migrated as Done. [#82](https://github.com/Lundalogik/move-to-go/issues/82)
+
 ## 5.3.0 (2018-09-25)
 
 Features:
