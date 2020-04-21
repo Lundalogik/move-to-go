@@ -56,6 +56,8 @@ This will create a go_0.zip file. If the file already exists it will be replaced
 
 If the migration contains lots of data, the result will be split into several zip files.
 
+**Note:** There is a max request length of ~2gb currently in place on the lime go admin site where the zips are going to be eventually uploaded to. If after converting the data you have zip(s) that have a size that is higher than 2gb then you should supply the `--shard_size=<number_of_items_per_data_type>` option when running this command and set it to a number that is substantially lower than the number of items of your largest zip file. Usually this might happen when you are converting documents i.e. If you have 12000 documents in your largest zip file of 3.5 gb and you supply the option with a value of 5000 then you will end up with 2 zip files of ~1.2gb each. By default, the shard_zize is 25000 so lowering the number will cause the script to return more zip files but that is obviously expected.
+
 ## What happens when you move to Lime Go?
 
 Since Lime Go contains [all organizations and persons](http://www.lime-go.com/foretagsinformation/) an migration not an import in the traditional sense. 
