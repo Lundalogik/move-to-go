@@ -377,6 +377,11 @@ By default move-to-go will set a deal's responsible to the 'migrator' coworker i
 ALLOW_DEALS_WITHOUT_RESPONSIBLE = 1
 ```
 
+By default move-to-go will **NOT** report any warnings in regards for example to data that have not been able to be converted. If you want to see these warnings then you should set the following in converter.rb
+```ruby
+REPORT_RESULT = 1
+```
+
 ## Development of core lib
 It's possible to execute projects without to install move-to-go
 
