@@ -130,6 +130,10 @@ module MoveToGo
             @text.gsub!("\b", "")
         end
 
+        def date=(date)
+          @date = DateTime.parse(date)
+        end
+
         def validate
             error = String.new
 

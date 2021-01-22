@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
     s.name        = 'move-to-go'
-    s.version     = '5.4.0'
+    s.version     = '5.4.1'
     s.platform    = Gem::Platform::RUBY
     s.authors     = ['Petter Sandholdt', 'Oskar Gewalli', 'Peter Wilhelmsson', 'Anders Pålsson', 'Ahmad Game', 'Rickard Helldin', 'Mikael Davidsson']
     s.email       = 'support@lime.tech'
