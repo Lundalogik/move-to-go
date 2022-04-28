@@ -9,7 +9,9 @@
 6. `cd` (Change direction) to folder where you want to put the migration folder.
 7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 8. Now a folder named “MigrationFolder” is created.
-9. Enter the folder. Enter the command `cd MigrationFolder`.
+9a. Enter the folder. Enter the command `cd MigrationFolder`.
+9b. Go to F:\Products\Lime Go\Migrations and grab the updated version of “Converter.rb” and put in the “MigrationFolder” that was created.
+	(9b is optional but recommended. The file on F:\ is improved, credits to Helena Gästrin for making the changes).
 10. Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :). [For some extra tips and tricks check this out.](tips-and-trix.md)
 11. Now that you are done with your mapping, you want to run the conversion
 
