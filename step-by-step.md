@@ -28,7 +28,7 @@
 	a. Is it how it should be?
 	b. Is there many "Failed to match" tags? If yes you might have a problem with the identifications.
 	c. If you have imported any external IDs, check them so they are correct. It's important to be abel to rerun the migration or add additional inormation at a later state. 
-21. If yes, create an account (like at step 15) to the customer where they can look at the data aswell and give you a go to do the migration in the sharp environment. 
+21. If yes, create an account (like at step 15) to the customer where they can look at the data aswell and give you a go to do the migration in the sharp environment. Don't forget to inactivate the customer's account so that they don't continue working in the staging app
 
 22. When the customer has approved of the test-migration you need a account for https://admin.lime-go.com/ to being able to do the migration in the production environment.
 23. When you get in, search for an existing Application for the company. If it does, use it. 
