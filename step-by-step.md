@@ -6,7 +6,7 @@
 3. Open "Start Command Prompt with Ruby".
 4. Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
 5. Wait...
-6. `cd` (Change direction) to folder where you want to put the migration folder.
+6. `cd` (Change direction) to folder where you want to put the migration folder. Have a look at this documentation: https://www.rubydoc.info/gems/move-to-go/index
 7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
 8. Now a folder named “MigrationFolder” is created.
 9a. Enter the folder. Enter the command `cd MigrationFolder`.
@@ -40,7 +40,7 @@
 If you want to go the extra mile and make it easier for yourself and your collegues the next time, follow these steps:
 1. Create a product folder for the migration on a share volume so cooperation is possible.
 2. Can the source of the migration be used as a template for other migrations? 
-3. Improve the [documentation](readme.md) and this guide on GitHub.
+3. Improve the [documentation](readme.md) and this guide on GitHub. (DEAD LINK)
 4. If you've learned some new trick that others may benifit from, consider adding it to [the tips and trix.](tips-and-trix.md)
 5. Improve [the checklist](Checklist.md) on GitHub.
 
