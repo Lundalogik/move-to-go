@@ -6,9 +6,11 @@
 3. Open "Start Command Prompt with Ruby".
 4. Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
 5. Wait...
-6. `cd` (Change direction) to folder where you want to put the migration folder. Have a look at this documentation: https://www.rubydoc.info/gems/move-to-go/index
+6. `cd` (Change direction) to folder where you want to put the migration folder. 
 7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
-8. Now a folder named “MigrationFolder” is created.
+8. Now a folder named “MigrationFolder” is created. Have a look at this documentation: https://www.rubydoc.info/gems/move-to-go/index
+
+
 9a. Enter the folder. Enter the command `cd MigrationFolder`.
 9b. Go to F:\Products\Lime Go\Migrations and grab the updated version of “Converter.rb” and put in the “MigrationFolder” that was created.
 	(9b is optional but recommended. The file on F:\ is improved, credits to Helena Gästrin for making the changes).
