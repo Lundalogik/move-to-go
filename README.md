@@ -412,6 +412,8 @@ Example from git root:
 
 You can find generated documentation on [rubydoc](http://rubydoc.info/gems/move-to-go/frames)
 
+You can find the FAQ owned by ES on the [repo's wiki](https://github.com/Lundalogik/move-to-go/wiki/FAQ)
+
 ## Legal
 
 ### License
