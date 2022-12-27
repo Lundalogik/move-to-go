@@ -42,9 +42,10 @@
 
 # POST MIGRATION
 If you want to go the extra mile and make it easier for yourself and your collegues the next time, follow these steps:
-1. Create a product folder for the migration on a share volume so cooperation is possible.
-2. Can the source of the migration be used as a template for other migrations? 
-3. Improve the [documentation](README.md) and this guide on GitHub.
-4. If you've learned some new trick that others may benifit from, consider adding it to [the tips and trix.](tips-and-trix.md)
-5. Improve [the checklist](Checklist.md) on GitHub.
+1. Add any new things you've [learned to the FAQ](https://github.com/Lundalogik/move-to-go/wiki/FAQ)
+2. Create a product folder for the migration on a share volume so cooperation is possible.
+3. Can the source of the migration be used as a template for other migrations? 
+4. Improve the [documentation](README.md) and this guide on GitHub.
+5. If you've learned some new trick that others may benifit from, consider adding it to [the tips and trix.](tips-and-trix.md)
+6. Improve [the checklist](Checklist.md) on GitHub.
 
