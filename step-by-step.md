@@ -1,17 +1,19 @@
 # Move-to-go step by step.
 
 0. **Before you start please check out [this checklist](Checklist.md)**
-1. Go get Ruby... (should be 2.5.1, 64-bits at https://rubyinstaller.org/downloads/).
-2. When installing, tick in the checkboxes to install toolkit and add Ruby executables to your PATH.
-3. Open "Start Command Prompt with Ruby".
-4. Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
-5. Wait...
-6. `cd` (Change direction) to folder where you want to put the migration folder. 
-7. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
-8. Now a folder named “MigrationFolder” is created. Have a look at this documentation: https://www.rubydoc.info/gems/move-to-go/index
+1. For technical questions regarding the impor tool, have a look at this documentation: https://www.rubydoc.info/gems/move-to-go/index 
+2. Go get Ruby... (should be 2.5.1, 64-bits at https://rubyinstaller.org/downloads/).
+3. When installing, tick in the checkboxes to install toolkit and add Ruby executables to your PATH.
+4. Open "Start Command Prompt with Ruby".
+5. Enter this command `gem install move-to-go` to install or 'gem update move-to-go' to update.
+6. Wait...
+7. `cd` (Change direction) to folder where you want to put the migration folder. 
+8. Enter this command `move-to-go new MigrationFolder excel` (or other list-source).
+9. Now a folder named “MigrationFolder” is created. 
 
 
 9a. Enter the folder. Enter the command `cd MigrationFolder`.
+
 9b. Go to F:\Products\Lime Go\Migrations and grab the updated version of “Converter.rb” and put in the “MigrationFolder” that was created.
 	(9b is optional but recommended. The file on F:\ is improved, credits to Helena Gästrin for making the changes).
 10. Open up the ruby file “Converter.rb”, this is the place where you do the mapping of the fields. There you have a lot of comments with good help with the mapping. :). [For some extra tips and tricks check this out.](tips-and-trix.md)
@@ -42,7 +44,7 @@
 If you want to go the extra mile and make it easier for yourself and your collegues the next time, follow these steps:
 1. Create a product folder for the migration on a share volume so cooperation is possible.
 2. Can the source of the migration be used as a template for other migrations? 
-3. Improve the [documentation](readme.md) and this guide on GitHub. (DEAD LINK)
+3. Improve the [documentation](README.md) and this guide on GitHub.
 4. If you've learned some new trick that others may benifit from, consider adding it to [the tips and trix.](tips-and-trix.md)
 5. Improve [the checklist](Checklist.md) on GitHub.
 
