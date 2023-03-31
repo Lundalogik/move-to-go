@@ -9,9 +9,12 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-    - name: Install tooling
+    - name: Code Checkout
       uses: actions/checkout@v3
+
+    - name: Install tooling
       run: bundle install
+      
     - name: Tools unit tests
       run: bundle exec rake spec
 
