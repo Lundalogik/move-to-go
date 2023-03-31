@@ -3,19 +3,19 @@ name: Release
 on:
   workflow_dispatch:
   pull_request:
-    branches:
+    branches: 
       - master
 
 jobs:
   release:
     runs-on: windows-2019
     steps:
-    - name: Code Checkout
-      uses: actions/checkout@v3
+      - name: Code Checkout
+        uses: actions/checkout@v3
 
-    - name: Install tooling
-      run: bundle install
+      - name: Install tooling
+        run: bundle install
 
-    - name: Tools unit tests
-      run: bundle exec rake spec
+      - name: Tools unit tests
+        run: bundle exec rake spec
 
