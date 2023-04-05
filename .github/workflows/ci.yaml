@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+    branches: master
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Code checkout
+      uses: actions/checkout@v3
+    
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.5.1 
+    
+    - name: Install tooling
+      run: bundle install
+
+    - name: Run unit tests
+      run: bundle exec rake spec
