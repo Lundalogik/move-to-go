@@ -55,7 +55,7 @@ def convert_source
     # Person - Consent connection
     # Reads the file and creats a hash
     # that connect persons to consents
-    
+
     if(defined?(PERSON_CONSENT_FILE) && File.exists?(PERSON_CONSENT_FILE))
         if (defined?(VALID_EMAIL_CONSENTS) && VALID_EMAIL_CONSENTS.size > 0)
             consent = Hash.new
@@ -397,7 +397,13 @@ def to_deal_todo(converter, row, rootmodel)
         todo.organization = deal.customer
         todo.created_by = coworker
         todo.assigned_coworker = coworker
-        todo.person = todo.organization.find_employee_by_integration_id(row['idPerson'])
+        
+        if todo.organization
+            todo.person = rootmodel.find_person_by_integration_id(row['idPerson'])
+        else
+            return nil
+        end
+
         if row['Start time'] != ''
             todo.date_start = "#{row['Start date']} #{row['Start time']}"
             todo.date_start_has_time = true
