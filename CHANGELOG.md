@@ -1,3 +1,9 @@
+## 5.4.3 (2026-04-02)
+
+Features:
+
+ - Add `wondate` property to Deal class to track when a deal was won/closed successfully [#91](https://github.com/Lundalogik/move-to-go/pull/91)
+
 ## 5.4.0 (2020-02-07)
 
 Features:
