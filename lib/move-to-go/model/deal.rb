@@ -64,6 +64,10 @@ module MoveToGo
         ##
         # :attr_accessor: offer_date
         immutable_accessor :offer_date
+        ##
+        # :attr_accessor: wondate
+        # The date when the deal was won/closed successfully
+        immutable_accessor :wondate
 
         # you add custom values by using {#set_custom_value}
         attr_reader :custom_values
@@ -71,7 +75,7 @@ module MoveToGo
         attr_reader :customer, :responsible_coworker, :customer_contact, :value
 
         def serialize_variables
-            [ :id, :integration_id, :name, :description, :probability, :value, :order_date, :offer_date ].map {
+            [ :id, :integration_id, :name, :description, :probability, :value, :order_date, :offer_date, :wondate ].map {
                 |p| {
                     :id => p,
                     :type => :string
